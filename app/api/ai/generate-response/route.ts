@@ -1,50 +1,44 @@
-import { NextResponse } from "next/server";
-import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
-import { generateReviewResponse } from "@/lib/anthropic/generate-response";
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+import { generateReviewResponse } from '@/lib/anthropic/client'
 
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const { review_id, location_id, tone, instructions, sign_off_name } = await request.json()
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const cookieStore = cookies()
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+
+    const { data: review, error: reviewError } = await (supabase
+      .from('reviews') as any)
+      .select('*')
+      .eq('id', review_id)
+      .eq('location_id', location_id)
+      .single()
+
+    if (reviewError || !review) {
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    }
+
+    const { data: settings } = await (supabase
+      .from('ai_settings') as any)
+      .select('tone, instructions, sign_off_name')
+      .eq('location_id', location_id)
+      .maybeSingle()
+
+    const responseText = await generateReviewResponse({
+      reviewText: review.body || review.content,
+      reviewerName: review.author_name,
+      rating: review.rating,
+      tone: tone || settings?.tone || 'professional',
+      instructions: instructions || settings?.instructions,
+      signOffName: sign_off_name || settings?.sign_off_name
+    })
+
+    return NextResponse.json({ response: responseText })
+  } catch (error: any) {
+    console.error('Error generating AI response:', error)
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
   }
-
-  const { reviewId } = await request.json();
-
-  const { data: review } = await supabase
-    .from("reviews")
-    .select("*, locations!inner(id, name, user_id)")
-    .eq("id", reviewId)
-    .eq("locations.user_id", user.id)
-    .single();
-
-  if (!review) {
-    return NextResponse.json({ error: "Review not found" }, { status: 404 });
-  }
-
-  const { data: aiSettings } = await supabase
-    .from("ai_settings")
-    .select("tone_instructions, sign_off_name")
-    .eq("location_id", review.location_id)
-    .maybeSingle();
-
-  const responseText = await generateReviewResponse({
-    review,
-    aiSettings,
-    businessName: review.locations.name,
-  });
-
-  const { error } = await supabase
-    .from("reviews")
-    .update({ response_text: responseText })
-    .eq("id", reviewId);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ response_text: responseText });
 }

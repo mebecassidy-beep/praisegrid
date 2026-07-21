@@ -26,7 +26,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const [profileOpen, setProfileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 transform-gpu items-center gap-3 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
       <button
         onClick={onMenuClick}
         className="text-muted-foreground hover:text-foreground md:hidden"

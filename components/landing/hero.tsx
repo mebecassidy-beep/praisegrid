@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { HeroPreview } from "@/components/landing/hero-preview";
+import { InstantReviewFixer } from "@/components/landing/instant-review-fixer";
 
 export function Hero() {
   return (
@@ -67,7 +67,7 @@ export function Hero() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          <HeroPreview />
+          <InstantReviewFixer />
         </div>
       </div>
     </section>

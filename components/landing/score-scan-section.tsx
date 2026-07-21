@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Loader2, Search, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowRight, Loader2, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { KineticHeading } from "@/components/motion/kinetic-heading";
@@ -38,7 +38,13 @@ export function ScoreScanSection() {
   const [name, setName] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [step, setStep] = useState(0);
-  const [result, setResult] = useState<{ score: number; factors: number[] } | null>(null);
+  const [result, setResult] = useState<{
+    score: number;
+    factors: number[];
+    unansweredReviews: number;
+    unclaimedQuestions: number;
+    estimatedLostCustomers: number;
+  } | null>(null);
 
   function runScan(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +56,9 @@ export function ScoreScanSection() {
     const seed = hashString(name.trim() || "your business");
     const score = 68 + (seed % 24);
     const factors = FACTOR_LABELS.map((_, i) => 60 + ((seed >> (i * 3)) % 38));
+    const unansweredReviews = 4 + (seed % 19);
+    const unclaimedQuestions = 1 + ((seed >> 4) % 7);
+    const estimatedLostCustomers = 8 + ((seed >> 7) % 42);
 
     let i = 0;
     const interval = setInterval(() => {
@@ -57,7 +66,7 @@ export function ScoreScanSection() {
       setStep(i);
       if (i >= SCAN_STEPS.length) {
         clearInterval(interval);
-        setResult({ score, factors });
+        setResult({ score, factors, unansweredReviews, unclaimedQuestions, estimatedLostCustomers });
         setStatus("done");
       }
     }, 550);
@@ -86,13 +95,13 @@ export function ScoreScanSection() {
             </div>
 
             <KineticHeading
-              text="See what your AI Visibility Score could look like"
+              text="Claim your business and see what's costing you customers"
               className="text-3xl font-bold tracking-tight text-white sm:text-4xl"
             />
 
             <p className="mt-5 max-w-md text-lg text-slate-400">
-              Enter your business name for a live preview of the score Reputicious
-              calculates from your Google, Yelp, and Facebook presence.
+              Enter your business name for a live preview of the AI Visibility Score and
+              hidden vulnerabilities Reputicious finds in your Google, Yelp, and Facebook presence.
             </p>
 
             <form onSubmit={runScan} className="mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
@@ -112,7 +121,7 @@ export function ScoreScanSection() {
                 ) : (
                   <Search className="h-4 w-4" />
                 )}
-                Run Free Scan
+                Claim My Business
               </Button>
             </form>
 
@@ -225,12 +234,35 @@ export function ScoreScanSection() {
                       <DrawTrendChart />
                     </div>
 
+                    <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3.5">
+                      <div className="mb-2 flex items-center gap-1.5">
+                        <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+                        <span className="text-xs font-semibold text-red-400">
+                          Vulnerabilities found for {displayName}
+                        </span>
+                      </div>
+                      <ul className="space-y-1.5 text-xs text-slate-300">
+                        <li>
+                          <span className="font-semibold text-white">{result.unansweredReviews}</span>{" "}
+                          unanswered reviews visible to potential customers
+                        </li>
+                        <li>
+                          <span className="font-semibold text-white">{result.unclaimedQuestions}</span>{" "}
+                          unanswered Google Q&amp;A questions
+                        </li>
+                        <li>
+                          Est. <span className="font-semibold text-white">{result.estimatedLostCustomers}</span>{" "}
+                          customers/mo lost to unresolved negative reviews
+                        </li>
+                      </ul>
+                    </div>
+
                     <Button
                       asChild
                       className="w-full gap-2 bg-white text-slate-900 hover:bg-slate-200"
                     >
                       <Link href="/signup">
-                        Get my real score — Start Free Trial
+                        Fix these issues — Start Free Trial
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>

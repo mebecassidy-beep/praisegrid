@@ -199,3 +199,33 @@ export const SENTIMENT_SPLIT = {
   neutral: 14,
   negative: 8,
 };
+
+export interface MonthlyMetric {
+  month: string;
+  avgRating: number;
+  reviewCount: number;
+  avgResponseHours: number;
+  platformCounts: Record<FeedPlatform, number>;
+}
+
+export const MONTHLY_TREND: MonthlyMetric[] = [
+  { month: "Feb", avgRating: 4.5, reviewCount: 132, avgResponseHours: 6.8, platformCounts: { google: 68, yelp: 41, facebook: 23 } },
+  { month: "Mar", avgRating: 4.6, reviewCount: 148, avgResponseHours: 5.9, platformCounts: { google: 76, yelp: 44, facebook: 28 } },
+  { month: "Apr", avgRating: 4.6, reviewCount: 156, avgResponseHours: 5.1, platformCounts: { google: 81, yelp: 45, facebook: 30 } },
+  { month: "May", avgRating: 4.7, reviewCount: 171, avgResponseHours: 4.3, platformCounts: { google: 89, yelp: 48, facebook: 34 } },
+  { month: "Jun", avgRating: 4.7, reviewCount: 189, avgResponseHours: 3.4, platformCounts: { google: 98, yelp: 52, facebook: 39 } },
+  { month: "Jul", avgRating: 4.8, reviewCount: 204, avgResponseHours: 2.6, platformCounts: { google: 107, yelp: 55, facebook: 42 } },
+];
+
+export interface LocationMetric {
+  avgRating: number;
+  reviewCount: number;
+  responseRate: number;
+  pendingCount: number;
+}
+
+export const LOCATION_METRICS: Record<string, LocationMetric> = {
+  "loc-downtown": { avgRating: 4.8, reviewCount: 612, responseRate: 96, pendingCount: 1 },
+  "loc-riverside": { avgRating: 4.5, reviewCount: 341, responseRate: 89, pendingCount: 2 },
+  "loc-uptown": { avgRating: 4.7, reviewCount: 331, responseRate: 94, pendingCount: 0 },
+};

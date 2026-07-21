@@ -1,3 +1,5 @@
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+
 const STATS = [
   { value: "10k+", label: "Reviews Managed" },
   { value: "4.9/5", label: "Average Rating" },
@@ -10,19 +12,19 @@ const LOGOS = ["Bloomfield", "Cedar & Co.", "Harborview", "Northgate", "Willow B
 export function SocialProof() {
   return (
     <section id="metrics" className="border-b bg-slate-950">
-      <div className="container grid grid-cols-2 gap-8 py-12 sm:grid-cols-4">
+      <RevealGroup className="container grid grid-cols-2 gap-8 py-12 sm:grid-cols-4" stagger={0.08}>
         {STATS.map((stat) => (
-          <div key={stat.label} className="text-center">
+          <RevealItem key={stat.label} className="text-center">
             <p className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
               {stat.value}
             </p>
             <p className="mt-1 text-sm text-slate-400">{stat.label}</p>
-          </div>
+          </RevealItem>
         ))}
-      </div>
+      </RevealGroup>
 
       <div className="border-t border-white/10 py-8">
-        <div className="container">
+        <Reveal className="container">
           <p className="mb-6 text-center text-xs font-medium uppercase tracking-wider text-slate-500">
             Trusted by local businesses everywhere
           </p>
@@ -36,7 +38,7 @@ export function SocialProof() {
               </span>
             ))}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

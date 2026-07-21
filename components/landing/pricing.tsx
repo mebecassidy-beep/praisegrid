@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
 const TIERS = [
@@ -46,14 +47,14 @@ export function Pricing() {
   return (
     <section id="pricing" className="bg-muted/40 py-24">
       <div className="container">
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Simple, transparent pricing
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Start free for 14 days. No credit card required, cancel anytime.
           </p>
-        </div>
+        </Reveal>
 
         <div className="mt-10 flex items-center justify-center gap-3">
           <span className={cn("text-sm font-medium", !annual && "text-foreground", annual && "text-muted-foreground")}>
@@ -68,15 +69,15 @@ export function Pricing() {
           </span>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
+        <RevealGroup className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2" stagger={0.12}>
           {TIERS.map((tier) => {
             const price = annual ? Math.round(tier.monthly * (1 - ANNUAL_DISCOUNT)) : tier.monthly;
 
             return (
+              <RevealItem key={tier.name}>
               <Card
-                key={tier.name}
                 className={cn(
-                  "relative flex flex-col",
+                  "relative flex h-full flex-col",
                   tier.highlighted && "border-2 border-blue-500 shadow-lg shadow-blue-500/10"
                 )}
               >
@@ -124,9 +125,10 @@ export function Pricing() {
                   </Button>
                 </CardContent>
               </Card>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

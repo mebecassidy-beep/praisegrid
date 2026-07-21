@@ -8,18 +8,18 @@ const FOOTER_LINKS = {
     { label: "Live Demo", href: "/dashboard" },
   ],
   Company: [
-    { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
+    { label: "About", href: "/about" },
+    { label: "Blog", href: "/blog" },
+    { label: "Careers", href: "/careers" },
   ],
   Resources: [
-    { label: "Help Center", href: "#" },
-    { label: "API Docs", href: "#" },
-    { label: "Status", href: "#" },
+    { label: "Help Center", href: "/help" },
+    { label: "API Docs", href: "/docs" },
+    { label: "Status", href: "/status" },
   ],
   Legal: [
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
   ],
 };
 

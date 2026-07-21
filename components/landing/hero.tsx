@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroPreview } from "@/components/landing/hero-preview";
@@ -23,7 +26,12 @@ export function Hero() {
       />
 
       <div className="container relative grid gap-16 py-24 lg:grid-cols-2 lg:items-center lg:py-32">
-        <div className="flex flex-col items-start gap-6 text-left">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-start gap-6 text-left"
+        >
           <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
             <Sparkles className="h-3.5 w-3.5 text-blue-400" />
             Powered by Claude 3.5 Sonnet
@@ -64,11 +72,16 @@ export function Hero() {
           </div>
 
           <p className="text-sm text-slate-500">No credit card required · 14-day free trial</p>
-        </div>
+        </motion.div>
 
-        <div className="flex justify-center lg:justify-end">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+          className="flex justify-center lg:justify-end"
+        >
           <HeroPreview />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

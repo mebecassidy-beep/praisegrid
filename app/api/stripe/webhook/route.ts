@@ -1,67 +1,43 @@
-import { NextResponse } from "next/server";
-import { headers } from "next/headers";
-import Stripe from "stripe";
-import { stripe } from "@/lib/stripe/server";
-import { createServiceRoleClient } from "@/lib/supabase/server";
-import type { SubscriptionTier } from "@/types";
+import { NextResponse } from 'next/server'
+import { headers } from 'next/headers'
+import { stripe } from '@/lib/stripe'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
-const TIER_BY_PRICE_LOOKUP_KEY: Record<string, SubscriptionTier> = {
-  starter: "starter",
-  pro: "pro",
-  enterprise: "enterprise",
-};
+export async function POST(req: Request) {
+  const body = await req.text()
+  const signature = headers().get('Stripe-Signature') as string
 
-export async function POST(request: Request) {
-  const body = await request.text();
-  const signature = headers().get("stripe-signature");
+  let event
 
-  if (!signature) {
-    return NextResponse.json({ error: "Missing signature" }, { status: 400 });
-  }
-
-  let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET as string
-    );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Invalid signature";
-    return NextResponse.json({ error: message }, { status: 400 });
+      process.env.STRIPE_WEBHOOK_SECRET!
+    )
+  } catch (error: any) {
+    return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 })
   }
 
-  const supabase = createServiceRoleClient();
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
-  switch (event.type) {
-    case "checkout.session.completed":
-    case "customer.subscription.updated": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id;
-      const lookupKey = subscription.items.data[0]?.price?.lookup_key ?? "";
-      const tier = TIER_BY_PRICE_LOOKUP_KEY[lookupKey] ?? "free";
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as any
 
-      await supabase
-        .from("profiles")
-        .update({ subscription_tier: tier })
-        .eq("stripe_customer_id", customerId);
-      break;
-    }
-    case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id;
+    const subscription = await stripe.subscriptions.retrieve(
+      session.subscription
+    )
 
-      await supabase
-        .from("profiles")
-        .update({ subscription_tier: "free" })
-        .eq("stripe_customer_id", customerId);
-      break;
-    }
-    default:
-      break;
+    const customerId = session.customer as string
+    const tier = subscription.items.data[0].price.id === process.env.STRIPE_PRICE_ID ? 'pro' : 'free'
+
+    await (supabase
+      .from('profiles') as any)
+      .update({ subscription_tier: tier } as any)
+      .eq('stripe_customer_id', customerId)
   }
 
-  return NextResponse.json({ received: true });
+  return new NextResponse(null, { status: 200 })
 }

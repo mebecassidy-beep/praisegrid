@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s http://localhost:3001/)",
+      "Skill(claude-in-chrome)",
+      "Bash(xargs -I{} sh -c 'echo ==={}===; cat {}')",
+      "Skill(dataviz)",
+      "Bash(curl -s -o /tmp/dash.html -w \"%{http_code}\\\\n\" http://localhost:3001/dashboard)",
+      "Bash(rm -f /tmp/dash.html)",
+      "Bash(npx eslint *)",
+      "Bash(curl -s http://localhost:3001/reviews)",
+      "Bash(curl -s http://localhost:3001/settings)",
+      "Bash(curl -s http://localhost:3001/settings/ai)",
+      "Bash(lsof *)",
+      "Bash(curl -sL http://localhost:3055/dashboard/reviews)",
+      "Bash(curl -sL http://localhost:3055/dashboard/settings)",
+      "Bash(awk 'NR>1{print $2}')",
+      "Bash(xargs -r kill)",
+      "Bash(npm install *)",
+      "Read(//Users/maurice/**)",
+      "Bash(mv review-sync *)"
+    ]
+  }
+}

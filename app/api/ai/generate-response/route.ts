@@ -1,7 +1,7 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { generateReviewResponse } from '@/lib/anthropic/client'
+import Anthropic from '@anthropic-ai/sdk'
 
 export async function POST(request: Request) {
   try {
@@ -27,14 +27,31 @@ export async function POST(request: Request) {
       .eq('location_id', location_id)
       .maybeSingle()
 
-    const responseText = await generateReviewResponse({
-      reviewText: review.body || review.content,
-      reviewerName: review.author_name,
-      rating: review.rating,
-      tone: tone || settings?.tone || 'professional',
-      instructions: instructions || settings?.instructions,
-      signOffName: sign_off_name || settings?.sign_off_name
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
     })
+
+    const selectedTone = tone || settings?.tone || 'professional'
+    const customInstructions = instructions || settings?.instructions || ''
+    const signOff = sign_off_name || settings?.sign_off_name || ''
+
+    const prompt = `Write a reply to this customer review.
+Tone: ${selectedTone}
+Rating: ${review.rating} out of 5 stars
+Reviewer Name: ${review.author_name}
+Review Body: "${review.body || review.content}"
+${customInstructions ? `Additional Instructions: ${customInstructions}` : ''}
+${signOff ? `Sign off name: ${signOff}` : ''}
+
+Write only the response message.`
+
+    const message = await anthropic.messages.create({
+      model: 'claude-3-5-sonnet-latest',
+      max_tokens: 300,
+      messages: [{ role: 'user', content: prompt }]
+    })
+
+    const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
 
     return NextResponse.json({ response: responseText })
   } catch (error: any) {

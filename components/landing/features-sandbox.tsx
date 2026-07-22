@@ -162,6 +162,9 @@ export function FeaturesSandbox() {
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
+                  <p className="text-center text-xs font-semibold text-slate-500">
+                    No credit card required • Cancel anytime with 1-click
+                  </p>
                 </div>
               </motion.div>
             )}

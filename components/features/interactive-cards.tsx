@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Globe2, MessageCircleWarning, Puzzle, Smartphone } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Building2, Globe2, MessageCircleWarning, Puzzle, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
@@ -82,6 +84,25 @@ export function InteractiveCards() {
             </RevealItem>
           ))}
         </RevealGroup>
+
+        <Reveal delay={0.2} className="mx-auto mt-16 flex max-w-md flex-col items-center gap-3 text-center">
+          <Button
+            asChild
+            size="lg"
+            className="gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-400 hover:to-violet-500"
+          >
+            <Link href="/signup">
+              Start Free Trial
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+          <p className="text-xs font-semibold text-slate-500">
+            No credit card required • Cancel anytime with 1-click
+          </p>
+          <p className="text-xs text-slate-600">
+            Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+          </p>
+        </Reveal>
       </div>
     </section>
   );

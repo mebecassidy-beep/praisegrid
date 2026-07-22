@@ -3,78 +3,71 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ArrowRight, Loader2, Search, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, Loader2, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { KineticHeading } from "@/components/motion/kinetic-heading";
 import { Parallax } from "@/components/motion/parallax";
 import { ScoreRing } from "@/components/landing/score-ring";
-import { DrawTrendChart } from "@/components/landing/draw-trend-chart";
 import { BlurredPreviewLock } from "@/components/landing/blurred-preview-lock";
-import { parseBusinessInput } from "@/lib/business-scan/parse-business-input";
+import { GoogleBusinessAutocomplete, type PlaceSuggestion } from "@/components/landing/google-business-autocomplete";
 import { cn } from "@/lib/utils";
 
 const SCAN_STEPS = [
-  "Connecting to Google Search…",
-  "Scraping review velocity…",
-  "Calculating visibility score…",
+  "Connecting to your Google Business Profile…",
+  "Pulling real rating & review data…",
+  "Calculating live visibility score…",
 ];
 
-const FACTOR_LABELS = [
-  "Google Business Profile completeness",
-  "Review response rate",
-  "AI crawler accessibility",
-];
+type Status = "idle" | "scanning" | "done" | "error";
 
-function hashString(input: string) {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash * 31 + input.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash);
+interface LiveResult {
+  name: string;
+  rating: number | null;
+  userRatingCount: number | null;
+  score: number;
+  factors: { label: string; value: number }[];
+  recentNegativeReviews: { authorName: string; rating: number; text: string }[];
+  estimatedLostCustomers: number;
 }
 
-type Status = "idle" | "scanning" | "done";
-
-export function ScoreScanSection() {
-  const [name, setName] = useState("");
+export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled: boolean }) {
   const [status, setStatus] = useState<Status>("idle");
   const [step, setStep] = useState(0);
-  const [displayName, setDisplayName] = useState("Your Business");
-  const [result, setResult] = useState<{
-    score: number;
-    factors: number[];
-    unansweredReviews: number;
-    unclaimedQuestions: number;
-    estimatedLostCustomers: number;
-  } | null>(null);
+  const [result, setResult] = useState<LiveResult | null>(null);
 
-  function runScan(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSelect(suggestion: PlaceSuggestion) {
     if (status === "scanning") return;
-
     setStatus("scanning");
     setStep(0);
 
-    const { label } = parseBusinessInput(name);
-    setDisplayName(label || "Your Business");
-    const seed = hashString(label || "your business");
-    const score = 68 + (seed % 24);
-    const factors = FACTOR_LABELS.map((_, i) => 60 + ((seed >> (i * 3)) % 38));
-    const unansweredReviews = 4 + (seed % 19);
-    const unclaimedQuestions = 1 + ((seed >> 4) % 7);
-    const estimatedLostCustomers = 8 + ((seed >> 7) % 42);
-
-    let i = 0;
-    const interval = setInterval(() => {
-      i += 1;
-      setStep(i);
-      if (i >= SCAN_STEPS.length) {
-        clearInterval(interval);
-        setResult({ score, factors, unansweredReviews, unclaimedQuestions, estimatedLostCustomers });
-        setStatus("done");
-      }
+    const stepInterval = setInterval(() => {
+      setStep((s) => Math.min(s + 1, SCAN_STEPS.length - 1));
     }, 550);
+
+    try {
+      const res = await fetch(`/api/places/details?placeId=${encodeURIComponent(suggestion.placeId)}`);
+      const data = await res.json();
+      clearInterval(stepInterval);
+
+      if (!res.ok || !data.details) {
+        setStatus("error");
+        return;
+      }
+
+      setResult({
+        name: data.details.name,
+        rating: data.details.rating,
+        userRatingCount: data.details.userRatingCount,
+        score: data.live.score,
+        factors: data.live.factors,
+        recentNegativeReviews: data.live.recentNegativeReviews,
+        estimatedLostCustomers: data.live.estimatedLostCustomers,
+      });
+      setStatus("done");
+    } catch {
+      clearInterval(stepInterval);
+      setStatus("error");
+    }
   }
 
   return (
@@ -94,7 +87,7 @@ export function ScoreScanSection() {
           <div>
             <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
               <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-              Free instant preview
+              Live Google data — free preview
             </div>
 
             <KineticHeading
@@ -103,33 +96,36 @@ export function ScoreScanSection() {
             />
 
             <p className="mt-5 max-w-md text-lg text-slate-400">
-              Enter your business name for a live preview of the AI Visibility Score and
-              hidden vulnerabilities Reputicious finds in your Google, Yelp, and Facebook presence.
+              Find your business on Google below for a live AI Visibility Score pulled from your real
+              rating and reviews — no account required.
             </p>
 
-            <form onSubmit={runScan} className="mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Business name or Google Business Profile URL"
-                className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-              />
-              <Button
-                type="submit"
-                disabled={status === "scanning"}
-                className="shrink-0 gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:from-blue-400 hover:to-violet-500"
-              >
-                {status === "scanning" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4" />
-                )}
-                Claim My Business
-              </Button>
-            </form>
+            {googlePlacesEnabled ? (
+              <div className="mt-8 max-w-md">
+                <GoogleBusinessAutocomplete onSelect={handleSelect} disabled={status === "scanning"} />
+              </div>
+            ) : (
+              <div className="mt-8 max-w-md">
+                <Button
+                  asChild
+                  className="gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:from-blue-400 hover:to-violet-500"
+                >
+                  <Link href="/signup">
+                    <Search className="h-4 w-4" />
+                    Start Free Trial to Run Your Audit
+                  </Link>
+                </Button>
+              </div>
+            )}
 
-            <p className="mt-3 text-xs text-slate-500">
-              Illustrative preview using sample data — no account or real business data required.
+            <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-500">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+              Google Business Profile data only — Yelp &amp; Facebook connect securely after you start your
+              free trial and log in.
+            </p>
+
+            <p className="mt-2 text-xs font-semibold text-slate-400">
+              No credit card required • Cancel anytime with 1-click
             </p>
           </div>
 
@@ -180,6 +176,27 @@ export function ScoreScanSection() {
                   </motion.div>
                 )}
 
+                {status === "error" && (
+                  <motion.div
+                    key="error"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex min-h-[330px] flex-col items-center justify-center gap-4 text-center"
+                  >
+                    <AlertTriangle className="h-8 w-8 text-amber-400" />
+                    <p className="text-sm text-slate-400">
+                      We couldn&apos;t pull live data for that listing just now.
+                    </p>
+                    <Button asChild className="gap-2 bg-white text-slate-900 hover:bg-slate-200">
+                      <Link href="/signup">
+                        Start Free Trial instead
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </motion.div>
+                )}
+
                 {status === "done" && result && (
                   <motion.div
                     key="done"
@@ -191,58 +208,66 @@ export function ScoreScanSection() {
                     <div className="flex items-center gap-4">
                       <ScoreRing score={result.score} size={88} />
                       <div>
-                        <p className="text-sm font-medium text-white">{displayName}</p>
-                        <p className="text-xs text-slate-400">AI Visibility Score preview</p>
+                        <p className="text-sm font-medium text-white">{result.name}</p>
+                        <p className="flex items-center gap-1 text-xs text-slate-400">
+                          <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                          Live AI Visibility Score
+                          {result.rating != null && result.userRatingCount != null && (
+                            <>
+                              {" "}
+                              · {result.rating.toFixed(1)}★ ({result.userRatingCount.toLocaleString()} reviews)
+                            </>
+                          )}
+                        </p>
                       </div>
                     </div>
 
                     <div className="space-y-2.5">
-                      {FACTOR_LABELS.map((label, i) => (
-                        <div key={label}>
+                      {result.factors.map((factor) => (
+                        <div key={factor.label}>
                           <div className="mb-1 flex items-center justify-between text-[11px]">
-                            <span className="text-slate-400">{label}</span>
-                            <span className="font-medium text-slate-300">{result.factors[i]}%</span>
+                            <span className="text-slate-400">{factor.label}</span>
+                            <span className="font-medium text-slate-300">{factor.value}%</span>
                           </div>
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
                             <motion.div
                               className="h-full rounded-full bg-gradient-to-r from-blue-500 to-violet-500"
                               initial={{ width: 0 }}
-                              animate={{ width: `${result.factors[i]}%` }}
-                              transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease: "easeOut" }}
+                              animate={{ width: `${factor.value}%` }}
+                              transition={{ duration: 0.8, ease: "easeOut" }}
                             />
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="border-t border-white/10 pt-4">
-                      <p className="mb-2 text-xs font-medium text-slate-400">
-                        Typical rating growth on Reputicious
-                      </p>
-                      <DrawTrendChart />
-                    </div>
-
                     <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3.5">
                       <div className="mb-2 flex items-center gap-1.5">
                         <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
                         <span className="text-xs font-semibold text-red-400">
-                          Vulnerabilities found for {displayName}
+                          Live vulnerabilities for {result.name}
                         </span>
                       </div>
-                      <ul className="space-y-1.5 text-xs text-slate-300">
-                        <li>
-                          <span className="font-semibold text-white">{result.unansweredReviews}</span>{" "}
-                          unanswered reviews visible to potential customers
-                        </li>
-                        <li>
-                          <span className="font-semibold text-white">{result.unclaimedQuestions}</span>{" "}
-                          unanswered Google Q&amp;A questions
-                        </li>
-                        <li>
-                          Est. <span className="font-semibold text-white">{result.estimatedLostCustomers}</span>{" "}
-                          customers/mo lost to unresolved negative reviews
-                        </li>
-                      </ul>
+                      {result.recentNegativeReviews.length > 0 ? (
+                        <div className="mb-2 rounded-lg bg-white/5 p-2.5">
+                          <p className="text-[11px] font-medium text-slate-300">
+                            Recent complaint visible to customers — {result.recentNegativeReviews[0].authorName}
+                          </p>
+                          <p className="mt-1 text-xs italic text-slate-400">
+                            &ldquo;{result.recentNegativeReviews[0].text.slice(0, 140)}
+                            {result.recentNegativeReviews[0].text.length > 140 ? "…" : ""}&rdquo;
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="mb-2 text-xs text-slate-300">
+                          No low-rated recent reviews found — nice work. Reputicious keeps it that way.
+                        </p>
+                      )}
+                      <p className="text-xs text-slate-300">
+                        Est. <span className="font-semibold text-white">{result.estimatedLostCustomers}</span>{" "}
+                        customers/mo lost to unresolved negative reviews
+                        <span className="text-slate-500"> — estimate, based on industry response-rate studies</span>
+                      </p>
                     </div>
 
                     <Button
@@ -254,6 +279,9 @@ export function ScoreScanSection() {
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
+                    <p className="text-center text-xs text-slate-500">
+                      No credit card required • Cancel anytime with 1-click
+                    </p>
                   </motion.div>
                 )}
               </AnimatePresence>

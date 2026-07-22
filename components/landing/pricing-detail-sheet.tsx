@@ -104,6 +104,9 @@ export function PricingDetailSheet({
         >
           <Link href="/signup">Start free trial with {tier.name}</Link>
         </Button>
+        <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
+          No credit card required • Cancel anytime with 1-click
+        </p>
       </div>
     </Sheet>
   );

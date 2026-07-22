@@ -6,6 +6,8 @@ import { FeaturesSandbox } from "@/components/landing/features-sandbox";
 import { MapRankSimulator } from "@/components/landing/map-rank-simulator";
 import { StickyScrollShowcase } from "@/components/features/sticky-scroll-showcase";
 import { InteractiveCards } from "@/components/features/interactive-cards";
+import { StickyCtaBar } from "@/components/features/sticky-cta-bar";
+import { ObjectionFaq } from "@/components/landing/objection-faq";
 
 export const metadata: Metadata = {
   title: "Features — Reputicious",
@@ -22,7 +24,9 @@ export default function FeaturesPage() {
       <MapRankSimulator />
       <StickyScrollShowcase />
       <InteractiveCards />
+      <ObjectionFaq />
       <Footer />
+      <StickyCtaBar />
     </main>
   );
 }

@@ -86,8 +86,13 @@ export function Hero() {
             </RevealItem>
           </RevealGroup>
 
-          <Reveal delay={1}>
-            <p className="text-sm text-slate-500">No credit card required · 14-day free trial</p>
+          <Reveal delay={1} className="space-y-1">
+            <p className="text-sm font-semibold text-slate-400">
+              No credit card required • Cancel anytime with 1-click
+            </p>
+            <p className="text-xs text-slate-500">
+              Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+            </p>
           </Reveal>
         </div>
 

@@ -138,7 +138,8 @@ export function BusinessScanLanding() {
           </form>
 
           <p className="mt-3 text-xs text-slate-500">
-            Illustrative preview using sample data — real Google/Yelp lookup coming soon.
+            Pulls live Google Business Profile data when we can find your listing, otherwise shows a
+            benchmark estimate for businesses your size.
           </p>
         </div>
 
@@ -217,13 +218,15 @@ export function BusinessScanLanding() {
                     <div>
                       <p className="text-sm font-medium text-white">{displayName}</p>
                       <p className="text-xs text-slate-400">Reputation Score</p>
-                      <div className="mt-1.5 flex items-center gap-1 text-xs text-slate-300">
-                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                        <span className="font-semibold text-white">{result.currentRating}</span>
-                        <span className="text-slate-500">
-                          ({result.reviewCount} reviews) — current
-                        </span>
-                      </div>
+                      {result.currentRating != null && result.reviewCount != null && (
+                        <div className="mt-1.5 flex items-center gap-1 text-xs text-slate-300">
+                          <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                          <span className="font-semibold text-white">{result.currentRating}</span>
+                          <span className="text-slate-500">
+                            ({result.reviewCount} reviews) — current
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -235,14 +238,13 @@ export function BusinessScanLanding() {
                       </span>
                     </div>
                     <ul className="space-y-1.5 text-xs text-slate-300">
-                      <li>
-                        <span className="font-semibold text-white">{result.unansweredReviews}</span>{" "}
-                        unanswered reviews visible to potential customers
-                      </li>
-                      <li>
-                        <span className="font-semibold text-white">{result.unclaimedQuestions}</span>{" "}
-                        unanswered Google Q&amp;A questions
-                      </li>
+                      {result.recentComplaintSnippet && (
+                        <li>
+                          Recent complaint visible to customers: &ldquo;
+                          {result.recentComplaintSnippet.slice(0, 120)}
+                          {result.recentComplaintSnippet.length > 120 ? "…" : ""}&rdquo;
+                        </li>
+                      )}
                       <li>
                         Est.{" "}
                         <span className="font-semibold text-white">

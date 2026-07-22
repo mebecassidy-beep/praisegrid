@@ -22,6 +22,8 @@ const PANELS: ShowcasePanelData[] = [
     title: "Google Maps Sync",
     description:
       "Two-way sync with your Google Business Profile keeps every review, rating, and response perfectly up to date in real time.",
+    outcome: "Rank higher on Google Maps SEO",
+    compliance: "100% compliant with Google's API Terms of Service — no scraping, no suspension risk",
     gradient: "from-blue-500 to-cyan-400",
     visual: <MapSyncVisual />,
   },
@@ -30,7 +32,8 @@ const PANELS: ShowcasePanelData[] = [
     eyebrow: "AI response drafting",
     title: "Claude Opus 4.8 Brand Voice",
     description:
-      "AI-drafted responses trained on your tone and past replies, so every reply sounds like it came straight from your team.",
+      "AI-drafted responses trained on your tone and past replies, so every reply sounds like it came straight from your team. Review it and approve in one click.",
+    outcome: "Save 5+ hours a week on responses",
     gradient: "from-violet-500 to-fuchsia-400",
     visual: <BrandVoiceVisual />,
   },
@@ -40,6 +43,8 @@ const PANELS: ShowcasePanelData[] = [
     title: "Auto-Approve Rules",
     description:
       "Set confidence thresholds and star-rating rules to auto-post low-risk responses while flagging edge cases for review.",
+    outcome: "Rescue negative reviews before they cost you customers",
+    compliance: "Meets Google & Meta review-response guidelines — every auto-post stays within platform rules",
     gradient: "from-amber-500 to-orange-400",
     visual: <AutoApproveVisual />,
   },
@@ -49,6 +54,7 @@ const PANELS: ShowcasePanelData[] = [
     title: "Track Every Trend",
     description:
       "Track sentiment trends, spot recurring complaints, and benchmark your rating against local competitors over time.",
+    outcome: "Catch problems before they tank your rating",
     gradient: "from-emerald-500 to-teal-400",
     visual: <SentimentVisual />,
   },

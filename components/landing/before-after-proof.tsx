@@ -144,10 +144,10 @@ export function BeforeAfterProof() {
       <div className="container">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Real transformation, not a mockup
+            The transformation Reputicious is built to deliver
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            This is what local businesses like yours look like before and after Reputicious.
+            Illustrative before/after examples for businesses like yours — see the full disclaimer below.
           </p>
         </Reveal>
 

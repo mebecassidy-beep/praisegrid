@@ -1,9 +1,8 @@
 /**
  * Accepts either a plain business name or a pasted URL (e.g. a Google
- * Business Profile link) from the Claim Your Business input. Neither scan
- * widget does a real Google Places lookup (both are illustrative previews),
- * so this is a display-layer parse only — it extracts something readable to
- * show/score against, not a real business record.
+ * Business Profile link) from the Claim Your Business input. This is a
+ * display-layer parse only — it extracts a readable label to search Google
+ * Places with; getBusinessScan() does the actual real-data lookup.
  */
 export function parseBusinessInput(raw: string): { label: string; wasUrl: boolean } {
   const trimmed = raw.trim();

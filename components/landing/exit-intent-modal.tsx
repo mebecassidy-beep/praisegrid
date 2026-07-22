@@ -11,6 +11,7 @@ const DISMISS_KEY = "reputicious_exit_intent_shown";
 export function ExitIntentModal() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [businessName, setBusinessName] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export function ExitIntentModal() {
       const res = await fetch("/api/leads/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "exit-intent" }),
+        body: JSON.stringify({ email, businessName, source: "exit-intent" }),
       });
       setStatus(res.ok ? "done" : "error");
     } catch {
@@ -93,26 +94,34 @@ export function ExitIntentModal() {
                 </span>
                 <h3 className="text-lg font-semibold text-white">Wait — before you go</h3>
                 <p className="mt-1 text-sm text-slate-400">
-                  Get a free Local Search Health Report for your business, straight to your inbox.
+                  Get a free Local Reputation &amp; Google Maps Audit for your business, straight to your inbox.
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2">
                   <Input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@business.com"
+                    value={businessName}
+                    onChange={(e) => setBusinessName(e.target.value)}
+                    placeholder="Business name (optional)"
                     className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
                   />
-                  <Button
-                    type="submit"
-                    disabled={status === "loading"}
-                    className="shrink-0 gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:from-blue-400 hover:to-violet-500"
-                  >
-                    {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
-                    Send my report
-                  </Button>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@business.com"
+                      className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={status === "loading"}
+                      className="shrink-0 gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:from-blue-400 hover:to-violet-500"
+                    >
+                      {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Send my audit
+                    </Button>
+                  </div>
                 </form>
 
                 {status === "error" && (
@@ -120,7 +129,7 @@ export function ExitIntentModal() {
                 )}
 
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  Illustrative preview using sample data — no account required.
+                  No account required • No credit card required
                 </p>
               </>
             )}

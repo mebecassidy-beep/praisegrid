@@ -3,13 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { PricingDetailSheet, type TierDetail } from "@/components/landing/pricing-detail-sheet";
-import { CostCalculator } from "@/components/landing/cost-calculator";
 import { cn } from "@/lib/utils";
 
 const TIERS: TierDetail[] = [
@@ -145,6 +144,11 @@ export function Pricing() {
                       ))}
                     </ul>
 
+                    <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                      100% compliant with Google &amp; Meta platform guidelines — zero suspension risk
+                    </p>
+
                     <div className="space-y-2">
                       <Button
                         asChild
@@ -158,6 +162,12 @@ export function Pricing() {
                       >
                         <Link href="/signup">Get Started</Link>
                       </Button>
+                      <p className="text-center text-xs font-semibold text-muted-foreground">
+                        No credit card required • Cancel anytime with 1-click
+                      </p>
+                      <p className="text-center text-[11px] text-muted-foreground/80">
+                        Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+                      </p>
                       <button
                         onClick={() => setActiveTier(tier)}
                         className="flex w-full items-center justify-center gap-1 rounded-md py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -173,8 +183,6 @@ export function Pricing() {
             );
           })}
         </RevealGroup>
-
-        <CostCalculator />
       </div>
 
       <PricingDetailSheet tier={activeTier} open={activeTier !== null} onClose={() => setActiveTier(null)} />

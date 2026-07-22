@@ -1,12 +1,14 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { createRouteHandlerSupabaseClient } from '@/lib/supabase/server'
+import { stripe, CHECKOUT_OFFERS, getOrCreateOfferCoupon, type CheckoutOfferId } from '@/lib/stripe'
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    const body = await request.json().catch(() => ({}))
+    const offer: CheckoutOfferId | undefined =
+      typeof body?.offer === 'string' && body.offer in CHECKOUT_OFFERS ? body.offer : undefined
+
+    const supabase = createRouteHandlerSupabaseClient()
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
 
@@ -37,6 +39,8 @@ export async function POST(request: Request) {
         .eq('id', user.id)
     }
 
+    const discounts = offer ? [{ coupon: await getOrCreateOfferCoupon(offer) }] : undefined
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
@@ -47,6 +51,7 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'subscription',
+      discounts,
       success_url: `${request.headers.get('origin')}/dashboard?success=true`,
       cancel_url: `${request.headers.get('origin')}/dashboard?canceled=true`,
     })

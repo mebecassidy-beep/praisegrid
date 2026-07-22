@@ -1,6 +1,7 @@
 import { ArrowUpRight, Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Meter, statusForValue, type MeterStatus } from "@/components/dashboard/meter";
+import { ScoreRing } from "@/components/dashboard/score-ring";
 import { cn } from "@/lib/utils";
 
 const STATUS_LABEL: Record<MeterStatus, string> = {
@@ -24,38 +25,6 @@ const FACTORS = [
 ];
 
 const SCORE = 82;
-const RADIUS = 52;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-function ScoreRing({ score }: { score: number }) {
-  const status = statusForValue(score);
-  const color = status === "good" ? "#0ca30c" : status === "warning" ? "#fab219" : "#d03b3b";
-  const offset = CIRCUMFERENCE * (1 - score / 100);
-
-  return (
-    <div className="relative h-32 w-32 shrink-0">
-      <svg viewBox="0 0 120 120" className="h-32 w-32 -rotate-90">
-        <circle cx="60" cy="60" r={RADIUS} fill="none" stroke="currentColor" strokeWidth="10" className="text-slate-100 dark:text-slate-800" />
-        <circle
-          cx="60"
-          cy="60"
-          r={RADIUS}
-          fill="none"
-          stroke={color}
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeDasharray={CIRCUMFERENCE}
-          strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-700"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-semibold tabular-nums tracking-tight">{score}</span>
-        <span className="text-[11px] text-muted-foreground">out of 100</span>
-      </div>
-    </div>
-  );
-}
 
 export function GeoReadinessCard() {
   return (

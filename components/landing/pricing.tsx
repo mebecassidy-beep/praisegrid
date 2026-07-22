@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { PricingDetailSheet, type TierDetail } from "@/components/landing/pricing-detail-sheet";
+import { CostCalculator } from "@/components/landing/cost-calculator";
 import { cn } from "@/lib/utils";
 
 const TIERS: TierDetail[] = [
@@ -150,6 +151,8 @@ export function Pricing() {
             );
           })}
         </RevealGroup>
+
+        <CostCalculator />
       </div>
 
       <PricingDetailSheet tier={activeTier} open={activeTier !== null} onClose={() => setActiveTier(null)} />

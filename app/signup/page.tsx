@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Star } from "lucide-react";
 import { SignupForm } from "@/components/auth/signup-form";
 
@@ -35,7 +36,9 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <SignupForm />
+          <Suspense fallback={null}>
+            <SignupForm />
+          </Suspense>
         </div>
       </div>
     </main>

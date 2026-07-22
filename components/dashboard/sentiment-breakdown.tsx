@@ -1,15 +1,24 @@
 import { Meh, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RATING_DISTRIBUTION, SENTIMENT_SPLIT } from "@/lib/dashboard/mock-data";
 
-const SENTIMENT_ROWS = [
-  { key: "positive", label: "Positive", icon: ThumbsUp, color: "#0ca30c", value: SENTIMENT_SPLIT.positive },
-  { key: "neutral", label: "Neutral", icon: Meh, color: "#fab219", value: SENTIMENT_SPLIT.neutral },
-  { key: "negative", label: "Negative", icon: ThumbsDown, color: "#d03b3b", value: SENTIMENT_SPLIT.negative },
-] as const;
+export function SentimentBreakdown({
+  ratingDistribution,
+}: {
+  ratingDistribution: { stars: number; count: number }[];
+}) {
+  const totalReviews = ratingDistribution.reduce((sum, r) => sum + r.count, 0);
+  const maxCount = Math.max(1, ...ratingDistribution.map((r) => r.count));
 
-export function SentimentBreakdown() {
-  const maxCount = Math.max(...RATING_DISTRIBUTION.map((r) => r.count));
+  const positive = ratingDistribution.filter((r) => r.stars >= 4).reduce((s, r) => s + r.count, 0);
+  const neutral = ratingDistribution.filter((r) => r.stars === 3).reduce((s, r) => s + r.count, 0);
+  const negative = ratingDistribution.filter((r) => r.stars <= 2).reduce((s, r) => s + r.count, 0);
+  const pct = (n: number) => (totalReviews === 0 ? 0 : Math.round((n / totalReviews) * 100));
+
+  const SENTIMENT_ROWS = [
+    { key: "positive", label: "Positive", icon: ThumbsUp, color: "#0ca30c", value: pct(positive) },
+    { key: "neutral", label: "Neutral", icon: Meh, color: "#fab219", value: pct(neutral) },
+    { key: "negative", label: "Negative", icon: ThumbsDown, color: "#d03b3b", value: pct(negative) },
+  ] as const;
 
   return (
     <Card>
@@ -22,7 +31,7 @@ export function SentimentBreakdown() {
             Rating distribution
           </p>
           <div className="space-y-2.5">
-            {RATING_DISTRIBUTION.map((row) => (
+            {ratingDistribution.map((row) => (
               <div key={row.stars} className="flex items-center gap-3">
                 <span className="w-6 shrink-0 text-xs font-medium text-muted-foreground">
                   {row.stars}★

@@ -1,13 +1,33 @@
 import { AlertCircle, MapPin, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Meter, statusForValue } from "@/components/dashboard/meter";
-import { LOCATIONS, LOCATION_METRICS } from "@/lib/dashboard/mock-data";
+import type { Location } from "@/types";
+import type { LocationMetric } from "@/lib/dashboard/queries";
 
-export function LocationsGrid() {
+export function LocationsGrid({
+  locations,
+  locationMetrics,
+}: {
+  locations: Location[];
+  locationMetrics: Record<string, LocationMetric>;
+}) {
+  if (locations.length === 0) {
+    return (
+      <div className="rounded-lg border bg-card py-16 text-center text-sm text-muted-foreground">
+        No locations yet. Add your first location to start tracking reviews.
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {LOCATIONS.map((location) => {
-        const metric = LOCATION_METRICS[location.id];
+      {locations.map((location) => {
+        const metric = locationMetrics[location.id] ?? {
+          avgRating: 0,
+          reviewCount: 0,
+          responseRate: 0,
+          pendingCount: 0,
+        };
         const status = statusForValue(metric.responseRate);
 
         return (

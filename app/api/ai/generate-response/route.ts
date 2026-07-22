@@ -1,61 +1,55 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { NextResponse } from "next/server";
+import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { generateReviewResponse } from "@/lib/anthropic/generate-response";
 
 export async function POST(request: Request) {
   try {
-    const { review_id, location_id, tone, instructions, sign_off_name } = await request.json()
+    const { review_id, location_id } = await request.json();
 
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
-
-    const { data: review, error: reviewError } = await (supabase
-      .from('reviews') as any)
-      .select('*')
-      .eq('id', review_id)
-      .eq('location_id', location_id)
-      .single()
-
-    if (reviewError || !review) {
-      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    if (!review_id || !location_id) {
+      return NextResponse.json(
+        { error: "review_id and location_id are required" },
+        { status: 400 }
+      );
     }
 
-    const { data: settings } = await (supabase
-      .from('ai_settings') as any)
-      .select('tone, instructions, sign_off_name')
-      .eq('location_id', location_id)
-      .maybeSingle()
+    const supabase = createRouteHandlerSupabaseClient();
 
-    const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-    })
+    const { data: review, error: reviewError } = await (supabase
+      .from("reviews") as any)
+      .select("*")
+      .eq("id", review_id)
+      .eq("location_id", location_id)
+      .single();
 
-    const selectedTone = tone || settings?.tone || 'professional'
-    const customInstructions = instructions || settings?.instructions || ''
-    const signOff = sign_off_name || settings?.sign_off_name || ''
+    if (reviewError || !review) {
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
+    }
 
-    const prompt = `Write a reply to this customer review.
-Tone: ${selectedTone}
-Rating: ${review.rating} out of 5 stars
-Reviewer Name: ${review.author_name}
-Review Body: "${review.body || review.content}"
-${customInstructions ? `Additional Instructions: ${customInstructions}` : ''}
-${signOff ? `Sign off name: ${signOff}` : ''}
+    const { data: location } = await (supabase
+      .from("locations") as any)
+      .select("name")
+      .eq("id", location_id)
+      .single();
 
-Write only the response message.`
+    const { data: aiSettings } = await (supabase
+      .from("ai_settings") as any)
+      .select("tone_instructions, sign_off_name")
+      .eq("location_id", location_id)
+      .maybeSingle();
 
-    const message = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-latest',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    const responseText = await generateReviewResponse({
+      review,
+      aiSettings,
+      businessName: location?.name ?? "our business",
+    });
 
-    const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
-
-    return NextResponse.json({ response: responseText })
+    return NextResponse.json({ response: responseText });
   } catch (error: any) {
-    console.error('Error generating AI response:', error)
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
+    console.error("Error generating AI response:", error);
+    return NextResponse.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

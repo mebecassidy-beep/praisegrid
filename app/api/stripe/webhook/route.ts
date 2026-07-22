@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { stripe } from '@/lib/stripe'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -20,8 +19,10 @@ export async function POST(req: Request) {
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 })
   }
 
-  const cookieStore = cookies()
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+  // Webhooks are server-to-server calls from Stripe — there's no browser
+  // session/cookies here, so this must bypass RLS via the service role client
+  // rather than a cookie-scoped one (which would silently no-op the update).
+  const supabase = createServiceRoleClient()
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as any

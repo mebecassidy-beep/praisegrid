@@ -1,16 +1,70 @@
+"use client";
+
+import { useState } from "react";
 import { AlertTriangle, CheckCircle2, MapPin, Star } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { cn } from "@/lib/utils";
 
-const BEFORE_POINTS = [
-  { icon: AlertTriangle, label: "12 unanswered reviews" },
-  { icon: MapPin, label: "Ranked #7 for \"plumbers near me\"" },
-  { icon: AlertTriangle, label: "Average response time: never" },
-];
+interface VerticalExample {
+  industry: string;
+  businessName: string;
+  searchTerm: string;
+  before: { rating: number; points: string[] };
+  after: { rating: number; points: string[] };
+}
 
-const AFTER_POINTS = [
-  { icon: CheckCircle2, label: "100% response rate in under 24h" },
-  { icon: MapPin, label: "Top 3 local pack for \"plumbers near me\"" },
-  { icon: CheckCircle2, label: "Every review answered on-brand, automatically" },
+const EXAMPLES: VerticalExample[] = [
+  {
+    industry: "Plumbing",
+    businessName: "Sac Valley Plumbing",
+    searchTerm: "plumbers near me",
+    before: {
+      rating: 3.8,
+      points: ["12 unanswered reviews", 'Ranked #7 for "plumbers near me"', "Average response time: never"],
+    },
+    after: {
+      rating: 4.9,
+      points: [
+        "100% response rate in under 24h",
+        'Top 3 local pack for "plumbers near me"',
+        "Every review answered on-brand, automatically",
+      ],
+    },
+  },
+  {
+    industry: "Restaurant",
+    businessName: "The Copper Fork",
+    searchTerm: "restaurants near me",
+    before: {
+      rating: 3.6,
+      points: ["18 unanswered reviews", 'Ranked #9 for "restaurants near me"', "3 unaddressed 1-star complaints"],
+    },
+    after: {
+      rating: 4.8,
+      points: [
+        "Every review answered within hours",
+        'Top 3 local pack for "restaurants near me"',
+        "Negative reviews caught before they go public",
+      ],
+    },
+  },
+  {
+    industry: "Hair Salon",
+    businessName: "Willow & Co. Salon",
+    searchTerm: "hair salon near me",
+    before: {
+      rating: 4.0,
+      points: ["9 unanswered reviews", 'Ranked #6 for "hair salon near me"', "No consistent brand voice in replies"],
+    },
+    after: {
+      rating: 4.9,
+      points: [
+        "100% response rate, always on-brand",
+        'Top 3 local pack for "hair salon near me"',
+        "Booking link in every AI reply",
+      ],
+    },
+  },
 ];
 
 function StarRow({ rating }: { rating: number }) {
@@ -31,6 +85,9 @@ function StarRow({ rating }: { rating: number }) {
 }
 
 export function BeforeAfterProof() {
+  const [active, setActive] = useState(0);
+  const example = EXAMPLES[active];
+
   return (
     <section className="border-b border-white/10 bg-slate-950 py-20">
       <div className="container">
@@ -43,21 +100,38 @@ export function BeforeAfterProof() {
           </p>
         </Reveal>
 
-        <RevealGroup className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2" stagger={0.15}>
+        <div className="mx-auto mt-8 flex max-w-3xl flex-wrap justify-center gap-2">
+          {EXAMPLES.map((ex, i) => (
+            <button
+              key={ex.industry}
+              onClick={() => setActive(i)}
+              className={cn(
+                "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
+                i === active
+                  ? "border-blue-500 bg-blue-500/10 text-white"
+                  : "border-white/10 text-slate-400 hover:border-white/20 hover:text-white"
+              )}
+            >
+              {ex.industry}
+            </button>
+          ))}
+        </div>
+
+        <RevealGroup key={active} className="mx-auto mt-8 grid max-w-3xl gap-6 sm:grid-cols-2" stagger={0.15}>
           <RevealItem>
             <div className="h-full rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-red-400">
-                Before — Sac Valley Plumbing
+                Before — {example.businessName}
               </p>
               <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-white">3.8</span>
-                <StarRow rating={3.8} />
+                <span className="text-4xl font-bold text-white">{example.before.rating.toFixed(1)}</span>
+                <StarRow rating={example.before.rating} />
               </div>
               <ul className="mt-5 space-y-3">
-                {BEFORE_POINTS.map((point) => (
-                  <li key={point.label} className="flex items-start gap-2 text-sm text-slate-300">
-                    <point.icon className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
-                    {point.label}
+                {example.before.points.map((point) => (
+                  <li key={point} className="flex items-start gap-2 text-sm text-slate-300">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                    {point}
                   </li>
                 ))}
               </ul>
@@ -70,14 +144,14 @@ export function BeforeAfterProof() {
                 After — with Reputicious
               </p>
               <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-white">4.9</span>
-                <StarRow rating={4.9} />
+                <span className="text-4xl font-bold text-white">{example.after.rating.toFixed(1)}</span>
+                <StarRow rating={example.after.rating} />
               </div>
               <ul className="mt-5 space-y-3">
-                {AFTER_POINTS.map((point) => (
-                  <li key={point.label} className="flex items-start gap-2 text-sm text-slate-300">
-                    <point.icon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                    {point.label}
+                {example.after.points.map((point) => (
+                  <li key={point} className="flex items-start gap-2 text-sm text-slate-300">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                    {point}
                   </li>
                 ))}
               </ul>

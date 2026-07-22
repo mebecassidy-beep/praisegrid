@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { createClient } from "@/lib/supabase/client";
 
 export function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const offer = searchParams.get("offer");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ export function SignupForm() {
     }
 
     if (data.session) {
-      router.push("/dashboard");
+      router.push(offer ? `/dashboard?offer=${encodeURIComponent(offer)}` : "/dashboard");
       router.refresh();
       return;
     }

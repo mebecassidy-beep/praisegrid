@@ -91,9 +91,24 @@ function LineChart({
   );
 }
 
-export function RatingTrendChart() {
-  const values = MONTHLY_TREND.map((m) => m.avgRating);
-  const labels = MONTHLY_TREND.map((m) => m.month);
+export function RatingTrendChart({
+  monthlyRatingTrend,
+}: {
+  monthlyRatingTrend: { month: string; avgRating: number; reviewCount: number }[];
+}) {
+  if (monthlyRatingTrend.length < 2) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Average rating trend</CardTitle>
+          <CardDescription>Not enough review history yet to chart a trend.</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  const values = monthlyRatingTrend.map((m) => m.avgRating);
+  const labels = monthlyRatingTrend.map((m) => m.month);
   const latest = values[values.length - 1];
   const first = values[0];
 
@@ -102,7 +117,8 @@ export function RatingTrendChart() {
       <CardHeader>
         <CardTitle>Average rating trend</CardTitle>
         <CardDescription>
-          {latest.toFixed(1)}★ average, up from {first.toFixed(1)}★ six months ago.
+          {latest.toFixed(1)}★ average, {latest >= first ? "up from" : "down from"} {first.toFixed(1)}★ in{" "}
+          {labels[0]}.
         </CardDescription>
       </CardHeader>
       <CardContent>

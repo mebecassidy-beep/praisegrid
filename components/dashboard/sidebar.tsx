@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Building2,
   LayoutDashboard,
   MapPin,
   MessageSquareText,
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: "/reviews", label: "Reviews", icon: MessageSquareText },
   { href: "/settings/ai", label: "AI Settings", icon: Sparkles },
   { href: "/locations", label: "Locations", icon: MapPin },
+  { href: "/franchise", label: "Franchise View", icon: Building2 },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

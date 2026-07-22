@@ -5,8 +5,13 @@ import {
   ResponseTimeChart,
 } from "@/components/dashboard/analytics-charts";
 import { SentimentBreakdown } from "@/components/dashboard/sentiment-breakdown";
+import { requireUser } from "@/lib/supabase/server";
+import { getDashboardData } from "@/lib/dashboard/queries";
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const user = await requireUser();
+  const data = await getDashboardData(user.id);
+
   return (
     <DashboardShell>
       <div className="space-y-6">
@@ -18,7 +23,7 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <RatingTrendChart />
+          <RatingTrendChart monthlyRatingTrend={data.monthlyRatingTrend} />
           <ResponseTimeChart />
         </div>
 
@@ -26,7 +31,7 @@ export default function AnalyticsPage() {
           <div className="lg:col-span-2">
             <PlatformVolumeChart />
           </div>
-          <SentimentBreakdown />
+          <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
         </div>
       </div>
     </DashboardShell>

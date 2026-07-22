@@ -15,9 +15,9 @@ import { parseBusinessInput } from "@/lib/business-scan/parse-business-input";
 import { cn } from "@/lib/utils";
 
 const SCAN_STEPS = [
-  "Checking Google Business Profile…",
-  "Analyzing review sentiment…",
-  "Calculating AI visibility score…",
+  "Connecting to Google Search…",
+  "Scraping review velocity…",
+  "Calculating visibility score…",
 ];
 
 const FACTOR_LABELS = [

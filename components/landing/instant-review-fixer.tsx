@@ -7,7 +7,11 @@ import { ArrowRight, Loader2, Sparkles, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useTypewriterPlaceholder } from "@/components/landing/typewriter-placeholder";
 import { cn } from "@/lib/utils";
+
+const LOADING_STEPS = ["Fetching Business Profile…", "Analyzing Sentiment…", "Waking Claude AI…"];
+const NAME_EXAMPLES = ["Sac Valley Plumbing", "The Copper Fork", "Willow & Co. Salon", "Brightleaf Cafe"];
 
 const COMPLAINT_TEMPLATES = [
   "Absolutely furious. Waited over an hour past my appointment time at {business} and nobody even acknowledged it. Won't be back.",
@@ -39,6 +43,8 @@ export function InstantReviewFixer() {
   const [complaintTouched, setComplaintTouched] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [fixedResponse, setFixedResponse] = useState("");
+  const [step, setStep] = useState(0);
+  const namePlaceholder = useTypewriterPlaceholder(NAME_EXAMPLES);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -52,15 +58,24 @@ export function InstantReviewFixer() {
     if (status === "loading") return;
 
     setStatus("loading");
+    setStep(0);
+
+    const stepInterval = setInterval(() => {
+      setStep((s) => Math.min(s + 1, LOADING_STEPS.length - 1));
+    }, 550);
+
     try {
-      const res = await fetch("/api/public/instant-fix", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessName: name.trim() || "Your Business",
-          complaint,
+      const [res] = await Promise.all([
+        fetch("/api/public/instant-fix", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessName: name.trim() || "Your Business",
+            complaint,
+          }),
         }),
-      });
+        new Promise((resolve) => setTimeout(resolve, LOADING_STEPS.length * 550)),
+      ]);
 
       if (!res.ok) {
         setStatus("error");
@@ -72,6 +87,8 @@ export function InstantReviewFixer() {
       setStatus("done");
     } catch {
       setStatus("error");
+    } finally {
+      clearInterval(stepInterval);
     }
   }
 
@@ -100,7 +117,7 @@ export function InstantReviewFixer() {
             <Input
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="e.g. Sac Valley Plumbing"
+              placeholder={namePlaceholder}
               className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
             />
           </div>
@@ -132,6 +149,31 @@ export function InstantReviewFixer() {
             )}
             Fix This Review
           </Button>
+
+          <AnimatePresence>
+            {status === "loading" && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-1 pt-1 text-center">
+                  {LOADING_STEPS.map((label, i) => (
+                    <p
+                      key={label}
+                      className={cn(
+                        "text-xs transition-colors",
+                        i === step ? "font-medium text-white" : i < step ? "text-slate-600 line-through" : "text-slate-600"
+                      )}
+                    >
+                      {label}
+                    </p>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {status === "error" && (
             <p className="text-center text-xs text-red-400">

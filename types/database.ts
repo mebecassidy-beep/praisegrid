@@ -26,6 +26,7 @@ export interface Database {
           welcome_email_sent_at: string | null;
           report_frequency: ReportFrequency;
           alert_phone_number: string | null;
+          competitor_name: string | null;
           created_at: string;
         };
         Insert: {
@@ -38,6 +39,7 @@ export interface Database {
           welcome_email_sent_at?: string | null;
           report_frequency?: ReportFrequency;
           alert_phone_number?: string | null;
+          competitor_name?: string | null;
           created_at?: string;
         };
         Update: {
@@ -50,6 +52,7 @@ export interface Database {
           welcome_email_sent_at?: string | null;
           report_frequency?: ReportFrequency;
           alert_phone_number?: string | null;
+          competitor_name?: string | null;
           created_at?: string;
         };
       };
@@ -147,6 +150,26 @@ export interface Database {
           auto_approve_5star?: boolean;
           tone_instructions?: string | null;
           sign_off_name?: string | null;
+        };
+      };
+      leads: {
+        Row: {
+          id: string;
+          email: string;
+          source: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          source?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          source?: string | null;
+          created_at?: string;
         };
       };
     };

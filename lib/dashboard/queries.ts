@@ -69,14 +69,22 @@ function computeLocationMetric(reviews: Review[]): LocationMetric {
 export async function getProfile(
   userId: string,
   supabase: SupabaseClient<Database> = createClient()
-): Promise<Pick<Profile, "email" | "subscription_tier" | "onboarding_completed_at" | "report_frequency">> {
+): Promise<
+  Pick<Profile, "email" | "subscription_tier" | "onboarding_completed_at" | "report_frequency" | "competitor_name">
+> {
   const { data } = await (supabase.from("profiles") as any)
-    .select("email, subscription_tier, onboarding_completed_at, report_frequency")
+    .select("email, subscription_tier, onboarding_completed_at, report_frequency, competitor_name")
     .eq("id", userId)
     .single();
 
   return (
-    data ?? { email: "", subscription_tier: "free", onboarding_completed_at: null, report_frequency: "weekly" }
+    data ?? {
+      email: "",
+      subscription_tier: "free",
+      onboarding_completed_at: null,
+      report_frequency: "weekly",
+      competitor_name: null,
+    }
   );
 }
 

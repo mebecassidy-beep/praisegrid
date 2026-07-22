@@ -1,6 +1,7 @@
 import { BusinessProfileCard } from "@/components/settings/business-profile-card";
 import { NotificationPreferencesCard } from "@/components/settings/notification-preferences-card";
 import { ConnectedPlatformsCard } from "@/components/settings/connected-platforms-card";
+import { CompetitorTrackerCard } from "@/components/settings/competitor-tracker-card";
 import { requireUser } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/dashboard/queries";
 
@@ -20,6 +21,7 @@ export default async function SettingsPage() {
       <BusinessProfileCard />
       <ConnectedPlatformsCard />
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
+      <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />
     </div>
   );
 }

@@ -17,6 +17,7 @@ create table if not exists public.profiles (
   report_frequency text not null default 'weekly'
     check (report_frequency in ('weekly', 'monthly', 'off')),
   alert_phone_number text,
+  competitor_name text,
   created_at timestamptz not null default now()
 );
 
@@ -28,6 +29,9 @@ alter table public.profiles
   add column if not exists report_frequency text not null default 'weekly'
     check (report_frequency in ('weekly', 'monthly', 'off')),
   add column if not exists alert_phone_number text;
+
+alter table public.profiles
+  add column if not exists competitor_name text;
 
 alter table public.profiles enable row level security;
 
@@ -243,3 +247,18 @@ create policy "Users can delete ai_settings for their own locations"
         and locations.user_id = auth.uid()
     )
   );
+
+-- ============================================================================
+-- leads
+-- Anonymous homepage lead captures (exit-intent modal, etc.) — not tied to a
+-- signed-up account, so no user-scoped RLS policy: only the service-role
+-- client (server-side routes) ever reads/writes this table.
+-- ============================================================================
+create table if not exists public.leads (
+  id uuid primary key default gen_random_uuid(),
+  email text not null,
+  source text,
+  created_at timestamptz not null default now()
+);
+
+alter table public.leads enable row level security;

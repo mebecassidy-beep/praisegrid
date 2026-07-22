@@ -29,6 +29,7 @@ const TIERS: TierDetail[] = [
       { label: "Platforms synced", value: "2 (Google, Yelp)", fill: 66 },
     ],
     highlighted: false,
+    activationLine: "⚡ Live in 90 seconds — connect Google, done.",
   },
   {
     name: "Pro",
@@ -48,6 +49,7 @@ const TIERS: TierDetail[] = [
       { label: "Platforms synced", value: "3 (Google, Yelp, Facebook)", fill: 100 },
     ],
     highlighted: true,
+    activationLine: "Everything unlimited — no per-location fees, no usage caps.",
   },
 ];
 
@@ -162,11 +164,13 @@ export function Pricing() {
                       >
                         <Link href="/signup">Get Started</Link>
                       </Button>
-                      <p className="text-center text-xs font-semibold text-muted-foreground">
-                        No credit card required • Cancel anytime with 1-click
-                      </p>
-                      <p className="text-center text-[11px] text-muted-foreground/80">
-                        Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+                      {tier.activationLine && (
+                        <p className="text-center text-xs font-semibold text-foreground/90">
+                          {tier.activationLine}
+                        </p>
+                      )}
+                      <p className="text-center text-[11px] text-muted-foreground">
+                        🔒 No card required · ↩ Cancel anytime, 1-click · 💳 Payments secured by Stripe
                       </p>
                       <button
                         onClick={() => setActiveTier(tier)}

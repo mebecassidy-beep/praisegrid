@@ -2,37 +2,57 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Loader2, Mail, Sparkles, X } from "lucide-react";
+import { AlertTriangle, Loader2, Mail, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const DISMISS_KEY = "reputicious_exit_intent_shown";
+const SCROLL_DEPTH_TRIGGER = 0.65;
 
 export function ExitIntentModal() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [source, setSource] = useState<"exit-intent" | "scroll-depth">("exit-intent");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem(DISMISS_KEY) === "1") return;
 
+    function trigger(triggerSource: "exit-intent" | "scroll-depth") {
+      setSource(triggerSource);
+      setOpen(true);
+      sessionStorage.setItem(DISMISS_KEY, "1");
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("scroll", handleScroll);
+    }
+
+    // Desktop signal — mouse leaving toward the browser chrome.
     function handleMouseLeave(e: MouseEvent) {
-      if (e.clientY <= 0) {
-        setOpen(true);
-        sessionStorage.setItem(DISMISS_KEY, "1");
-        document.removeEventListener("mouseleave", handleMouseLeave);
+      if (e.clientY <= 0) trigger("exit-intent");
+    }
+
+    // Mobile/touch signal — mouseleave never fires on touch devices, so deep
+    // scroll (someone who's read most of the page but hasn't converted) is
+    // the equivalent "about to leave without converting" moment there.
+    function handleScroll() {
+      const scrolled = window.scrollY;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable > 0 && scrolled / scrollable >= SCROLL_DEPTH_TRIGGER) {
+        trigger("scroll-depth");
       }
     }
 
     const timeout = setTimeout(() => {
       document.addEventListener("mouseleave", handleMouseLeave);
+      window.addEventListener("scroll", handleScroll, { passive: true });
     }, 3000);
 
     return () => {
       clearTimeout(timeout);
       document.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -45,7 +65,7 @@ export function ExitIntentModal() {
       const res = await fetch("/api/leads/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, businessName, source: "exit-intent" }),
+        body: JSON.stringify({ email, businessName, source, template: "ftc_shield" }),
       });
       setStatus(res.ok ? "done" : "error");
     } catch {
@@ -85,16 +105,18 @@ export function ExitIntentModal() {
                   <Mail className="h-6 w-6 text-emerald-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">Check your inbox</h3>
-                <p className="mt-1 text-sm text-slate-400">Your free report is on its way.</p>
+                <p className="mt-1 text-sm text-slate-400">Your Compliance &amp; FTC Shield Audit is on its way.</p>
               </div>
             ) : (
               <>
-                <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-600">
-                  <Sparkles className="h-5 w-5 text-white" />
+                <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-500">
+                  <AlertTriangle className="h-5 w-5 text-white" />
                 </span>
-                <h3 className="text-lg font-semibold text-white">Wait — before you go</h3>
+                <h3 className="text-lg font-semibold text-white">Is your review strategy FTC-compliant?</h3>
                 <p className="mt-1 text-sm text-slate-400">
-                  Get a free Local Reputation &amp; Google Maps Audit for your business, straight to your inbox.
+                  Get a free Local Review Compliance &amp; FTC Shield Audit. The FTC&apos;s 2024 rule bans a review
+                  tactic a lot of local businesses use without realizing it — we&apos;ll check yours and send real
+                  numbers on your current Google standing too.
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2">
@@ -119,7 +141,7 @@ export function ExitIntentModal() {
                       className="shrink-0 gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:from-blue-400 hover:to-violet-500"
                     >
                       {status === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
-                      Send my audit
+                      Send my Compliance Audit
                     </Button>
                   </div>
                 </form>
@@ -129,7 +151,7 @@ export function ExitIntentModal() {
                 )}
 
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  No account required • No credit card required
+                  No account required • No credit card required • Takes 30 seconds
                 </p>
               </>
             )}

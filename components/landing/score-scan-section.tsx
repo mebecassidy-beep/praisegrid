@@ -10,6 +10,7 @@ import { Parallax } from "@/components/motion/parallax";
 import { ScoreRing } from "@/components/landing/score-ring";
 import { BlurredPreviewLock } from "@/components/landing/blurred-preview-lock";
 import { GoogleBusinessAutocomplete, type PlaceSuggestion } from "@/components/landing/google-business-autocomplete";
+import { ScanEmailCapture } from "@/components/landing/scan-email-capture";
 import { cn } from "@/lib/utils";
 
 const SCAN_STEPS = [
@@ -21,6 +22,7 @@ const SCAN_STEPS = [
 type Status = "idle" | "scanning" | "done" | "error";
 
 interface LiveResult {
+  placeId: string;
   name: string;
   rating: number | null;
   userRatingCount: number | null;
@@ -55,6 +57,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
       }
 
       setResult({
+        placeId: suggestion.placeId,
         name: data.details.name,
         rating: data.details.rating,
         userRatingCount: data.details.userRatingCount,
@@ -269,6 +272,8 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
                         <span className="text-slate-500"> — estimate, based on industry response-rate studies</span>
                       </p>
                     </div>
+
+                    <ScanEmailCapture businessName={result.name} placeId={result.placeId} />
 
                     <Button
                       asChild

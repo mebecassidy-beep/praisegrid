@@ -20,6 +20,7 @@ export interface TierDetail {
   highlighted: boolean;
   metrics: TierMetric[];
   features: string[];
+  activationLine?: string;
 }
 
 export function PricingDetailSheet({

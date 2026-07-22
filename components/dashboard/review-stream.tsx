@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ReviewFeedCard } from "@/components/dashboard/review-feed-card";
 import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 import { PLATFORM_META } from "@/components/reviews/platform-meta";
+import { crisisRank } from "@/lib/reviews/display-status";
 import type { Review } from "@/types";
 import type { Platform } from "@/types/database";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,11 @@ export function ReviewStream({
   }, [reviews]);
 
   const visible = useMemo(
-    () => liveReviews.filter((r) => tab === "all" || r.platform === tab).slice(0, limit),
+    () =>
+      liveReviews
+        .filter((r) => tab === "all" || r.platform === tab)
+        .sort((a, b) => crisisRank(a) - crisisRank(b))
+        .slice(0, limit),
     [liveReviews, tab, limit]
   );
 

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import type { Review } from "@/types";
 import { getDisplayStatus } from "@/lib/reviews/display-status";
 import { PLATFORM_META, STATUS_META } from "@/components/reviews/platform-meta";
+import { CrisisAlertBadge } from "@/components/reviews/crisis-alert-badge";
+import { DisputeDrafter } from "@/components/reviews/dispute-drafter";
 
 function initialsFor(name: string | null) {
   if (!name) return "?";
@@ -97,8 +99,15 @@ export function ReviewFeedCard({
     }
   }
 
+  const isCrisis = review.risk_level === "high";
+
   return (
-    <Card className={cn(displayStatus === "flagged" && "border-red-500/30 shadow-red-500/5")}>
+    <Card
+      className={cn(
+        displayStatus === "flagged" && "border-red-500/30 shadow-red-500/5",
+        isCrisis && "border-2 border-red-600 shadow-lg shadow-red-600/10"
+      )}
+    >
       <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0 pb-3">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-violet-500 text-xs font-semibold text-white">
@@ -116,6 +125,7 @@ export function ReviewFeedCard({
                 <platform.icon className="h-3 w-3" />
                 {platform.label}
               </span>
+              <CrisisAlertBadge riskLevel={review.risk_level} />
             </div>
             <div className="mt-1 flex items-center gap-2">
               <div className="flex gap-0.5">
@@ -142,12 +152,20 @@ export function ReviewFeedCard({
       <CardContent className="space-y-3 pt-0">
         <p className="text-sm leading-relaxed text-foreground/90">{review.review_text}</p>
 
-        <div className="rounded-xl border border-blue-500/25 bg-gradient-to-br from-blue-500/[0.07] via-violet-500/[0.05] to-transparent p-4 shadow-sm">
+        <div
+          className={cn(
+            "rounded-xl border border-blue-500/25 bg-gradient-to-br from-blue-500/[0.07] via-violet-500/[0.05] to-transparent p-4 shadow-sm",
+            isCrisis && "border-red-500/30 from-red-500/[0.06] via-orange-500/[0.04]"
+          )}
+        >
           <div className="mb-2.5 flex items-center justify-between">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
               <Sparkles className="h-3 w-3" />
               Claude AI
             </span>
+            {isCrisis && (
+              <span className="text-[11px] font-medium text-red-600">Drafted to be calm, professional, and legally safe</span>
+            )}
           </div>
 
           {editing ? (
@@ -225,6 +243,8 @@ export function ReviewFeedCard({
             )}
           </div>
         </div>
+
+        <DisputeDrafter review={review} onReviewUpdate={onReviewUpdate} />
       </CardContent>
     </Card>
   );

@@ -1,6 +1,11 @@
 import { AiSettingsPanel } from "@/components/settings/ai-settings-panel";
+import { requireUser } from "@/lib/supabase/server";
+import { getDashboardData } from "@/lib/dashboard/queries";
 
-export default function AiSettingsPage() {
+export default async function AiSettingsPage() {
+  const user = await requireUser();
+  const data = await getDashboardData(user.id);
+
   return (
     <div className="max-w-3xl space-y-6">
       <div>
@@ -10,7 +15,7 @@ export default function AiSettingsPage() {
         </p>
       </div>
 
-      <AiSettingsPanel />
+      <AiSettingsPanel locations={data.locations} />
     </div>
   );
 }

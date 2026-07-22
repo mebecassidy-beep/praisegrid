@@ -10,7 +10,7 @@ export async function sendReviewRequestSms(params: {
   to: string;
   customerName: string;
   businessName: string;
-  reviewLink: string;
+  feedbackLink: string;
 }): Promise<void> {
   const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM_NUMBER } = process.env;
 
@@ -28,6 +28,6 @@ export async function sendReviewRequestSms(params: {
   await client.messages.create({
     to: params.to,
     from: TWILIO_FROM_NUMBER,
-    body: `Hi ${firstName}, thanks for choosing ${params.businessName}! Mind leaving us a quick review? It really helps: ${params.reviewLink}`,
+    body: `Hi ${firstName}, thanks for choosing ${params.businessName}! Mind sharing quick feedback? ${params.feedbackLink}`,
   });
 }

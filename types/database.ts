@@ -11,6 +11,8 @@ export type ReviewStatus = "pending" | "approved" | "posted";
 export type SubscriptionTier = "free" | "starter" | "pro" | "enterprise";
 export type ReportFrequency = "weekly" | "monthly" | "off";
 export type RiskLevel = "low" | "medium" | "high";
+export type TonePreset = "friendly_neighborhood" | "professional_corporate" | "custom";
+export type BlastMethod = "sms" | "email";
 
 export interface Database {
   public: {
@@ -98,6 +100,10 @@ export interface Database {
           status: ReviewStatus;
           risk_level: RiskLevel | null;
           flagged_at: string | null;
+          flagged_as_fake: boolean;
+          dispute_notes: string | null;
+          dispute_draft: string | null;
+          social_generated_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -112,6 +118,10 @@ export interface Database {
           status?: ReviewStatus;
           risk_level?: RiskLevel | null;
           flagged_at?: string | null;
+          flagged_as_fake?: boolean;
+          dispute_notes?: string | null;
+          dispute_draft?: string | null;
+          social_generated_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -126,6 +136,10 @@ export interface Database {
           status?: ReviewStatus;
           risk_level?: RiskLevel | null;
           flagged_at?: string | null;
+          flagged_as_fake?: boolean;
+          dispute_notes?: string | null;
+          dispute_draft?: string | null;
+          social_generated_at?: string | null;
           created_at?: string;
         };
       };
@@ -134,21 +148,27 @@ export interface Database {
           id: string;
           location_id: string;
           auto_approve_5star: boolean;
+          auto_approve_min_rating: number;
           tone_instructions: string | null;
+          tone_preset: TonePreset;
           sign_off_name: string | null;
         };
         Insert: {
           id?: string;
           location_id: string;
           auto_approve_5star?: boolean;
+          auto_approve_min_rating?: number;
           tone_instructions?: string | null;
+          tone_preset?: TonePreset;
           sign_off_name?: string | null;
         };
         Update: {
           id?: string;
           location_id?: string;
           auto_approve_5star?: boolean;
+          auto_approve_min_rating?: number;
           tone_instructions?: string | null;
+          tone_preset?: TonePreset;
           sign_off_name?: string | null;
         };
       };
@@ -169,6 +189,70 @@ export interface Database {
           id?: string;
           email?: string;
           source?: string | null;
+          created_at?: string;
+        };
+      };
+      feedback_responses: {
+        Row: {
+          id: string;
+          location_id: string;
+          customer_name: string | null;
+          rating: number;
+          comment: string | null;
+          created_at: string;
+          viewed_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          location_id: string;
+          customer_name?: string | null;
+          rating: number;
+          comment?: string | null;
+          created_at?: string;
+          viewed_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          location_id?: string;
+          customer_name?: string | null;
+          rating?: number;
+          comment?: string | null;
+          created_at?: string;
+          viewed_at?: string | null;
+        };
+      };
+      scheduled_blasts: {
+        Row: {
+          id: string;
+          user_id: string;
+          location_id: string;
+          method: BlastMethod;
+          to_address: string;
+          customer_name: string;
+          send_at: string;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          location_id: string;
+          method: BlastMethod;
+          to_address: string;
+          customer_name: string;
+          send_at: string;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          location_id?: string;
+          method?: BlastMethod;
+          to_address?: string;
+          customer_name?: string;
+          send_at?: string;
+          sent_at?: string | null;
           created_at?: string;
         };
       };

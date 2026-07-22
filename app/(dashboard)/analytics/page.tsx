@@ -4,12 +4,13 @@ import {
   ResponseTimeChart,
 } from "@/components/dashboard/analytics-charts";
 import { SentimentBreakdown } from "@/components/dashboard/sentiment-breakdown";
+import { CompetitorLeakFinderCard } from "@/components/dashboard/competitor-leak-finder-card";
 import { requireUser } from "@/lib/supabase/server";
-import { getDashboardData } from "@/lib/dashboard/queries";
+import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 
 export default async function AnalyticsPage() {
   const user = await requireUser();
-  const data = await getDashboardData(user.id);
+  const [data, profile] = await Promise.all([getDashboardData(user.id), getProfile(user.id)]);
   const hasLocation = data.locations.length > 0;
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
 
@@ -41,6 +42,8 @@ export default async function AnalyticsPage() {
         </div>
         <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
       </div>
+
+      <CompetitorLeakFinderCard hasCompetitor={Boolean(profile.competitor_name)} />
     </div>
   );
 }

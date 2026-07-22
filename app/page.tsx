@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
+import { StandoutFeatures } from "@/components/landing/standout-features";
 import { RoiCalculatorSection } from "@/components/landing/roi-calculator-section";
 import { DashboardPreviewSection } from "@/components/landing/dashboard-preview-section";
 import { SocialProof } from "@/components/landing/social-proof";
@@ -18,6 +19,7 @@ export default function HomePage() {
     <main>
       <Navbar />
       <Hero />
+      <StandoutFeatures />
       <RoiCalculatorSection />
       <DashboardPreviewSection />
       <SocialProof />

@@ -18,3 +18,15 @@ export function getDisplayStatus(review: Pick<Review, "status" | "risk_level">):
   }
   return review.status;
 }
+
+/**
+ * Sort key for "Crisis Mode" triage: high-risk reviews pin to the very top of
+ * the feed, medium-risk (flagged) next, everything else keeps its existing
+ * order. Use with Array.prototype.sort, which is stable in all supported
+ * runtimes — so within a rank, original (most-recent-first) order is kept.
+ */
+export function crisisRank(review: Pick<Review, "status" | "risk_level">): number {
+  if (review.risk_level === "high") return 0;
+  if (getDisplayStatus(review) === "flagged") return 1;
+  return 2;
+}

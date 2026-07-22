@@ -10,6 +10,7 @@ import {
   Lock,
   MapPin,
   MessageSquareText,
+  QrCode,
   Settings,
   Sparkles,
   Star,
@@ -49,6 +50,8 @@ const NAV_ITEMS = [
   { href: "/locations", label: "Locations", icon: MapPin },
   { href: "/franchise", label: "Franchise View", icon: Building2, lockedForFree: true },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/marketing", label: "Social Auto-Pilot", icon: Sparkles },
+  { href: "/assets", label: "QR & Table Tents", icon: QrCode },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

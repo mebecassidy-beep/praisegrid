@@ -4,7 +4,7 @@ import { HealthMeterCard } from "@/components/dashboard/health-meter-card";
 import { GeoReadinessCard } from "@/components/dashboard/geo-readiness-card";
 import { ReviewStream } from "@/components/dashboard/review-stream";
 import { SentimentBreakdown } from "@/components/dashboard/sentiment-breakdown";
-import { SmartRoutingCard } from "@/components/dashboard/smart-routing-card";
+import { FeedbackShieldCard } from "@/components/dashboard/feedback-shield-card";
 import { WidgetPreviewCard } from "@/components/dashboard/widget-preview-card";
 import { OfferBanner } from "@/components/dashboard/offer-banner";
 import { OnboardingBanner } from "@/components/dashboard/onboarding-banner";
@@ -14,10 +14,15 @@ import { CompetitorBenchmarkCard } from "@/components/dashboard/competitor-bench
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 import { getCompetitorSnapshot } from "@/lib/competitor/get-competitor-snapshot";
+import { getFeedbackResponses } from "@/lib/feedback/queries";
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [data, profile] = await Promise.all([getDashboardData(user.id), getProfile(user.id)]);
+  const [data, profile, feedbackResponses] = await Promise.all([
+    getDashboardData(user.id),
+    getProfile(user.id),
+    getFeedbackResponses(user.id),
+  ]);
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
   const hasLocation = data.locations.length > 0;
 
@@ -80,7 +85,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <SmartRoutingCard />
+        <FeedbackShieldCard recentResponses={feedbackResponses} />
         <WidgetPreviewCard />
       </div>
     </div>

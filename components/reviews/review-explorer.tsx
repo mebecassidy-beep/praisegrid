@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ReviewFeedCard } from "@/components/dashboard/review-feed-card";
 import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 import { FilterPills } from "@/components/shared/filter-pills";
-import { getDisplayStatus, type DisplayStatus } from "@/lib/reviews/display-status";
+import { crisisRank, getDisplayStatus, type DisplayStatus } from "@/lib/reviews/display-status";
 import type { Review } from "@/types";
 import type { Platform } from "@/types/database";
 
@@ -48,17 +48,19 @@ export function ReviewExplorer({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return liveReviews.filter((review) => {
-      const matchesQuery =
-        q.length === 0 ||
-        (review.reviewer_name ?? "").toLowerCase().includes(q) ||
-        (review.review_text ?? "").toLowerCase().includes(q);
-      return (
-        matchesQuery &&
-        (platformFilter === "all" || review.platform === platformFilter) &&
-        (statusFilter === "all" || getDisplayStatus(review) === statusFilter)
-      );
-    });
+    return liveReviews
+      .filter((review) => {
+        const matchesQuery =
+          q.length === 0 ||
+          (review.reviewer_name ?? "").toLowerCase().includes(q) ||
+          (review.review_text ?? "").toLowerCase().includes(q);
+        return (
+          matchesQuery &&
+          (platformFilter === "all" || review.platform === platformFilter) &&
+          (statusFilter === "all" || getDisplayStatus(review) === statusFilter)
+        );
+      })
+      .sort((a, b) => crisisRank(a) - crisisRank(b));
   }, [liveReviews, query, platformFilter, statusFilter]);
 
   function handleReviewUpdate(updated: Review) {

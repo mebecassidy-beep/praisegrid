@@ -127,6 +127,12 @@ alter table public.reviews
   add column if not exists risk_level text check (risk_level in ('low', 'medium', 'high')),
   add column if not exists flagged_at timestamptz;
 
+alter table public.reviews
+  add column if not exists flagged_as_fake boolean not null default false,
+  add column if not exists dispute_notes text,
+  add column if not exists dispute_draft text,
+  add column if not exists social_generated_at timestamptz;
+
 create index if not exists reviews_location_id_idx on public.reviews (location_id);
 create index if not exists reviews_status_idx on public.reviews (status);
 
@@ -195,6 +201,12 @@ create table if not exists public.ai_settings (
   sign_off_name text
 );
 
+alter table public.ai_settings
+  add column if not exists auto_approve_min_rating smallint not null default 5
+    check (auto_approve_min_rating between 1 and 5),
+  add column if not exists tone_preset text not null default 'custom'
+    check (tone_preset in ('friendly_neighborhood', 'professional_corporate', 'custom'));
+
 alter table public.ai_settings enable row level security;
 
 drop policy if exists "Users can view ai_settings for their own locations" on public.ai_settings;
@@ -262,3 +274,98 @@ create table if not exists public.leads (
 );
 
 alter table public.leads enable row level security;
+
+-- ============================================================================
+-- feedback_responses
+-- Private "Feedback Shield" ratings captured from the public post-service
+-- link (app/feedback/[locationId]). Same anonymous-capture pattern as
+-- `leads`: RLS is enabled with no policies, so only the service-role client
+-- (server-side routes) ever reads/writes it. Every recipient of the
+-- post-service SMS/email sees the same public review links regardless of
+-- what they submit here — this table only feeds the business's private
+-- inbox, it never determines who is invited to review publicly (that would
+-- be "review gating", which the FTC's 2024 rule on fake/manipulated reviews
+-- prohibits).
+-- ============================================================================
+create table if not exists public.feedback_responses (
+  id uuid primary key default gen_random_uuid(),
+  location_id uuid not null references public.locations (id) on delete cascade,
+  customer_name text,
+  rating smallint not null check (rating between 1 and 5),
+  comment text,
+  created_at timestamptz not null default now(),
+  viewed_at timestamptz
+);
+
+create index if not exists feedback_responses_location_id_idx on public.feedback_responses (location_id);
+
+alter table public.feedback_responses enable row level security;
+
+drop policy if exists "Users can view feedback for their own locations" on public.feedback_responses;
+create policy "Users can view feedback for their own locations"
+  on public.feedback_responses for select
+  using (
+    exists (
+      select 1 from public.locations
+      where locations.id = feedback_responses.location_id
+        and locations.user_id = auth.uid()
+    )
+  );
+
+drop policy if exists "Users can update feedback for their own locations" on public.feedback_responses;
+create policy "Users can update feedback for their own locations"
+  on public.feedback_responses for update
+  using (
+    exists (
+      select 1 from public.locations
+      where locations.id = feedback_responses.location_id
+        and locations.user_id = auth.uid()
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.locations
+      where locations.id = feedback_responses.location_id
+        and locations.user_id = auth.uid()
+    )
+  );
+
+-- No insert policy: the public capture route (app/api/feedback/[locationId])
+-- uses the service-role client, matching the leads table's insert path.
+
+-- ============================================================================
+-- scheduled_blasts
+-- Queued post-service review requests for the "smart-timing" send option on
+-- the One-Click Review Blast card (e.g. "2 hours after service" instead of
+-- immediately). Polled by /api/cron/send-scheduled-blasts.
+-- ============================================================================
+create table if not exists public.scheduled_blasts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  location_id uuid not null references public.locations (id) on delete cascade,
+  method text not null check (method in ('sms', 'email')),
+  to_address text not null,
+  customer_name text not null,
+  send_at timestamptz not null,
+  sent_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists scheduled_blasts_due_idx on public.scheduled_blasts (send_at) where sent_at is null;
+
+alter table public.scheduled_blasts enable row level security;
+
+drop policy if exists "Users can view their own scheduled blasts" on public.scheduled_blasts;
+create policy "Users can view their own scheduled blasts"
+  on public.scheduled_blasts for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can insert their own scheduled blasts" on public.scheduled_blasts;
+create policy "Users can insert their own scheduled blasts"
+  on public.scheduled_blasts for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can delete their own scheduled blasts" on public.scheduled_blasts;
+create policy "Users can delete their own scheduled blasts"
+  on public.scheduled_blasts for delete
+  using (auth.uid() = user_id);

@@ -275,7 +275,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
                       className="w-full gap-2 bg-white text-slate-900 hover:bg-slate-200"
                     >
                       <Link href="/signup">
-                        Fix these issues — Start Free Trial
+                        Claim Your Free Trial to Unlock Full Dashboard & AI Replies
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>

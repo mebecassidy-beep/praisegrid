@@ -83,25 +83,25 @@ export async function getProfile(
     | "website"
   >
 > {
-  const { data } = await (supabase.from("profiles") as any)
-    .select(
-      "email, company_name, subscription_tier, onboarding_completed_at, report_frequency, competitor_name, phone_number, website"
-    )
-    .eq("id", userId)
-    .single();
+  // select("*") rather than naming phone_number/website explicitly: an
+  // explicit column list errors the whole query if a column doesn't exist
+  // yet on this database (e.g. schema.sql hasn't been re-run after adding
+  // them), while select("*") just omits it gracefully — degrading instead
+  // of breaking every profile fetch sitewide.
+  const { data } = await (supabase.from("profiles") as any).select("*").eq("id", userId).single();
 
-  return (
-    data ?? {
-      email: "",
-      company_name: null,
-      subscription_tier: "free",
-      onboarding_completed_at: null,
-      report_frequency: "weekly",
-      competitor_name: null,
-      phone_number: null,
-      website: null,
-    }
-  );
+  return data
+    ? { ...data, phone_number: data.phone_number ?? null, website: data.website ?? null }
+    : {
+        email: "",
+        company_name: null,
+        subscription_tier: "free",
+        onboarding_completed_at: null,
+        report_frequency: "weekly",
+        competitor_name: null,
+        phone_number: null,
+        website: null,
+      };
 }
 
 /**

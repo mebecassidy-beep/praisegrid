@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Check, ChevronDown, Loader2, Menu, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,17 @@ export function Topbar({
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  // `locations` is server-fetched and only changes after a fresh navigation
+  // or router.refresh() (e.g. right after connecting a location via the
+  // modal) — useState's initial value only applies on mount, so without
+  // this the switcher would keep showing "Select location" until a full
+  // page reload even after a location was just added.
+  useEffect(() => {
+    if (!locationId && locations.length > 0) {
+      setLocationId(locations[0].id);
+    }
+  }, [locations, locationId]);
 
   const initials = userEmail
     ? userEmail.slice(0, 2).toUpperCase()

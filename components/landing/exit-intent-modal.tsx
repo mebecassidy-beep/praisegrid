@@ -89,7 +89,7 @@ export function ExitIntentModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="fixed left-1/2 top-1/2 z-[90] w-[min(420px,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl"
+            className="fixed inset-0 z-[90] m-auto h-fit max-h-[85vh] w-full max-w-[min(420px,90vw)] overflow-y-auto rounded-2xl border border-white/10 bg-slate-900 p-5 shadow-2xl sm:p-6"
           >
             <button
               onClick={() => setOpen(false)}

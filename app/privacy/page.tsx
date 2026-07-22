@@ -48,8 +48,8 @@ export default function PrivacyPage() {
       <LegalH2>Contact us</LegalH2>
       <LegalP>
         Questions about this policy? Reach out any time at{" "}
-        <a href="mailto:privacy@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
-          privacy@reputicious.com
+        <a href="mailto:support@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
+          support@reputicious.com
         </a>
         .
       </LegalP>

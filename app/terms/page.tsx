@@ -51,8 +51,8 @@ export default function TermsPage() {
       <LegalH2>Contact us</LegalH2>
       <LegalP>
         Questions about these Terms? Email us at{" "}
-        <a href="mailto:legal@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
-          legal@reputicious.com
+        <a href="mailto:support@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
+          support@reputicious.com
         </a>
         .
       </LegalP>

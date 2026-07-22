@@ -1,7 +1,12 @@
-import { AlertTriangle, HeartPulse } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { AlertTriangle, HeartPulse, MapPin } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScoreRing } from "@/components/dashboard/score-ring";
 import { statusForValue } from "@/components/dashboard/meter";
+import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 
 const STATUS_MESSAGE = {
   good: "Your reputation is in great shape.",
@@ -12,10 +17,14 @@ const STATUS_MESSAGE = {
 export function HealthMeterCard({
   healthScore,
   pendingCount,
+  googlePlacesEnabled,
 }: {
   healthScore: number | null;
   pendingCount: number;
+  googlePlacesEnabled: boolean;
 }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
   if (healthScore === null) {
     return (
       <Card>
@@ -28,6 +37,13 @@ export function HealthMeterCard({
             Connect a location and get your first reviews in to see your health score.
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <Button size="sm" onClick={() => setModalOpen(true)} className="gap-1.5">
+            <MapPin className="h-3.5 w-3.5" />
+            Connect Google Business Profile
+          </Button>
+        </CardContent>
+        <AddLocationModal open={modalOpen} onClose={() => setModalOpen(false)} googlePlacesEnabled={googlePlacesEnabled} />
       </Card>
     );
   }

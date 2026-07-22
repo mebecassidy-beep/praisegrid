@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Building2,
   LayoutDashboard,
+  Lock,
   MapPin,
   MessageSquareText,
   Settings,
@@ -15,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { UpgradeSlideOver } from "@/components/dashboard/upgrade-slide-over";
 import type { SubscriptionTier } from "@/types";
 
 const TIER_LABEL: Record<SubscriptionTier, string> = {
@@ -44,18 +47,42 @@ const NAV_ITEMS = [
   { href: "/reviews", label: "Reviews", icon: MessageSquareText },
   { href: "/settings/ai", label: "AI Settings", icon: Sparkles },
   { href: "/locations", label: "Locations", icon: MapPin },
-  { href: "/franchise", label: "Franchise View", icon: Building2 },
+  { href: "/franchise", label: "Franchise View", icon: Building2, lockedForFree: true },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+function NavLinks({
+  tier,
+  onNavigate,
+  onLockedClick,
+}: {
+  tier: SubscriptionTier;
+  onNavigate?: () => void;
+  onLockedClick: () => void;
+}) {
   const pathname = usePathname();
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3">
       {NAV_ITEMS.map((item) => {
         const active = pathname === item.href;
+        const locked = item.lockedForFree && tier === "free";
+
+        if (locked) {
+          return (
+            <button
+              key={item.href}
+              onClick={onLockedClick}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-500 transition-colors hover:bg-slate-800/60 hover:text-slate-300"
+            >
+              <item.icon className="h-4 w-4 shrink-0" />
+              <span className="flex-1">{item.label}</span>
+              <Lock className="h-3.5 w-3.5 shrink-0" />
+            </button>
+          );
+        }
+
         return (
           <Link
             key={item.href}
@@ -86,6 +113,8 @@ export function Sidebar({
   open: boolean;
   onClose: () => void;
 }) {
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+
   return (
     <>
       <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-950 py-6 md:flex">
@@ -98,7 +127,7 @@ export function Sidebar({
           </Link>
           <TierBadge tier={tier} />
         </div>
-        <NavLinks />
+        <NavLinks tier={tier} onLockedClick={() => setUpgradeOpen(true)} />
       </aside>
 
       {open && (
@@ -119,10 +148,17 @@ export function Sidebar({
             <div className="mb-4 px-4">
               <TierBadge tier={tier} />
             </div>
-            <NavLinks onNavigate={onClose} />
+            <NavLinks tier={tier} onNavigate={onClose} onLockedClick={() => setUpgradeOpen(true)} />
           </aside>
         </div>
       )}
+
+      <UpgradeSlideOver
+        open={upgradeOpen}
+        onClose={() => setUpgradeOpen(false)}
+        featureName="Multi-Location Analytics"
+        tier="pro"
+      />
     </>
   );
 }

@@ -62,8 +62,8 @@ export function CompetitorTrackerCard({ initialCompetitorName }: { initialCompet
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Competitor ratings shown in your weekly report are illustrative estimates today — a real live
-          lookup is a planned upgrade.
+          We pull a live Google rating for this business when we can find a public listing — otherwise
+          your report shows a benchmark estimate instead.
         </p>
       </CardContent>
     </Card>

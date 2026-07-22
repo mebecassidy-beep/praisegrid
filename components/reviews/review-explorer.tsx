@@ -1,57 +1,98 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MapPin, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ReviewFeedCard } from "@/components/dashboard/review-feed-card";
+import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 import { FilterPills } from "@/components/shared/filter-pills";
-import { FEED_REVIEWS, type FeedPlatform, type FeedStatus } from "@/lib/dashboard/mock-data";
+import { getDisplayStatus, type DisplayStatus } from "@/lib/reviews/display-status";
+import type { Review } from "@/types";
+import type { Platform } from "@/types/database";
 
-const PLATFORM_FILTERS: { value: FeedPlatform | "all"; label: string }[] = [
+const PLATFORM_FILTERS: { value: Platform | "all"; label: string }[] = [
   { value: "all", label: "All platforms" },
   { value: "google", label: "Google" },
   { value: "yelp", label: "Yelp" },
   { value: "facebook", label: "Facebook" },
 ];
 
-const STATUS_FILTERS: { value: FeedStatus | "all"; label: string }[] = [
+const STATUS_FILTERS: { value: DisplayStatus | "all"; label: string }[] = [
   { value: "all", label: "All statuses" },
   { value: "pending", label: "Pending" },
-  { value: "approved", label: "Approved" },
   { value: "flagged", label: "Flagged" },
+  { value: "approved", label: "Approved" },
+  { value: "posted", label: "Posted" },
 ];
 
-export function ReviewExplorer() {
-  const [reviews, setReviews] = useState(FEED_REVIEWS);
+export function ReviewExplorer({
+  reviews,
+  hasLocation,
+  googlePlacesEnabled,
+}: {
+  reviews: Review[];
+  hasLocation: boolean;
+  googlePlacesEnabled: boolean;
+}) {
+  const [liveReviews, setLiveReviews] = useState(reviews);
   const [query, setQuery] = useState("");
-  const [platformFilter, setPlatformFilter] = useState<FeedPlatform | "all">("all");
-  const [statusFilter, setStatusFilter] = useState<FeedStatus | "all">("all");
+  const [platformFilter, setPlatformFilter] = useState<Platform | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<DisplayStatus | "all">("all");
+
+  // Resync when the server-fetched `reviews` prop changes (e.g. after
+  // router.refresh()) — useState's initial value only applies on mount.
+  useEffect(() => {
+    setLiveReviews(reviews);
+  }, [reviews]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return reviews.filter((review) => {
+    return liveReviews.filter((review) => {
       const matchesQuery =
         q.length === 0 ||
-        review.reviewerName.toLowerCase().includes(q) ||
-        review.reviewText.toLowerCase().includes(q);
+        (review.reviewer_name ?? "").toLowerCase().includes(q) ||
+        (review.review_text ?? "").toLowerCase().includes(q);
       return (
         matchesQuery &&
         (platformFilter === "all" || review.platform === platformFilter) &&
-        (statusFilter === "all" || review.status === statusFilter)
+        (statusFilter === "all" || getDisplayStatus(review) === statusFilter)
       );
     });
-  }, [reviews, query, platformFilter, statusFilter]);
+  }, [liveReviews, query, platformFilter, statusFilter]);
 
-  function handleStatusChange(id: string, status: FeedStatus) {
-    setReviews((prev) => prev.map((review) => (review.id === id ? { ...review, status } : review)));
+  function handleReviewUpdate(updated: Review) {
+    setLiveReviews((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
   }
 
-  const pendingCount = reviews.filter((r) => r.status === "pending").length;
-  const flaggedCount = reviews.filter((r) => r.status === "flagged").length;
+  const pendingCount = liveReviews.filter((r) => r.status === "pending").length;
+  const flaggedCount = liveReviews.filter((r) => getDisplayStatus(r) === "flagged").length;
+
+  if (!hasLocation) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed bg-muted/20 py-16 text-center">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-500/10">
+          <MapPin className="h-5 w-5 text-blue-600" />
+        </span>
+        <div>
+          <p className="text-sm font-semibold">No location connected yet</p>
+          <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+            Connect your Google Business Profile to start pulling in reviews.
+          </p>
+        </div>
+        <Button size="sm" onClick={() => setModalOpen(true)} className="mt-1 gap-1.5">
+          <MapPin className="h-3.5 w-3.5" />
+          Connect Google Business Profile
+        </Button>
+        <AddLocationModal open={modalOpen} onClose={() => setModalOpen(false)} googlePlacesEnabled={googlePlacesEnabled} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-        <span>{reviews.length} total reviews</span>
+        <span>{liveReviews.length} total reviews</span>
         <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
         <span>{pendingCount} pending</span>
         <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
@@ -78,11 +119,11 @@ export function ReviewExplorer() {
       <div className="space-y-4">
         {filtered.length === 0 ? (
           <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
-            No reviews match your search or filters.
+            {liveReviews.length === 0 ? "No reviews yet — check back soon." : "No reviews match your search or filters."}
           </div>
         ) : (
           filtered.map((review) => (
-            <ReviewFeedCard key={review.id} review={review} onStatusChange={handleStatusChange} />
+            <ReviewFeedCard key={review.id} review={review} onReviewUpdate={handleReviewUpdate} />
           ))
         )}
       </div>

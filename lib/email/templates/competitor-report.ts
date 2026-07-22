@@ -5,8 +5,10 @@ export function competitorReportEmail(params: {
   competitorName: string;
   competitorRating: number;
   competitorReviewCount: number;
+  isRealData?: boolean;
 }): { subject: string; html: string } {
-  const { companyName, yourRating, yourReviewCount, competitorName, competitorRating, competitorReviewCount } = params;
+  const { companyName, yourRating, yourReviewCount, competitorName, competitorRating, competitorReviewCount, isRealData } =
+    params;
   const ahead = yourRating >= competitorRating;
 
   return {
@@ -41,7 +43,11 @@ export function competitorReportEmail(params: {
   </p>
 
   <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">
-    Illustrative estimate, not a live Google Places lookup — real competitor data is a planned upgrade.
+    ${
+      isRealData
+        ? "Pulled live from Google Business Profile data."
+        : `We couldn't find a public Google listing for "${competitorName}" — this is a benchmark estimate. Double-check the spelling in your dashboard settings for a live lookup.`
+    }
   </p>
 
   <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://reputicious.vercel.app"}/dashboard"

@@ -70,16 +70,20 @@ export async function getProfile(
   userId: string,
   supabase: SupabaseClient<Database> = createClient()
 ): Promise<
-  Pick<Profile, "email" | "subscription_tier" | "onboarding_completed_at" | "report_frequency" | "competitor_name">
+  Pick<
+    Profile,
+    "email" | "company_name" | "subscription_tier" | "onboarding_completed_at" | "report_frequency" | "competitor_name"
+  >
 > {
   const { data } = await (supabase.from("profiles") as any)
-    .select("email, subscription_tier, onboarding_completed_at, report_frequency, competitor_name")
+    .select("email, company_name, subscription_tier, onboarding_completed_at, report_frequency, competitor_name")
     .eq("id", userId)
     .single();
 
   return (
     data ?? {
       email: "",
+      company_name: null,
       subscription_tier: "free",
       onboarding_completed_at: null,
       report_frequency: "weekly",

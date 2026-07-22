@@ -33,6 +33,7 @@ export async function GET(request: Request) {
         competitorName: competitor.competitorName,
         competitorRating: competitor.rating,
         competitorReviewCount: competitor.reviewCount,
+        isRealData: competitor.isRealData,
       });
 
       await sendEmail({ to: profile.email, subject, html });

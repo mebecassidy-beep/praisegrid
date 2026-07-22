@@ -15,7 +15,11 @@ export default async function LocationsPage() {
         </p>
       </div>
 
-      <LocationsGrid locations={data.locations} locationMetrics={data.locationMetrics} />
+      <LocationsGrid
+        locations={data.locations}
+        locationMetrics={data.locationMetrics}
+        googlePlacesEnabled={Boolean(process.env.GOOGLE_PLACES_API_KEY)}
+      />
     </div>
   );
 }

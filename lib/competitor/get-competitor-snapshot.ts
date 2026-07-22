@@ -1,3 +1,5 @@
+import { isGooglePlacesConfigured, searchBusinessByName } from "@/lib/google-places/client";
+
 export interface CompetitorSnapshot {
   competitorName: string;
   rating: number;
@@ -13,26 +15,39 @@ function hashString(input: string) {
   return Math.abs(hash);
 }
 
-/**
- * Returns a competitor's public rating/review count for the weekly
- * competitor-gap report.
- *
- * Placeholder implementation: deterministic, hash-derived numbers, same
- * idiom as lib/business-scan/get-business-scan.ts. Swap this function's body
- * for a real Google Places API call (Find Place + Place Details) once a
- * GOOGLE_PLACES_API_KEY is configured — the shape here is already what a real
- * lookup should produce, so no caller needs to change.
- */
-export async function getCompetitorSnapshot(competitorName: string): Promise<CompetitorSnapshot> {
+function mockSnapshot(competitorName: string): CompetitorSnapshot {
   const seed = hashString(competitorName.toLowerCase());
-
-  const rating = Math.round((3.6 + ((seed % 130) / 100)) * 10) / 10; // 3.6–4.9
-  const reviewCount = 25 + (seed % 300);
-
   return {
     competitorName,
-    rating,
-    reviewCount,
+    rating: Math.round((3.6 + ((seed % 130) / 100)) * 10) / 10, // 3.6–4.9
+    reviewCount: 25 + (seed % 300),
     isRealData: false,
   };
+}
+
+/**
+ * Returns a competitor's public rating/review count. Uses a real Google
+ * Places text-search lookup when GOOGLE_PLACES_API_KEY is configured;
+ * otherwise falls back to a deterministic, clearly-labeled (isRealData:
+ * false) estimate so callers never present invented numbers about a real
+ * named business as fact.
+ */
+export async function getCompetitorSnapshot(competitorName: string): Promise<CompetitorSnapshot> {
+  if (isGooglePlacesConfigured()) {
+    try {
+      const details = await searchBusinessByName(competitorName);
+      if (details && details.rating != null && details.userRatingCount != null) {
+        return {
+          competitorName: details.name,
+          rating: details.rating,
+          reviewCount: details.userRatingCount,
+          isRealData: true,
+        };
+      }
+    } catch (error) {
+      console.error("Error resolving competitor snapshot, falling back to estimate:", error);
+    }
+  }
+
+  return mockSnapshot(competitorName);
 }

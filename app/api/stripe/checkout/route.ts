@@ -18,6 +18,7 @@ export async function POST(request: Request) {
       typeof body?.offer === 'string' && body.offer in CHECKOUT_OFFERS ? body.offer : undefined
 
     const tier: SubscriptionTier = VALID_TIERS.includes(body?.tier) ? body.tier : 'pro'
+    const trial = body?.trial === true
     const priceId = TIER_TO_PRICE_ID[tier]
 
     if (!priceId) {
@@ -63,6 +64,13 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],
+      // Trial checkouts collect a card only if something is actually due
+      // today (e.g. a partial-period charge) — with a full trial and no
+      // discount stacking weirdness, nothing is due, so Stripe skips the
+      // card step entirely. This is what makes "No credit card required"
+      // in the upgrade UI an accurate claim rather than a false promise.
+      payment_method_collection: trial ? 'if_required' : 'always',
+      subscription_data: trial ? { trial_period_days: 7 } : undefined,
       line_items: [
         {
           price: priceId,

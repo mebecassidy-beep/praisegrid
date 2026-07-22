@@ -10,6 +10,22 @@ export const metadata: Metadata = {
     "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Reputicious",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description:
+    "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
+  url: "https://www.reputicious.com",
+  offers: {
+    "@type": "Offer",
+    price: "49",
+    priceCurrency: "USD",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -17,7 +33,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

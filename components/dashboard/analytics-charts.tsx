@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { BarChart3, Clock, MapPin, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 import { PLATFORM_META } from "@/components/reviews/platform-meta";
-import { MONTHLY_TREND, type FeedPlatform } from "@/lib/dashboard/mock-data";
+import type { Platform } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 const CHART_WIDTH = 560;
@@ -91,19 +95,68 @@ function LineChart({
   );
 }
 
+function ChartEmptyState({
+  icon: Icon,
+  title,
+  description,
+  cta,
+}: {
+  icon: typeof TrendingUp;
+  title: string;
+  description: string;
+  cta?: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed bg-muted/20 py-10 text-center">
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-500/10">
+            <Icon className="h-5 w-5 text-blue-600" />
+          </span>
+          <p className="mx-auto max-w-xs text-sm text-muted-foreground">{description}</p>
+          {cta}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function RatingTrendChart({
   monthlyRatingTrend,
+  hasLocation,
+  googlePlacesEnabled,
 }: {
   monthlyRatingTrend: { month: string; avgRating: number; reviewCount: number }[];
+  hasLocation: boolean;
+  googlePlacesEnabled: boolean;
 }) {
+  const [modalOpen, setModalOpen] = useState(false);
+
   if (monthlyRatingTrend.length < 2) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Average rating trend</CardTitle>
-          <CardDescription>Not enough review history yet to chart a trend.</CardDescription>
-        </CardHeader>
-      </Card>
+      <>
+        <ChartEmptyState
+          icon={TrendingUp}
+          title="Average rating trend"
+          description={
+            hasLocation
+              ? "Not enough review history yet — this chart fills in as reviews come in over time."
+              : "Connect a location to start tracking your rating trend month over month."
+          }
+          cta={
+            !hasLocation && (
+              <Button size="sm" onClick={() => setModalOpen(true)} className="mt-1 gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                Connect Google Business Profile
+              </Button>
+            )
+          }
+        />
+        <AddLocationModal open={modalOpen} onClose={() => setModalOpen(false)} googlePlacesEnabled={googlePlacesEnabled} />
+      </>
     );
   }
 
@@ -129,41 +182,74 @@ export function RatingTrendChart({
 }
 
 export function ResponseTimeChart() {
-  const values = MONTHLY_TREND.map((m) => m.avgResponseHours);
-  const labels = MONTHLY_TREND.map((m) => m.month);
-  const latest = values[values.length - 1];
-
+  // Real response-time tracking needs a `responded_at` timestamp on reviews
+  // (when a draft was actually approved), which the schema doesn't capture
+  // yet — showing fabricated numbers here would be worse than an honest
+  // "coming soon" state.
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Avg. first response time</CardTitle>
-        <CardDescription>
-          Down to {latest.toFixed(1)} hours as AI auto-drafting picks up more replies.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <LineChart
-          values={values}
-          labels={labels}
-          formatValue={(v) => `${v.toFixed(1)}h avg. response`}
-          stroke="#7c5cff"
-        />
-      </CardContent>
-    </Card>
+    <ChartEmptyState
+      icon={Clock}
+      title="Avg. first response time"
+      description="Response-time tracking is coming soon — we'll start timing this from your first approved response."
+    />
   );
 }
 
-const PLATFORMS: FeedPlatform[] = ["google", "yelp", "facebook"];
-const PLATFORM_COLOR: Record<FeedPlatform, string> = {
+const PLATFORMS: Platform[] = ["google", "yelp", "facebook"];
+const PLATFORM_COLOR: Record<Platform, string> = {
   google: "#3b82f6",
   yelp: "#ef4444",
   facebook: "#6366f1",
 };
 
-export function PlatformVolumeChart() {
-  const [hovered, setHovered] = useState<{ month: string; platform: FeedPlatform } | null>(null);
+export function PlatformVolumeChart({
+  monthlyPlatformVolume,
+  hasLocation,
+  googlePlacesEnabled,
+}: {
+  monthlyPlatformVolume: { month: string; google: number; yelp: number; facebook: number }[];
+  hasLocation: boolean;
+  googlePlacesEnabled: boolean;
+}) {
+  const [hovered, setHovered] = useState<{ month: string; platform: Platform } | null>(null);
+  const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  if (monthlyPlatformVolume.length === 0) {
+    return (
+      <>
+        <ChartEmptyState
+          icon={BarChart3}
+          title="Review volume by platform"
+          description={
+            hasLocation
+              ? "Volume by platform will show up here once reviews start coming in."
+              : "Connect a location to see which platforms your reviews are coming from."
+          }
+          cta={
+            !hasLocation && (
+              <Button size="sm" onClick={() => setModalOpen(true)} className="mt-1 gap-1.5">
+                <MapPin className="h-3.5 w-3.5" />
+                Connect Google Business Profile
+              </Button>
+            )
+          }
+        />
+        <AddLocationModal
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            router.refresh();
+          }}
+          googlePlacesEnabled={googlePlacesEnabled}
+        />
+      </>
+    );
+  }
+
   const maxTotal = Math.max(
-    ...MONTHLY_TREND.map((m) => PLATFORMS.reduce((sum, p) => sum + m.platformCounts[p], 0))
+    ...monthlyPlatformVolume.map((m) => PLATFORMS.reduce((sum, p) => sum + m[p], 0)),
+    1
   );
 
   return (
@@ -186,13 +272,13 @@ export function PlatformVolumeChart() {
         </div>
 
         <div className="flex items-end justify-between gap-3 sm:gap-5">
-          {MONTHLY_TREND.map((m) => {
-            const total = PLATFORMS.reduce((sum, p) => sum + m.platformCounts[p], 0);
+          {monthlyPlatformVolume.map((m) => {
+            const total = PLATFORMS.reduce((sum, p) => sum + m[p], 0);
             return (
               <div key={m.month} className="flex flex-1 flex-col items-center gap-2">
                 <div className="flex h-32 w-full max-w-10 flex-col-reverse gap-[2px] overflow-hidden rounded-t-[4px]">
                   {PLATFORMS.map((platform) => {
-                    const count = m.platformCounts[platform];
+                    const count = m[platform];
                     const isHovered = hovered?.month === m.month && hovered.platform === platform;
                     return (
                       <div

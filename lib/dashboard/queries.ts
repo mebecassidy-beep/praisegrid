@@ -20,6 +20,7 @@ export interface DashboardData {
   ratingDistribution: { stars: number; count: number }[];
   locationMetrics: Record<string, LocationMetric>;
   monthlyRatingTrend: { month: string; avgRating: number; reviewCount: number }[];
+  monthlyPlatformVolume: { month: string; google: number; yelp: number; facebook: number }[];
   healthScore: number | null;
 }
 
@@ -140,17 +141,30 @@ export async function getDashboardData(
     if (!monthBuckets.has(key)) monthBuckets.set(key, []);
     monthBuckets.get(key)!.push(review);
   }
-  const monthlyRatingTrend = Array.from(monthBuckets.entries())
-    .sort(([a], [b]) => (a > b ? 1 : -1))
-    .slice(-6)
-    .map(([key, reviews]) => {
-      const [, monthIndex] = key.split("-").map(Number);
-      return {
-        month: MONTH_LABELS[monthIndex],
-        avgRating: Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10,
-        reviewCount: reviews.length,
-      };
-    });
+  const sortedMonthKeys = Array.from(monthBuckets.keys())
+    .sort((a, b) => (a > b ? 1 : -1))
+    .slice(-6);
+
+  const monthlyRatingTrend = sortedMonthKeys.map((key) => {
+    const reviews = monthBuckets.get(key)!;
+    const [, monthIndex] = key.split("-").map(Number);
+    return {
+      month: MONTH_LABELS[monthIndex],
+      avgRating: Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10,
+      reviewCount: reviews.length,
+    };
+  });
+
+  const monthlyPlatformVolume = sortedMonthKeys.map((key) => {
+    const reviews = monthBuckets.get(key)!;
+    const [, monthIndex] = key.split("-").map(Number);
+    return {
+      month: MONTH_LABELS[monthIndex],
+      google: reviews.filter((r) => r.platform === "google").length,
+      yelp: reviews.filter((r) => r.platform === "yelp").length,
+      facebook: reviews.filter((r) => r.platform === "facebook").length,
+    };
+  });
 
   return {
     locations: locationList,
@@ -162,6 +176,7 @@ export async function getDashboardData(
     ratingDistribution,
     locationMetrics,
     monthlyRatingTrend,
+    monthlyPlatformVolume,
     healthScore: computeHealthScore(overall),
   };
 }

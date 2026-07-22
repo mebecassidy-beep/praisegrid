@@ -10,6 +10,8 @@ import { getDashboardData } from "@/lib/dashboard/queries";
 export default async function AnalyticsPage() {
   const user = await requireUser();
   const data = await getDashboardData(user.id);
+  const hasLocation = data.locations.length > 0;
+  const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
 
   return (
     <div className="space-y-6">
@@ -21,13 +23,21 @@ export default async function AnalyticsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <RatingTrendChart monthlyRatingTrend={data.monthlyRatingTrend} />
+        <RatingTrendChart
+          monthlyRatingTrend={data.monthlyRatingTrend}
+          hasLocation={hasLocation}
+          googlePlacesEnabled={googlePlacesEnabled}
+        />
         <ResponseTimeChart />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <PlatformVolumeChart />
+          <PlatformVolumeChart
+            monthlyPlatformVolume={data.monthlyPlatformVolume}
+            hasLocation={hasLocation}
+            googlePlacesEnabled={googlePlacesEnabled}
+          />
         </div>
         <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
       </div>

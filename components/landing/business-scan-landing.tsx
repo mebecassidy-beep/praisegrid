@@ -7,6 +7,8 @@ import { AlertTriangle, ArrowRight, Loader2, Search, Star, Tag } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScoreRing } from "@/components/landing/score-ring";
+import { BlurredPreviewLock } from "@/components/landing/blurred-preview-lock";
+import { parseBusinessInput } from "@/lib/business-scan/parse-business-input";
 import { cn } from "@/lib/utils";
 import type { BusinessScanResult } from "@/lib/business-scan/get-business-scan";
 
@@ -39,11 +41,12 @@ export function BusinessScanLanding() {
     }, 550);
 
     try {
+      const { label } = parseBusinessInput(businessName);
       const [response] = await Promise.all([
         fetch("/api/public/business-scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ businessName: businessName.trim(), city: city.trim() || undefined }),
+          body: JSON.stringify({ businessName: label, city: city.trim() || undefined }),
         }),
         new Promise((resolve) => setTimeout(resolve, SCAN_STEPS.length * 550)),
       ]);
@@ -64,7 +67,7 @@ export function BusinessScanLanding() {
     }
   }
 
-  const displayName = businessName.trim() || "Your Business";
+  const displayName = parseBusinessInput(businessName).label || "Your Business";
   const signupHref = `/signup?offer=scan50${
     businessName.trim() ? `&business=${encodeURIComponent(businessName.trim())}` : ""
   }`;
@@ -111,7 +114,7 @@ export function BusinessScanLanding() {
             <Input
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              placeholder="Business name, e.g. Brightleaf Cafe"
+              placeholder="Business name or Google Business Profile URL"
               className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
             />
             <Input
@@ -142,22 +145,7 @@ export function BusinessScanLanding() {
         <div className="mx-auto mt-12 max-w-xl">
           <div className="relative rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
             <AnimatePresence mode="wait">
-              {status === "idle" && (
-                <motion.div
-                  key="idle"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex min-h-[280px] flex-col items-center justify-center gap-3 text-center"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5">
-                    <Search className="h-6 w-6 text-slate-500" />
-                  </div>
-                  <p className="max-w-[260px] text-sm text-slate-500">
-                    Enter your business name above to run your free scan
-                  </p>
-                </motion.div>
-              )}
+              {status === "idle" && <BlurredPreviewLock key="idle" />}
 
               {status === "scanning" && (
                 <motion.div

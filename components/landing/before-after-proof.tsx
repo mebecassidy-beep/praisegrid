@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle2, MapPin, Star } from "lucide-react";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { cn } from "@/lib/utils";
 
-interface VerticalExample {
+export interface VerticalExample {
   industry: string;
   businessName: string;
   searchTerm: string;
@@ -13,7 +13,7 @@ interface VerticalExample {
   after: { rating: number; points: string[] };
 }
 
-const EXAMPLES: VerticalExample[] = [
+export const EXAMPLES: VerticalExample[] = [
   {
     industry: "Plumbing",
     businessName: "Sac Valley Plumbing",
@@ -65,9 +65,60 @@ const EXAMPLES: VerticalExample[] = [
       ],
     },
   },
+  {
+    industry: "Auto Repair",
+    businessName: "Trailhead Auto & Tire",
+    searchTerm: "auto repair near me",
+    before: {
+      rating: 3.7,
+      points: ["21 unanswered reviews", 'Ranked #8 for "auto repair near me"', "Trust concerns visible in top reviews"],
+    },
+    after: {
+      rating: 4.8,
+      points: [
+        "Every complaint addressed within hours",
+        'Top 3 local pack for "auto repair near me"',
+        "Pricing concerns caught before they go public",
+      ],
+    },
+  },
+  {
+    industry: "Dental",
+    businessName: "Bright Smile Dental",
+    searchTerm: "dentist near me",
+    before: {
+      rating: 4.1,
+      points: ["14 unanswered reviews", 'Ranked #5 for "dentist near me"', "Insurance complaints unaddressed"],
+    },
+    after: {
+      rating: 4.9,
+      points: [
+        "100% response rate, HIPAA-safe replies",
+        'Top 3 local pack for "dentist near me"',
+        "New-patient questions routed automatically",
+      ],
+    },
+  },
+  {
+    industry: "Home Cleaning",
+    businessName: "Clearwater Cleaning Co.",
+    searchTerm: "house cleaning near me",
+    before: {
+      rating: 3.9,
+      points: ["16 unanswered reviews", 'Ranked #9 for "house cleaning near me"', "Missed-appointment complaints piling up"],
+    },
+    after: {
+      rating: 4.9,
+      points: [
+        "Every review answered same-day",
+        'Top 3 local pack for "house cleaning near me"',
+        "Rebooking link in every AI reply",
+      ],
+    },
+  },
 ];
 
-function StarRow({ rating }: { rating: number }) {
+export function StarRow({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (

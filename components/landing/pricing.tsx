@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -88,9 +89,15 @@ export function Pricing() {
 
             return (
               <RevealItem key={tier.name}>
+                <motion.div
+                  className="h-full"
+                  whileHover={{ y: -6 }}
+                  whileTap={{ y: -2 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
                 <Card
                   className={cn(
-                    "relative flex h-full flex-col",
+                    "relative flex h-full flex-col transition-shadow duration-300 hover:shadow-xl",
                     tier.highlighted && "border-2 border-blue-500 shadow-lg shadow-blue-500/10"
                   )}
                 >
@@ -103,8 +110,22 @@ export function Pricing() {
                   <CardHeader className="pb-0">
                     <h3 className="text-xl font-semibold">{tier.name}</h3>
                     <p className="text-sm text-muted-foreground">{tier.description}</p>
-                    <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-4xl font-bold tracking-tight">${price}</span>
+                    <div className="mt-4 flex items-baseline gap-1 overflow-hidden">
+                      <span className="text-4xl font-bold tracking-tight">
+                        $
+                        <AnimatePresence mode="wait" initial={false}>
+                          <motion.span
+                            key={price}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2 }}
+                            className="inline-block"
+                          >
+                            {price}
+                          </motion.span>
+                        </AnimatePresence>
+                      </span>
                       <span className="text-sm text-muted-foreground">/mo</span>
                     </div>
                     {annual && (
@@ -147,6 +168,7 @@ export function Pricing() {
                     </div>
                   </CardContent>
                 </Card>
+                </motion.div>
               </RevealItem>
             );
           })}

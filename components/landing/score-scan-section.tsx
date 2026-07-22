@@ -10,6 +10,8 @@ import { KineticHeading } from "@/components/motion/kinetic-heading";
 import { Parallax } from "@/components/motion/parallax";
 import { ScoreRing } from "@/components/landing/score-ring";
 import { DrawTrendChart } from "@/components/landing/draw-trend-chart";
+import { BlurredPreviewLock } from "@/components/landing/blurred-preview-lock";
+import { parseBusinessInput } from "@/lib/business-scan/parse-business-input";
 import { cn } from "@/lib/utils";
 
 const SCAN_STEPS = [
@@ -38,6 +40,7 @@ export function ScoreScanSection() {
   const [name, setName] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [step, setStep] = useState(0);
+  const [displayName, setDisplayName] = useState("Your Business");
   const [result, setResult] = useState<{
     score: number;
     factors: number[];
@@ -53,7 +56,9 @@ export function ScoreScanSection() {
     setStatus("scanning");
     setStep(0);
 
-    const seed = hashString(name.trim() || "your business");
+    const { label } = parseBusinessInput(name);
+    setDisplayName(label || "Your Business");
+    const seed = hashString(label || "your business");
     const score = 68 + (seed % 24);
     const factors = FACTOR_LABELS.map((_, i) => 60 + ((seed >> (i * 3)) % 38));
     const unansweredReviews = 4 + (seed % 19);
@@ -71,8 +76,6 @@ export function ScoreScanSection() {
       }
     }, 550);
   }
-
-  const displayName = name.trim() || "Your Business";
 
   return (
     <section className="relative overflow-hidden bg-slate-950 py-24">
@@ -108,7 +111,7 @@ export function ScoreScanSection() {
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Brightleaf Cafe"
+                placeholder="Business name or Google Business Profile URL"
                 className="border-white/10 bg-white/5 text-white placeholder:text-slate-500"
               />
               <Button
@@ -134,22 +137,7 @@ export function ScoreScanSection() {
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-blue-500/20 via-violet-500/10 to-transparent blur-2xl" />
             <div className="relative min-h-[380px] overflow-hidden rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-black/40 backdrop-blur">
               <AnimatePresence mode="wait">
-                {status === "idle" && (
-                  <motion.div
-                    key="idle"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex min-h-[330px] flex-col items-center justify-center gap-3 text-center"
-                  >
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5">
-                      <Search className="h-6 w-6 text-slate-500" />
-                    </div>
-                    <p className="max-w-[220px] text-sm text-slate-500">
-                      Run a scan to see a live preview of your score
-                    </p>
-                  </motion.div>
-                )}
+                {status === "idle" && <BlurredPreviewLock key="idle" />}
 
                 {status === "scanning" && (
                   <motion.div

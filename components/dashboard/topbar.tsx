@@ -19,11 +19,21 @@ function closeOnBlur(setOpen: (v: boolean) => void) {
   };
 }
 
-export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+export function Topbar({
+  userEmail,
+  onMenuClick,
+}: {
+  userEmail: string;
+  onMenuClick: () => void;
+}) {
   const [location, setLocation] = useState(LOCATIONS[0]);
   const [locationOpen, setLocationOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const initials = userEmail
+    ? userEmail.slice(0, 2).toUpperCase()
+    : "?";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 transform-gpu items-center gap-3 border-b bg-background/95 px-4 backdrop-blur sm:px-6">
@@ -102,13 +112,12 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
             onClick={() => setProfileOpen((v) => !v)}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-semibold text-white"
           >
-            AR
+            {initials}
           </button>
           {profileOpen && (
             <div className="absolute right-0 z-40 mt-2 w-48 rounded-md border bg-popover p-1 shadow-md">
               <div className="px-2 py-1.5">
-                <p className="text-sm font-medium text-foreground">Alex Rivera</p>
-                <p className="text-xs text-muted-foreground">alex@brightleafcafe.com</p>
+                <p className="truncate text-sm font-medium text-foreground">{userEmail}</p>
               </div>
               <div className="my-1 h-px bg-border" />
               <button className="w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent">

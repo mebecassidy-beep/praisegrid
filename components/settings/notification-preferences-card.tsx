@@ -4,6 +4,9 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { ReportFrequency } from "@/types";
 
 const PREFERENCES = [
   {
@@ -19,12 +22,6 @@ const PREFERENCES = [
     defaultChecked: true,
   },
   {
-    key: "weeklyDigest",
-    label: "Weekly summary email",
-    description: "A weekly recap of review volume, ratings, and sentiment trends.",
-    defaultChecked: true,
-  },
-  {
     key: "autoApproveDigest",
     label: "Auto-approve activity digest",
     description: "Daily summary of responses posted automatically by your AI rules.",
@@ -32,10 +29,41 @@ const PREFERENCES = [
   },
 ];
 
-export function NotificationPreferencesCard() {
+const FREQUENCY_OPTIONS: { value: ReportFrequency; label: string }[] = [
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+  { value: "off", label: "Off" },
+];
+
+export function NotificationPreferencesCard({
+  initialReportFrequency,
+}: {
+  initialReportFrequency: ReportFrequency;
+}) {
   const [state, setState] = useState<Record<string, boolean>>(
     Object.fromEntries(PREFERENCES.map((p) => [p.key, p.defaultChecked]))
   );
+  const [reportFrequency, setReportFrequency] = useState<ReportFrequency>(initialReportFrequency);
+  const [saving, setSaving] = useState(false);
+
+  async function handleFrequencyChange(value: ReportFrequency) {
+    const previous = reportFrequency;
+    setReportFrequency(value);
+    setSaving(true);
+
+    try {
+      const res = await fetch("/api/settings/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ report_frequency: value }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setReportFrequency(previous);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <Card>
@@ -57,6 +85,33 @@ export function NotificationPreferencesCard() {
             />
           </div>
         ))}
+
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <Label>Reputation Impact summary email</Label>
+            <p className="text-xs text-muted-foreground">
+              A recap of your health score, ratings, and response rate, delivered on a schedule.
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-1 rounded-lg border p-1">
+            {FREQUENCY_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={saving}
+                onClick={() => handleFrequencyChange(option.value)}
+                className={cn(
+                  "h-7 px-2.5 text-xs",
+                  reportFrequency === option.value && "bg-primary text-primary-foreground hover:bg-primary/90"
+                )}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

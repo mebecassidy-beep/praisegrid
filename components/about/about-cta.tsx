@@ -31,7 +31,7 @@ export function AboutCta() {
               variant="outline"
               className="border-white/20 bg-white/5 text-white hover:bg-white/10"
             >
-              <Link href="/dashboard">View Live Demo</Link>
+              <Link href="/features">See Features</Link>
             </Button>
           </div>
         </Reveal>

@@ -1,12 +1,31 @@
 import { NextResponse } from 'next/server'
 import { createRouteHandlerSupabaseClient } from '@/lib/supabase/server'
-import { stripe, CHECKOUT_OFFERS, getOrCreateOfferCoupon, type CheckoutOfferId } from '@/lib/stripe'
+import {
+  stripe,
+  CHECKOUT_OFFERS,
+  getOrCreateOfferCoupon,
+  TIER_TO_PRICE_ID,
+  type CheckoutOfferId,
+  type SubscriptionTier,
+} from '@/lib/stripe'
+
+const VALID_TIERS: SubscriptionTier[] = ['starter', 'pro']
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}))
     const offer: CheckoutOfferId | undefined =
       typeof body?.offer === 'string' && body.offer in CHECKOUT_OFFERS ? body.offer : undefined
+
+    const tier: SubscriptionTier = VALID_TIERS.includes(body?.tier) ? body.tier : 'pro'
+    const priceId = TIER_TO_PRICE_ID[tier]
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: `No Stripe price configured for tier "${tier}".` },
+        { status: 500 }
+      )
+    }
 
     const supabase = createRouteHandlerSupabaseClient()
 
@@ -46,12 +65,16 @@ export async function POST(request: Request) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
       mode: 'subscription',
       discounts,
+      // Stripe rejects a session with both `discounts` and `allow_promotion_codes`
+      // set — only offer the promo-code field when a landing-page offer isn't
+      // already forcing a discount (e.g. the WELCOME20 welcome-email code).
+      allow_promotion_codes: offer ? undefined : true,
       success_url: `${request.headers.get('origin')}/dashboard?success=true`,
       cancel_url: `${request.headers.get('origin')}/dashboard?canceled=true`,
     })

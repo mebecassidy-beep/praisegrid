@@ -19,8 +19,12 @@ export default function HelpPage() {
             Common questions about Reputicious. Can&apos;t find what you need?{" "}
             <a href="mailto:support@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
               Email support
-            </a>
-            .
+            </a>{" "}
+            or visit our{" "}
+            <a href="/support" className="font-medium text-foreground underline underline-offset-2">
+              Support Center
+            </a>{" "}
+            to chat with us.
           </p>
 
           <div className="mt-10">

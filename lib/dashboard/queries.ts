@@ -1,5 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import type { Location, Review } from "@/types";
+import type { Location, Review, Profile } from "@/types";
+import type { Database } from "@/types/database";
 
 export interface LocationMetric {
   avgRating: number;
@@ -60,13 +62,33 @@ function computeLocationMetric(reviews: Review[]): LocationMetric {
 }
 
 /**
+ * Fetches the signed-in user's billing/onboarding profile row — kept separate
+ * from getDashboardData (which is scoped to locations+reviews) since it backs
+ * the dashboard shell chrome (tier badge, onboarding modal) rather than page content.
+ */
+export async function getProfile(
+  userId: string,
+  supabase: SupabaseClient<Database> = createClient()
+): Promise<Pick<Profile, "email" | "subscription_tier" | "onboarding_completed_at" | "report_frequency">> {
+  const { data } = await (supabase.from("profiles") as any)
+    .select("email, subscription_tier, onboarding_completed_at, report_frequency")
+    .eq("id", userId)
+    .single();
+
+  return (
+    data ?? { email: "", subscription_tier: "free", onboarding_completed_at: null, report_frequency: "weekly" }
+  );
+}
+
+/**
  * Fetches every location + review the signed-in user owns and computes the
  * aggregates the dashboard/locations/analytics pages need. Scoped by RLS
  * (locations.user_id = auth.uid()) via the request-scoped Supabase client.
  */
-export async function getDashboardData(userId: string): Promise<DashboardData> {
-  const supabase = createClient();
-
+export async function getDashboardData(
+  userId: string,
+  supabase: SupabaseClient<Database> = createClient()
+): Promise<DashboardData> {
   const { data: locations } = await (supabase.from("locations") as any)
     .select("*")
     .eq("user_id", userId)

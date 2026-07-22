@@ -12,15 +12,31 @@ create table if not exists public.profiles (
   stripe_customer_id text,
   subscription_tier text not null default 'free'
     check (subscription_tier in ('free', 'starter', 'pro', 'enterprise')),
+  onboarding_completed_at timestamptz,
+  welcome_email_sent_at timestamptz,
+  report_frequency text not null default 'weekly'
+    check (report_frequency in ('weekly', 'monthly', 'off')),
+  alert_phone_number text,
   created_at timestamptz not null default now()
 );
 
+alter table public.profiles
+  add column if not exists onboarding_completed_at timestamptz;
+
+alter table public.profiles
+  add column if not exists welcome_email_sent_at timestamptz,
+  add column if not exists report_frequency text not null default 'weekly'
+    check (report_frequency in ('weekly', 'monthly', 'off')),
+  add column if not exists alert_phone_number text;
+
 alter table public.profiles enable row level security;
 
+drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile"
   on public.profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile"
   on public.profiles for update
   using (auth.uid() = id)
@@ -62,19 +78,23 @@ create index if not exists locations_user_id_idx on public.locations (user_id);
 
 alter table public.locations enable row level security;
 
+drop policy if exists "Users can view their own locations" on public.locations;
 create policy "Users can view their own locations"
   on public.locations for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own locations" on public.locations;
 create policy "Users can insert their own locations"
   on public.locations for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update their own locations" on public.locations;
 create policy "Users can update their own locations"
   on public.locations for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete their own locations" on public.locations;
 create policy "Users can delete their own locations"
   on public.locations for delete
   using (auth.uid() = user_id);
@@ -94,14 +114,21 @@ create table if not exists public.reviews (
   response_text text,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'posted')),
+  risk_level text check (risk_level in ('low', 'medium', 'high')),
+  flagged_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+alter table public.reviews
+  add column if not exists risk_level text check (risk_level in ('low', 'medium', 'high')),
+  add column if not exists flagged_at timestamptz;
 
 create index if not exists reviews_location_id_idx on public.reviews (location_id);
 create index if not exists reviews_status_idx on public.reviews (status);
 
 alter table public.reviews enable row level security;
 
+drop policy if exists "Users can view reviews for their own locations" on public.reviews;
 create policy "Users can view reviews for their own locations"
   on public.reviews for select
   using (
@@ -112,6 +139,7 @@ create policy "Users can view reviews for their own locations"
     )
   );
 
+drop policy if exists "Users can insert reviews for their own locations" on public.reviews;
 create policy "Users can insert reviews for their own locations"
   on public.reviews for insert
   with check (
@@ -122,6 +150,7 @@ create policy "Users can insert reviews for their own locations"
     )
   );
 
+drop policy if exists "Users can update reviews for their own locations" on public.reviews;
 create policy "Users can update reviews for their own locations"
   on public.reviews for update
   using (
@@ -139,6 +168,7 @@ create policy "Users can update reviews for their own locations"
     )
   );
 
+drop policy if exists "Users can delete reviews for their own locations" on public.reviews;
 create policy "Users can delete reviews for their own locations"
   on public.reviews for delete
   using (
@@ -163,6 +193,7 @@ create table if not exists public.ai_settings (
 
 alter table public.ai_settings enable row level security;
 
+drop policy if exists "Users can view ai_settings for their own locations" on public.ai_settings;
 create policy "Users can view ai_settings for their own locations"
   on public.ai_settings for select
   using (
@@ -173,6 +204,7 @@ create policy "Users can view ai_settings for their own locations"
     )
   );
 
+drop policy if exists "Users can insert ai_settings for their own locations" on public.ai_settings;
 create policy "Users can insert ai_settings for their own locations"
   on public.ai_settings for insert
   with check (
@@ -183,6 +215,7 @@ create policy "Users can insert ai_settings for their own locations"
     )
   );
 
+drop policy if exists "Users can update ai_settings for their own locations" on public.ai_settings;
 create policy "Users can update ai_settings for their own locations"
   on public.ai_settings for update
   using (
@@ -200,6 +233,7 @@ create policy "Users can update ai_settings for their own locations"
     )
   );
 
+drop policy if exists "Users can delete ai_settings for their own locations" on public.ai_settings;
 create policy "Users can delete ai_settings for their own locations"
   on public.ai_settings for delete
   using (

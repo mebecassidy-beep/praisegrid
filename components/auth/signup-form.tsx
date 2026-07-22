@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { OauthButtons } from "@/components/auth/oauth-buttons";
 import { createClient } from "@/lib/supabase/client";
 
 export function SignupForm() {
@@ -40,6 +41,13 @@ export function SignupForm() {
       return;
     }
 
+    // Fire-and-forget — don't block the redirect/confirmation UI on email delivery.
+    fetch("/api/auth/welcome", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {});
+
     if (data.session) {
       router.push(offer ? `/dashboard?offer=${encodeURIComponent(offer)}` : "/dashboard");
       router.refresh();
@@ -60,6 +68,8 @@ export function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <OauthButtons />
+
       <div className="space-y-2">
         <Label htmlFor="email" className="text-slate-300">
           Email

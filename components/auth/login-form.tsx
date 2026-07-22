@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { OauthButtons } from "@/components/auth/oauth-buttons";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
@@ -40,6 +41,8 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <OauthButtons />
+
       <div className="space-y-2">
         <Label htmlFor="email" className="text-slate-300">
           Email
@@ -57,9 +60,14 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-slate-300">
-          Password
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password" className="text-slate-300">
+            Password
+          </Label>
+          <Link href="/forgot-password" className="text-xs font-medium text-slate-400 hover:text-white">
+            Forgot your password?
+          </Link>
+        </div>
         <Input
           id="password"
           type="password"

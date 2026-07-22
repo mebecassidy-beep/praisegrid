@@ -1,6 +1,6 @@
 import type { Database } from "@/types/database";
 
-export type { Platform, ReviewStatus, SubscriptionTier } from "@/types/database";
+export type { Platform, ReviewStatus, SubscriptionTier, ReportFrequency, RiskLevel } from "@/types/database";
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Location = Database["public"]["Tables"]["locations"]["Row"];

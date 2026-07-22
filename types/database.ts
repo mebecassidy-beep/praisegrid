@@ -9,6 +9,8 @@ export type Json =
 export type Platform = "google" | "yelp" | "facebook";
 export type ReviewStatus = "pending" | "approved" | "posted";
 export type SubscriptionTier = "free" | "starter" | "pro" | "enterprise";
+export type ReportFrequency = "weekly" | "monthly" | "off";
+export type RiskLevel = "low" | "medium" | "high";
 
 export interface Database {
   public: {
@@ -20,6 +22,10 @@ export interface Database {
           company_name: string | null;
           stripe_customer_id: string | null;
           subscription_tier: SubscriptionTier;
+          onboarding_completed_at: string | null;
+          welcome_email_sent_at: string | null;
+          report_frequency: ReportFrequency;
+          alert_phone_number: string | null;
           created_at: string;
         };
         Insert: {
@@ -28,6 +34,10 @@ export interface Database {
           company_name?: string | null;
           stripe_customer_id?: string | null;
           subscription_tier?: SubscriptionTier;
+          onboarding_completed_at?: string | null;
+          welcome_email_sent_at?: string | null;
+          report_frequency?: ReportFrequency;
+          alert_phone_number?: string | null;
           created_at?: string;
         };
         Update: {
@@ -36,6 +46,10 @@ export interface Database {
           company_name?: string | null;
           stripe_customer_id?: string | null;
           subscription_tier?: SubscriptionTier;
+          onboarding_completed_at?: string | null;
+          welcome_email_sent_at?: string | null;
+          report_frequency?: ReportFrequency;
+          alert_phone_number?: string | null;
           created_at?: string;
         };
       };
@@ -79,6 +93,8 @@ export interface Database {
           review_date: string | null;
           response_text: string | null;
           status: ReviewStatus;
+          risk_level: RiskLevel | null;
+          flagged_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -91,6 +107,8 @@ export interface Database {
           review_date?: string | null;
           response_text?: string | null;
           status?: ReviewStatus;
+          risk_level?: RiskLevel | null;
+          flagged_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -103,6 +121,8 @@ export interface Database {
           review_date?: string | null;
           response_text?: string | null;
           status?: ReviewStatus;
+          risk_level?: RiskLevel | null;
+          flagged_at?: string | null;
           created_at?: string;
         };
       };

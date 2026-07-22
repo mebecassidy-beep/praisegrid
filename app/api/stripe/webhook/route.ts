@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import { stripe } from '@/lib/stripe'
+import { stripe, PRICE_ID_TO_TIER } from '@/lib/stripe'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 
 export async function POST(req: Request) {
@@ -32,11 +32,22 @@ export async function POST(req: Request) {
     )
 
     const customerId = session.customer as string
-    const tier = subscription.items.data[0].price.id === process.env.STRIPE_PRICE_ID ? 'pro' : 'free'
+    const priceId = subscription.items.data[0].price.id
+    const tier = PRICE_ID_TO_TIER[priceId] ?? 'free'
 
     await (supabase
       .from('profiles') as any)
       .update({ subscription_tier: tier } as any)
+      .eq('stripe_customer_id', customerId)
+  }
+
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object as any
+    const customerId = subscription.customer as string
+
+    await (supabase
+      .from('profiles') as any)
+      .update({ subscription_tier: 'free' } as any)
       .eq('stripe_customer_id', customerId)
   }
 

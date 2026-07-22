@@ -3,9 +3,9 @@ import { Star, Twitter, Linkedin, Github } from "lucide-react";
 
 const FOOTER_LINKS = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "Live Demo", href: "/dashboard" },
+    { label: "Features", href: "/features" },
+    { label: "Pricing", href: "/#pricing" },
+    { label: "Live Demo", href: "/features" },
   ],
   Company: [
     { label: "About", href: "/about" },
@@ -14,6 +14,7 @@ const FOOTER_LINKS = {
   ],
   Resources: [
     { label: "Help Center", href: "/help" },
+    { label: "Support", href: "/support" },
     { label: "API Docs", href: "/docs" },
     { label: "Status", href: "/status" },
   ],

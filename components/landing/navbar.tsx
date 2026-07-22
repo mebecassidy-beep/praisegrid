@@ -6,9 +6,10 @@ import { Menu, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { href: "#features", label: "Features" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#metrics", label: "Customers" },
+  { href: "/features", label: "Features" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#metrics", label: "Customers" },
+  { href: "/about", label: "About" },
 ];
 
 export function Navbar() {

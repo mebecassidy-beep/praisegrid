@@ -33,6 +33,10 @@ alter table public.profiles
 alter table public.profiles
   add column if not exists competitor_name text;
 
+alter table public.profiles
+  add column if not exists phone_number text,
+  add column if not exists website text;
+
 alter table public.profiles enable row level security;
 
 drop policy if exists "Users can view their own profile" on public.profiles;

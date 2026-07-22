@@ -3,11 +3,11 @@ import { NotificationPreferencesCard } from "@/components/settings/notification-
 import { ConnectedPlatformsCard } from "@/components/settings/connected-platforms-card";
 import { CompetitorTrackerCard } from "@/components/settings/competitor-tracker-card";
 import { requireUser } from "@/lib/supabase/server";
-import { getProfile } from "@/lib/dashboard/queries";
+import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const profile = await getProfile(user.id);
+  const [profile, data] = await Promise.all([getProfile(user.id), getDashboardData(user.id)]);
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -18,8 +18,12 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <BusinessProfileCard />
-      <ConnectedPlatformsCard />
+      <BusinessProfileCard
+        initialCompanyName={profile.company_name}
+        initialPhoneNumber={profile.phone_number}
+        initialWebsite={profile.website}
+      />
+      <ConnectedPlatformsCard locations={data.locations} />
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
       <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />
     </div>

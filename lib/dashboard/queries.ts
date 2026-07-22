@@ -73,11 +73,20 @@ export async function getProfile(
 ): Promise<
   Pick<
     Profile,
-    "email" | "company_name" | "subscription_tier" | "onboarding_completed_at" | "report_frequency" | "competitor_name"
+    | "email"
+    | "company_name"
+    | "subscription_tier"
+    | "onboarding_completed_at"
+    | "report_frequency"
+    | "competitor_name"
+    | "phone_number"
+    | "website"
   >
 > {
   const { data } = await (supabase.from("profiles") as any)
-    .select("email, company_name, subscription_tier, onboarding_completed_at, report_frequency, competitor_name")
+    .select(
+      "email, company_name, subscription_tier, onboarding_completed_at, report_frequency, competitor_name, phone_number, website"
+    )
     .eq("id", userId)
     .single();
 
@@ -89,6 +98,8 @@ export async function getProfile(
       onboarding_completed_at: null,
       report_frequency: "weekly",
       competitor_name: null,
+      phone_number: null,
+      website: null,
     }
   );
 }

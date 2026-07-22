@@ -29,6 +29,8 @@ export interface Database {
           report_frequency: ReportFrequency;
           alert_phone_number: string | null;
           competitor_name: string | null;
+          phone_number: string | null;
+          website: string | null;
           created_at: string;
         };
         Insert: {
@@ -42,6 +44,8 @@ export interface Database {
           report_frequency?: ReportFrequency;
           alert_phone_number?: string | null;
           competitor_name?: string | null;
+          phone_number?: string | null;
+          website?: string | null;
           created_at?: string;
         };
         Update: {
@@ -55,6 +59,8 @@ export interface Database {
           report_frequency?: ReportFrequency;
           alert_phone_number?: string | null;
           competitor_name?: string | null;
+          phone_number?: string | null;
+          website?: string | null;
           created_at?: string;
         };
       };

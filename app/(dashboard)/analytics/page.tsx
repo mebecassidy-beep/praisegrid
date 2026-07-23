@@ -5,14 +5,18 @@ import {
 } from "@/components/dashboard/analytics-charts";
 import { SentimentBreakdown } from "@/components/dashboard/sentiment-breakdown";
 import { CompetitorLeakFinderCard } from "@/components/dashboard/competitor-leak-finder-card";
+import { RevenueForensicsCard } from "@/components/dashboard/revenue-forensics-card";
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
+import { computeRevenueForensics, computeResponseTimeTrend } from "@/lib/analytics/revenue-forensics";
 
 export default async function AnalyticsPage() {
   const user = await requireUser();
   const [data, profile] = await Promise.all([getDashboardData(user.id), getProfile(user.id)]);
   const hasLocation = data.locations.length > 0;
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
+  const forensics = computeRevenueForensics(data.reviews, profile.estimated_customer_value);
+  const monthlyResponseTimeTrend = computeResponseTimeTrend(data.reviews);
 
   return (
     <div className="space-y-6">
@@ -29,7 +33,7 @@ export default async function AnalyticsPage() {
           hasLocation={hasLocation}
           googlePlacesEnabled={googlePlacesEnabled}
         />
-        <ResponseTimeChart />
+        <ResponseTimeChart monthlyResponseTimeTrend={monthlyResponseTimeTrend} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -42,6 +46,8 @@ export default async function AnalyticsPage() {
         </div>
         <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
       </div>
+
+      <RevenueForensicsCard forensics={forensics} />
 
       <CompetitorLeakFinderCard hasCompetitor={Boolean(profile.competitor_name)} />
     </div>

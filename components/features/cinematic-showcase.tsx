@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Radar, ShieldCheck, ShieldHalf, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
-import { ScreenshotPlaceholder } from "@/components/features/screenshot-placeholder";
+import { FeatureScreenshot } from "@/components/features/screenshot-placeholder";
 import { cn } from "@/lib/utils";
 
 interface Module {
@@ -13,7 +13,8 @@ interface Module {
   outcome: string;
   compliance?: string;
   gradient: string;
-  screenshotLabel: string;
+  screenshotSrc: string;
+  screenshotAlt: string;
 }
 
 const MODULES: Module[] = [
@@ -25,7 +26,8 @@ const MODULES: Module[] = [
       "The moment a 1 or 2 star review lands, it's pinned to the top of your feed with a Crisis Alert badge and a calm, on-brand response already drafted. You just approve it.",
     outcome: "Respond to a crisis in under 60 seconds",
     gradient: "from-red-500 to-orange-400",
-    screenshotLabel: "Review feed with a pinned 1-star review, Crisis Alert badge, and drafted response",
+    screenshotSrc: "/assets/features-high-converting/crisis-shield.png",
+    screenshotAlt: "Review feed with a pinned 1-star review, Crisis Alert badge, and drafted response",
   },
   {
     icon: Sparkles,
@@ -35,7 +37,8 @@ const MODULES: Module[] = [
       "Every response is drafted by Claude Opus, trained on your tone and past replies, so it reads like your team wrote it, not a robot. Review it, tweak it if you want, approve in one click.",
     outcome: "Save 5+ hours a week on responses",
     gradient: "from-violet-500 to-fuchsia-400",
-    screenshotLabel: "AI-drafted response next to the original review, ready to approve",
+    screenshotSrc: "/assets/features-high-converting/ai-brand-voice.png",
+    screenshotAlt: "AI-drafted response next to the original review, ready to approve",
   },
   {
     icon: Radar,
@@ -46,7 +49,8 @@ const MODULES: Module[] = [
     outcome: "Turn a rival's weak spot into your next customer",
     compliance: "Powered by Google's official Places API, no scraping, no ToS risk",
     gradient: "from-emerald-500 to-teal-400",
-    screenshotLabel: "Competitor Radar panel showing a rival's recurring complaint themes",
+    screenshotSrc: "/assets/features-high-converting/competitor-radar.png",
+    screenshotAlt: "Competitor Radar panel showing a rival's recurring complaint themes",
   },
 ];
 
@@ -91,7 +95,7 @@ function FeatureModule({ module, reverse }: { module: Module; reverse: boolean }
         </div>
 
         <div className={cn("order-2", reverse ? "lg:order-1" : "lg:order-2")}>
-          <ScreenshotPlaceholder label={module.screenshotLabel} />
+          <FeatureScreenshot src={module.screenshotSrc} alt={module.screenshotAlt} />
         </div>
       </div>
     </Reveal>

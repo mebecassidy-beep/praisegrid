@@ -25,3 +25,30 @@ export function ScreenshotPlaceholder({
     </div>
   );
 }
+
+/** Same gradient-framed treatment as ScreenshotPlaceholder, but rendering a
+ * real dashboard capture (see scripts/capture-feature-screenshots.mjs) once
+ * one exists for that module, instead of the "insert screenshot" slot. */
+export function FeatureScreenshot({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/30 to-violet-600/30 p-px shadow-2xl shadow-blue-950/40",
+        className
+      )}
+    >
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={alt} className="w-full" />
+      </div>
+    </div>
+  );
+}

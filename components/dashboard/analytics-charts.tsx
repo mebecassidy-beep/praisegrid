@@ -9,6 +9,7 @@ import { AddLocationModal } from "@/components/dashboard/add-location-modal";
 import { PLATFORM_META } from "@/components/reviews/platform-meta";
 import type { Platform } from "@/types/database";
 import { cn } from "@/lib/utils";
+import { formatDuration } from "@/lib/analytics/revenue-forensics";
 
 const CHART_WIDTH = 560;
 const CHART_HEIGHT = 180;
@@ -23,7 +24,7 @@ function pointsFor(values: number[], min: number, max: number) {
   }));
 }
 
-function LineChart({
+export function LineChart({
   values,
   labels,
   formatValue,
@@ -95,7 +96,7 @@ function LineChart({
   );
 }
 
-function ChartEmptyState({
+export function ChartEmptyState({
   icon: Icon,
   title,
   description,
@@ -181,17 +182,35 @@ export function RatingTrendChart({
   );
 }
 
-export function ResponseTimeChart() {
-  // Real response-time tracking needs a `responded_at` timestamp on reviews
-  // (when a draft was actually approved), which the schema doesn't capture
-  // yet — showing fabricated numbers here would be worse than an honest
-  // "coming soon" state.
+export function ResponseTimeChart({
+  monthlyResponseTimeTrend,
+}: {
+  monthlyResponseTimeTrend: { month: string; avgResponseTimeMs: number }[];
+}) {
+  if (monthlyResponseTimeTrend.length < 2) {
+    return (
+      <ChartEmptyState
+        icon={Clock}
+        title="Avg. first response time"
+        description="Not enough response history yet, this chart fills in as you approve responses over time."
+      />
+    );
+  }
+
+  const values = monthlyResponseTimeTrend.map((m) => m.avgResponseTimeMs);
+  const labels = monthlyResponseTimeTrend.map((m) => m.month);
+  const latest = values[values.length - 1];
+
   return (
-    <ChartEmptyState
-      icon={Clock}
-      title="Avg. first response time"
-      description="Response-time tracking is coming soon, we'll start timing this from your first approved response."
-    />
+    <Card>
+      <CardHeader>
+        <CardTitle>Avg. first response time</CardTitle>
+        <CardDescription>{formatDuration(latest)} average this period, across every responded review.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <LineChart values={values} labels={labels} formatValue={(v) => `${formatDuration(v)} avg`} />
+      </CardContent>
+    </Card>
   );
 }
 

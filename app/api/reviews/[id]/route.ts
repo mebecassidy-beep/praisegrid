@@ -28,7 +28,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     const { data: existing } = await (supabase.from("reviews") as any)
-      .select("id, location_id, locations!inner(user_id)")
+      .select("id, location_id, status, responded_at, locations!inner(user_id)")
       .eq("id", params.id)
       .single();
 
@@ -39,6 +39,13 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const update: Record<string, string> = {};
     if (responseText !== undefined) update.response_text = responseText;
     if (status !== undefined) update.status = status;
+
+    // Stamp responded_at the first time a response actually goes live -
+    // never overwritten on later edits, so it stays a true "time to first
+    // response" mark for the Reputation Revenue Forensics metrics.
+    if (status === "posted" && existing.status !== "posted" && !existing.responded_at) {
+      update.responded_at = new Date().toISOString();
+    }
 
     const { data: review, error } = await (supabase.from("reviews") as any)
       .update(update)

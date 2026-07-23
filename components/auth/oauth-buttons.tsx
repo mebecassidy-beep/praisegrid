@@ -34,6 +34,25 @@ function FacebookIcon() {
   );
 }
 
+function AppleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+      <path d="M16.365 1.43c0 1.14-.468 2.213-1.238 3.02-.836.87-2.192 1.55-3.26 1.46-.13-1.09.42-2.24 1.19-3.02.83-.86 2.28-1.53 3.31-1.46zM20.86 17.24c-.5 1.15-.73 1.66-1.36 2.68-.88 1.42-2.12 3.2-3.66 3.21-1.37.02-1.72-.9-3.58-.89-1.86.01-2.25.9-3.62.88-1.54-.02-2.71-1.62-3.59-3.04-2.46-3.98-2.72-8.65-1.2-11.13.14-.23 1.86-2.87 4.29-2.86 1.34.01 1.98.9 3.28.9 1.3 0 2.07-.9 3.6-.9 1.14 0 3.06.62 4.19 2.5-3.69 2.02-3.1 7.28 1.65 8.65z" />
+    </svg>
+  );
+}
+
+function GithubIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.5 0 12.3c0 5.44 3.44 10.05 8.21 11.68.6.12.82-.27.82-.59 0-.29-.01-1.06-.02-2.08-3.34.75-4.04-1.64-4.04-1.64-.55-1.43-1.34-1.82-1.34-1.82-1.09-.77.08-.75.08-.75 1.21.09 1.84 1.28 1.84 1.28 1.07 1.87 2.81 1.33 3.49 1.02.11-.79.42-1.33.76-1.64-2.67-.31-5.47-1.37-5.47-6.09 0-1.35.47-2.45 1.24-3.31-.12-.31-.54-1.57.12-3.27 0 0 1.01-.33 3.3 1.27a11.2 11.2 0 0 1 6 0c2.29-1.6 3.3-1.27 3.3-1.27.66 1.7.24 2.96.12 3.27.77.86 1.24 1.96 1.24 3.31 0 4.73-2.81 5.77-5.49 6.08.43.38.81 1.13.81 2.28 0 1.65-.01 2.98-.01 3.38 0 .32.21.72.82.59C20.56 22.34 24 17.74 24 12.3 24 5.5 18.63 0 12 0z" />
+    </svg>
+  );
+}
+
+const READY_TO_CONNECT_TITLE =
+  "Ready to connect — needs Apple/GitHub OAuth credentials configured in the Supabase dashboard first.";
+
 export function OauthButtons() {
   const [loadingProvider, setLoadingProvider] = useState<"google" | "facebook" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +95,39 @@ export function OauthButtons() {
         >
           <FacebookIcon />
           Facebook
+        </button>
+
+        {/* Apple/GitHub: code path is wired and correct (same signInWithOAuth
+            call as Google/Facebook above), but Supabase's Apple and GitHub
+            providers still need real OAuth app credentials registered in the
+            Supabase dashboard (Authentication -> Providers) before these can
+            go live — that step needs an Apple Developer / GitHub account and
+            can't be done from here. Left disabled with a "Soon" tag rather
+            than clickable-but-erroring, matching this app's pattern of never
+            presenting an unfinished feature as if it were live. */}
+        <button
+          type="button"
+          disabled
+          title={READY_TO_CONNECT_TITLE}
+          className="relative flex h-9 cursor-not-allowed items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 text-sm font-medium text-white/40"
+        >
+          <AppleIcon />
+          Apple
+          <span className="absolute -right-1.5 -top-1.5 rounded-full bg-slate-700 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-slate-300">
+            Soon
+          </span>
+        </button>
+        <button
+          type="button"
+          disabled
+          title={READY_TO_CONNECT_TITLE}
+          className="relative flex h-9 cursor-not-allowed items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 text-sm font-medium text-white/40"
+        >
+          <GithubIcon />
+          GitHub
+          <span className="absolute -right-1.5 -top-1.5 rounded-full bg-slate-700 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-slate-300">
+            Soon
+          </span>
         </button>
       </div>
 

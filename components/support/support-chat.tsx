@@ -1,133 +1,130 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { MessageCircle, Send, User, X } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { usePathname } from "next/navigation";
+import { MessageCircle, Send, Sparkles, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { ChatThread } from "@/components/support/chat-thread";
+import { MicButton } from "@/components/support/mic-button";
+import { useSupportChat } from "@/components/support/use-support-chat";
 
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-const GREETING: ChatMessage = {
-  role: "assistant",
-  content: "Hi! I'm the Reputicious support assistant. Ask me anything about plans, features, or your account.",
-};
+// Pages where a dwelling, non-interacting visitor is likely weighing price,
+// worth proactively offering help before they bounce.
+const NUDGE_PATHS = ["/", "/features"];
+const NUDGE_DELAY_MS = 20_000;
+const NUDGE_STORAGE_KEY = "reputicious_support_nudge_shown";
 
 export function SupportChat() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [escalated, setEscalated] = useState(false);
-  const [email, setEmail] = useState("");
+  const [nudge, setNudge] = useState(false);
+  const chat = useSupportChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [chat.messages, chat.loading]);
+
+  useEffect(() => {
+    if (open || pathname === "/support") return;
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(NUDGE_STORAGE_KEY)) return;
+    if (!NUDGE_PATHS.includes(pathname)) return;
+
+    const timer = setTimeout(() => {
+      setNudge(true);
+      sessionStorage.setItem(NUDGE_STORAGE_KEY, "1");
+    }, NUDGE_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [pathname, open]);
+
+  function openWithPricingHelp() {
+    setNudge(false);
+    setOpen(true);
+    chat.addAssistantMessage(
+      "Looks like you might be weighing plans. Happy to help you figure out which one actually fits your business, just tell me how many locations you're managing and which platforms you get reviews on."
+    );
+  }
 
   async function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const text = input.trim();
-    if (!text || loading) return;
-
-    const nextMessages = [...messages, { role: "user" as const, content: text }];
-    setMessages(nextMessages);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/support/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Something went wrong.");
-
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Sorry, something went wrong. Try the \"Talk to a human\" button below." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+    await chat.sendMessage(chat.input);
   }
 
-  async function handleEscalate() {
-    setEscalated(true);
-    try {
-      await fetch("/api/support/escalate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: messages, email }),
-      });
-    } catch {
-      // Escalation confirmation is optimistic — the user already sees the
-      // "we'll be in touch" message regardless of network hiccups here.
-    }
-  }
+  // The support page has its own always-open embedded panel, showing the
+  // floating bubble there too would just be a duplicate widget.
+  if (pathname === "/support") return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+      {nudge && !open && (
+        <div className="w-[calc(100vw-2rem)] max-w-64 rounded-2xl border border-white/10 bg-slate-900 p-4 shadow-2xl">
+          <div className="flex items-start gap-2">
+            <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
+            <p className="text-sm text-slate-200">
+              Questions about pricing? I can help you find the right plan in under a minute.
+            </p>
+          </div>
+          <div className="mt-3 flex justify-end gap-2">
+            <button
+              onClick={() => setNudge(false)}
+              className="text-xs font-medium text-slate-400 hover:text-white"
+            >
+              Dismiss
+            </button>
+            <button
+              onClick={openWithPricingHelp}
+              className="rounded-md bg-gradient-to-r from-blue-500 to-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90"
+            >
+              Let&apos;s talk
+            </button>
+          </div>
+        </div>
+      )}
+
       {open && (
-        <Card className="mb-3 flex h-[480px] w-80 flex-col overflow-hidden shadow-2xl sm:w-96">
-          <div className="flex items-center justify-between border-b bg-muted/30 px-4 py-3">
-            <p className="text-sm font-semibold">Support chat</p>
-            <button onClick={() => setOpen(false)} aria-label="Close chat" className="text-muted-foreground hover:text-foreground">
+        <div className="flex h-[min(520px,calc(100vh-6rem))] w-[calc(100vw-2rem)] max-w-80 flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl sm:max-w-96">
+          <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-blue-500/10 to-violet-600/10 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold text-white">Reputicious Support</p>
+              <p className="text-xs text-slate-400">Usually replies instantly</p>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              aria-label="Close chat"
+              className="text-slate-400 hover:text-white"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "max-w-[85%] rounded-lg px-3 py-2 text-sm leading-relaxed",
-                  m.role === "user"
-                    ? "ml-auto bg-gradient-to-r from-blue-500 to-violet-600 text-white"
-                    : "bg-muted text-foreground"
-                )}
-              >
-                {m.content}
-              </div>
-            ))}
-            {loading && (
-              <div className="max-w-[85%] rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
-                Thinking…
-              </div>
-            )}
+            <ChatThread messages={chat.messages} loading={chat.loading} />
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="border-t p-3">
-            {escalated ? (
-              <p className="text-center text-xs text-muted-foreground">
-                Thanks — a real human will follow up{email ? ` at ${email}` : ""} shortly.
+          <div className="border-t border-white/10 p-3">
+            {chat.escalated ? (
+              <p className="text-center text-xs text-slate-400">
+                Thanks, a real human will follow up{chat.email ? ` at ${chat.email}` : ""} shortly.
               </p>
             ) : (
               <div className="mb-2 flex items-center gap-2">
                 <Input
                   type="email"
                   placeholder="Your email (optional)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-8 text-xs"
+                  value={chat.email}
+                  onChange={(e) => chat.setEmail(e.target.value)}
+                  className="h-8 border-white/10 bg-white/5 text-xs text-white placeholder:text-slate-500"
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={handleEscalate}
-                  className="h-8 shrink-0 gap-1.5 whitespace-nowrap text-xs"
+                  onClick={chat.escalate}
+                  className="h-8 shrink-0 gap-1.5 whitespace-nowrap border-white/10 bg-transparent text-xs text-slate-300 hover:bg-white/10 hover:text-white"
                 >
                   <User className="h-3.5 w-3.5" />
                   Talk to a human
@@ -137,24 +134,33 @@ export function SupportChat() {
 
             <form onSubmit={handleSend} className="flex items-center gap-2">
               <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={chat.input}
+                onChange={(e) => chat.setInput(e.target.value)}
                 placeholder="Ask a question…"
-                className="h-9"
+                className="h-9 border-white/10 bg-white/5 text-white placeholder:text-slate-500"
               />
-              <Button type="submit" size="icon" disabled={loading || !input.trim()} className="h-9 w-9 shrink-0">
+              <MicButton onResult={(t) => chat.setInput((prev) => (prev ? `${prev} ${t}` : t))} />
+              <Button
+                type="submit"
+                size="icon"
+                disabled={chat.loading || !chat.input.trim()}
+                className="h-9 w-9 shrink-0 bg-gradient-to-r from-blue-500 to-violet-600 hover:opacity-90"
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </form>
           </div>
-        </Card>
+        </div>
       )}
 
       <Button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setNudge(false);
+          setOpen((v) => !v);
+        }}
         size="icon"
         aria-label={open ? "Close support chat" : "Open support chat"}
-        className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 shadow-xl hover:opacity-90"
+        className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 shadow-xl shadow-blue-500/25 hover:opacity-90"
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </Button>

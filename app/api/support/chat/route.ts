@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { generateSupportReply, type SupportMessage } from "@/lib/anthropic/generate-support-reply";
+import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { detectCancellationIntent, detectPricingHesitation } from "@/lib/support/detect-signals";
 
-const MAX_MESSAGES = 10;
+const MAX_MESSAGES = 12;
 const MAX_MESSAGE_LENGTH = 800;
 const RATE_LIMIT = 15;
 const RATE_WINDOW_MS = 60_000;
@@ -42,9 +44,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No valid messages provided." }, { status: 400 });
     }
 
-    const reply = await generateSupportReply(history);
+    const supabase = createRouteHandlerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    return NextResponse.json({ reply });
+    const lastUserMessage = [...history].reverse().find((m) => m.role === "user")?.content ?? "";
+
+    const { reply, bugReportFiled } = await generateSupportReply(history, {
+      userId: user?.id ?? null,
+      pricingHesitation: detectPricingHesitation(lastUserMessage),
+      cancellationIntent: detectCancellationIntent(lastUserMessage),
+    });
+
+    return NextResponse.json({ reply, bugReportFiled });
   } catch (error: any) {
     console.error("Error generating support reply:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });

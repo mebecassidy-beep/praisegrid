@@ -1,0 +1,87 @@
+"use client";
+
+import { useState } from "react";
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const DEFAULT_GREETING: ChatMessage = {
+  role: "assistant",
+  content:
+    "Hey, I'm Sam from Reputicious support. Ask me anything about your reviews, pricing, or your account, and I'll help you sort it out.",
+};
+
+export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) {
+  const [messages, setMessages] = useState<ChatMessage[]>([initialGreeting]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [escalated, setEscalated] = useState(false);
+  const [email, setEmail] = useState("");
+
+  async function sendMessage(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || loading) return;
+
+    const nextMessages = [...messages, { role: "user" as const, content: trimmed }];
+    setMessages(nextMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/support/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Sorry, something went wrong on my end. Try again in a moment, or use \"Talk to a human\" below.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function addAssistantMessage(content: string) {
+    setMessages((prev) => [...prev, { role: "assistant", content }]);
+  }
+
+  async function escalate() {
+    setEscalated(true);
+    try {
+      await fetch("/api/support/escalate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript: messages, email }),
+      });
+    } catch {
+      // Escalation confirmation is optimistic, the user already sees the
+      // "we'll be in touch" message regardless of network hiccups here.
+    }
+  }
+
+  return {
+    messages,
+    input,
+    setInput,
+    loading,
+    sendMessage,
+    addAssistantMessage,
+    escalated,
+    escalate,
+    email,
+    setEmail,
+  };
+}

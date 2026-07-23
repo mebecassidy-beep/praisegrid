@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Briefcase } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Careers | Praisegrid",
   description: "No open roles right now, but check back as we grow.",
-};
+  path: "/careers",
+});
 
 export default function CareersPage() {
   return (

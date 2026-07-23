@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Activity } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "System Status | Praisegrid",
   description: "Real-time status monitoring for Praisegrid is coming soon.",
-};
+  path: "/status",
+});
 
 export default function StatusPage() {
   return (

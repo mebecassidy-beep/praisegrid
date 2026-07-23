@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
 import { SupportChatPanel } from "@/components/support/support-chat-panel";
 import { ContactCards } from "@/components/support/contact-cards";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Support Center | Praisegrid",
   description:
     "Chat with our AI support assistant for instant answers, or reach the team directly at support@praisegrid.com.",
-};
+  path: "/support",
+});
 
 export default function SupportPage() {
   return (

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { LoginForm } from "@/components/auth/login-form";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Log in | Praisegrid",
   description: "Log in to your Praisegrid account.",
-};
+  path: "/login",
+});
 
 export default function LoginPage() {
   return (

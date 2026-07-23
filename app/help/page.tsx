@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
 import { FaqAccordion } from "@/components/help/faq-accordion";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Help Center | Praisegrid",
   description: "Answers to common questions about Praisegrid.",
-};
+  path: "/help",
+});
 
 export default function HelpPage() {
   return (

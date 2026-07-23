@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LegalH2, LegalP, LegalList, LegalPageLayout } from "@/components/legal/legal-page-layout";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy | Praisegrid",
   description: "How Praisegrid collects, uses, and protects your data.",
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

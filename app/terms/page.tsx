@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LegalH2, LegalP, LegalList, LegalPageLayout } from "@/components/legal/legal-page-layout";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Terms of Service | Praisegrid",
   description: "The terms that govern your use of Praisegrid.",
-};
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

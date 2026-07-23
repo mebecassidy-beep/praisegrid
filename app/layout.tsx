@@ -5,10 +5,27 @@ import { SupportChat } from "@/components/support/support-chat";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const SITE_URL = "https://praisegrid.com";
+const SITE_DESCRIPTION =
+  "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Praisegrid | Local Business Review Management",
-  description:
-    "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: "Praisegrid | Local Business Review Management",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: "Praisegrid",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Praisegrid | Local Business Review Management",
+    description: SITE_DESCRIPTION,
+  },
 };
 
 const organizationJsonLd = {
@@ -17,9 +34,8 @@ const organizationJsonLd = {
   name: "Praisegrid",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
-  description:
-    "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
-  url: "https://www.praisegrid.com",
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
   offers: {
     "@type": "Offer",
     price: "49",

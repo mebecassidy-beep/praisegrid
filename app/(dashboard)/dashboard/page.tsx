@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { StatTiles } from "@/components/dashboard/stat-tiles";
 import { HealthMeterCard } from "@/components/dashboard/health-meter-card";
 import { GeoReadinessCard } from "@/components/dashboard/geo-readiness-card";
@@ -57,38 +58,40 @@ export default async function DashboardPage() {
         pendingCount={data.pendingCount}
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <HealthMeterCard
-          healthScore={data.healthScore}
-          pendingCount={data.pendingCount}
-          googlePlacesEnabled={googlePlacesEnabled}
-        />
-        <GeoReadinessCard />
-      </div>
+      <RevealGroup className="space-y-6" stagger={0.1}>
+        <RevealItem className="grid gap-6 lg:grid-cols-2">
+          <HealthMeterCard
+            healthScore={data.healthScore}
+            pendingCount={data.pendingCount}
+            googlePlacesEnabled={googlePlacesEnabled}
+          />
+          <GeoReadinessCard />
+        </RevealItem>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <ReviewStream reviews={data.reviews} hasLocation={hasLocation} googlePlacesEnabled={googlePlacesEnabled} limit={4} />
-        </div>
-        <div>
-          <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
-        </div>
-      </div>
+        <RevealItem className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <ReviewStream reviews={data.reviews} hasLocation={hasLocation} googlePlacesEnabled={googlePlacesEnabled} limit={4} />
+          </div>
+          <div>
+            <SentimentBreakdown ratingDistribution={data.ratingDistribution} />
+          </div>
+        </RevealItem>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ReviewBlastCard locations={data.locations} />
-        <CompetitorBenchmarkCard
-          yourName={profile.company_name || "Your business"}
-          yourRating={data.avgRating}
-          yourReviewCount={data.totalReviews}
-          competitor={competitor}
-        />
-      </div>
+        <RevealItem className="grid gap-6 lg:grid-cols-2">
+          <ReviewBlastCard locations={data.locations} />
+          <CompetitorBenchmarkCard
+            yourName={profile.company_name || "Your business"}
+            yourRating={data.avgRating}
+            yourReviewCount={data.totalReviews}
+            competitor={competitor}
+          />
+        </RevealItem>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <FeedbackShieldCard recentResponses={feedbackResponses} totalResponseCount={feedbackResponseCount} />
-        <WidgetPreviewCard />
-      </div>
+        <RevealItem className="grid gap-6 lg:grid-cols-2">
+          <FeedbackShieldCard recentResponses={feedbackResponses} totalResponseCount={feedbackResponseCount} />
+          <WidgetPreviewCard />
+        </RevealItem>
+      </RevealGroup>
     </div>
   );
 }

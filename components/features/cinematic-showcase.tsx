@@ -108,7 +108,7 @@ function FeatureModule({ module, reverse }: { module: Module; reverse: boolean }
 
 export function CinematicShowcase() {
   return (
-    <section className="relative bg-slate-950 py-24 sm:py-32">
+    <section className="relative bg-surface-dark py-24 sm:py-32">
       <div className="container">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">

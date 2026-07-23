@@ -56,7 +56,7 @@ export function ObjectionFaq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="border-t border-white/10 bg-slate-950 py-24">
+    <section className="border-t bg-background py-24">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -64,15 +64,15 @@ export function ObjectionFaq() {
       />
       <div className="container">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Questions local business owners actually ask
           </h2>
-          <p className="mt-4 text-lg text-slate-400">
+          <p className="mt-4 text-lg text-muted-foreground">
             Straight answers before you start your free trial.
           </p>
         </Reveal>
 
-        <Reveal delay={0.1} className="mx-auto mt-12 max-w-2xl divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/[0.03]">
+        <Reveal delay={0.1} className="mx-auto mt-12 max-w-2xl divide-y rounded-2xl border bg-card">
           {FAQS.map((faq, i) => {
             const open = openIndex === i;
             return (
@@ -82,16 +82,16 @@ export function ObjectionFaq() {
                   className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
                   aria-expanded={open}
                 >
-                  <span className="font-medium text-white">{faq.question}</span>
+                  <span className="font-medium">{faq.question}</span>
                   <ChevronDown
                     className={cn(
-                      "h-4 w-4 shrink-0 text-slate-500 transition-transform",
+                      "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
                       open && "rotate-180"
                     )}
                   />
                 </button>
                 {open && (
-                  <div className="px-5 pb-4 text-sm leading-relaxed text-slate-400">{faq.answer}</div>
+                  <div className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.answer}</div>
                 )}
               </div>
             );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
 import { SocialProof } from "@/components/landing/social-proof";
@@ -9,11 +10,12 @@ import { PillarsSection } from "@/components/about/pillars-section";
 import { ValuesSection } from "@/components/about/values-section";
 import { AboutCta } from "@/components/about/about-cta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About | Praisegrid",
   description:
     "Praisegrid exists to make review management fast, authentic, and manageable for local businesses.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

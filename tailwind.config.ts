@@ -49,11 +49,22 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "surface-dark": {
+          DEFAULT: "hsl(var(--surface-dark))",
+          foreground: "hsl(var(--surface-dark-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        // The one brand gradient (matches icon.tsx/apple-icon.tsx exactly)
+        // reused across CTAs instead of every component retyping
+        // "bg-gradient-to-r from-blue-500 to-violet-600" by hand.
+        "brand-gradient": "linear-gradient(to right, #3b82f6, #7c3aed)",
+        "brand-gradient-br": "linear-gradient(to bottom right, #3b82f6, #7c3aed)",
       },
     },
   },

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Code2 } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "API Docs | Praisegrid",
   description: "Public API access for Praisegrid is coming soon.",
-};
+  path: "/docs",
+});
 
 export default function DocsPage() {
   return (

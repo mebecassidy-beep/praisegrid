@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Newspaper } from "lucide-react";
+import { pageMetadata } from "@/lib/seo";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog | Praisegrid",
   description: "Insights on review management and local business growth, coming soon.",
-};
+  path: "/blog",
+});
 
 export default function BlogPage() {
   return (

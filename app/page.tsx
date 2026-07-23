@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
 import { ConversionVideoPlaceholder } from "@/components/landing/conversion-video-placeholder";
@@ -12,6 +14,13 @@ import { ObjectionFaq } from "@/components/landing/objection-faq";
 import { Footer } from "@/components/landing/footer";
 import { FomoTicker } from "@/components/landing/fomo-ticker";
 import { ExitIntentModal } from "@/components/landing/exit-intent-modal";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Praisegrid | Local Business Review Management",
+  description:
+    "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
+  path: "/",
+});
 
 export default function HomePage() {
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);

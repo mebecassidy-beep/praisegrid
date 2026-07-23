@@ -45,13 +45,13 @@ export function InteractiveCards() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <section className="relative bg-slate-950 py-24">
+    <section className="relative bg-background py-24">
       <div className="container">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             And the details that make it feel effortless
           </h2>
-          <p className="mt-4 text-lg text-slate-400">
+          <p className="mt-4 text-lg text-muted-foreground">
             Small touches that add up to a dashboard your whole team actually wants to use.
           </p>
         </Reveal>
@@ -63,8 +63,8 @@ export function InteractiveCards() {
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
                 className={cn(
-                  "group h-full border-white/10 bg-white/[0.03] transition-all duration-300",
-                  hovered === i ? "-translate-y-1 border-white/20 shadow-xl shadow-black/20" : ""
+                  "group h-full transition-all duration-300",
+                  hovered === i ? "-translate-y-1 shadow-xl" : ""
                 )}
               >
                 <CardHeader>
@@ -75,8 +75,8 @@ export function InteractiveCards() {
                   >
                     <card.icon className="h-5 w-5 text-white" />
                   </div>
-                  <CardTitle className="pt-4 text-lg text-white">{card.title}</CardTitle>
-                  <CardDescription className="leading-relaxed text-slate-400">
+                  <CardTitle className="pt-4 text-lg">{card.title}</CardTitle>
+                  <CardDescription className="leading-relaxed">
                     {card.description}
                   </CardDescription>
                 </CardHeader>
@@ -89,17 +89,17 @@ export function InteractiveCards() {
           <Button
             asChild
             size="lg"
-            className="gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-400 hover:to-violet-500"
+            className="gap-2 bg-brand-gradient text-white shadow-lg shadow-blue-500/25 hover:opacity-90"
           >
             <Link href="/signup">
               Start Free Trial
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <p className="text-xs font-semibold text-slate-500">
+          <p className="text-xs font-semibold text-muted-foreground">
             No credit card required • Cancel anytime with 1-click
           </p>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-muted-foreground/70">
             Setup takes under 3 minutes, connect your Google Business Profile in 2 clicks
           </p>
         </Reveal>

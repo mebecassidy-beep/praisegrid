@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, Loader2, Pencil, RefreshCw, Send, Sparkles, Star } from "lucide-react";
+import { AlertTriangle, Bell, Check, Loader2, Pencil, RefreshCw, Send, Sparkles, Star } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,9 @@ export function ReviewFeedCard({
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notifying, setNotifying] = useState(false);
+  const [notified, setNotified] = useState(false);
+  const [notifyError, setNotifyError] = useState<string | null>(null);
 
   // This card can be updated from elsewhere (e.g. the Revenue Protection
   // banner approves the same review, then the page refreshes) — resync the
@@ -96,6 +99,22 @@ export function ReviewFeedCard({
       setError(err.message || "Couldn't save this response.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleNotifyCrisisManager() {
+    if (notifying) return;
+    setNotifying(true);
+    setNotifyError(null);
+    try {
+      const res = await fetch(`/api/reviews/${review.id}/notify-crisis`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Couldn't send that notification.");
+      setNotified(true);
+    } catch (err: any) {
+      setNotifyError(err.message || "Couldn't send that notification.");
+    } finally {
+      setNotifying(false);
     }
   }
 
@@ -242,6 +261,28 @@ export function ReviewFeedCard({
               </>
             )}
           </div>
+
+          {isCrisis && (
+            <div className="mt-3 flex items-center gap-2 border-t border-red-500/15 pt-3">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleNotifyCrisisManager}
+                disabled={notifying || notified}
+                className="gap-1.5 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30"
+              >
+                {notifying ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : notified ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <Bell className="h-3.5 w-3.5" />
+                )}
+                {notified ? "Crisis manager notified" : "Notify Crisis Manager"}
+              </Button>
+              {notifyError && <p className="text-xs text-red-600">{notifyError}</p>}
+            </div>
+          )}
         </div>
 
         <DisputeDrafter review={review} onReviewUpdate={onReviewUpdate} />

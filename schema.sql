@@ -433,3 +433,11 @@ alter table public.reviews
 -- real, but the dollar figure is always presented as an estimate.
 alter table public.profiles
   add column if not exists estimated_customer_value numeric(10,2) not null default 150;
+
+-- Optional Slack incoming-webhook URL for the "Notify Crisis Manager" button
+-- on high-risk reviews (see lib/slack/send-crisis-notification.ts). Separate
+-- from alert_phone_number's automatic SMS alert (lib/sms/send-crisis-alert.ts,
+-- pro-tier only, fires on ingestion) - this is an on-demand, team-visible
+-- channel notification the owner triggers manually per review.
+alter table public.profiles
+  add column if not exists crisis_slack_webhook_url text;

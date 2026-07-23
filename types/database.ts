@@ -32,6 +32,7 @@ export interface Database {
           phone_number: string | null;
           website: string | null;
           estimated_customer_value: number;
+          crisis_slack_webhook_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -48,6 +49,7 @@ export interface Database {
           phone_number?: string | null;
           website?: string | null;
           estimated_customer_value?: number;
+          crisis_slack_webhook_url?: string | null;
           created_at?: string;
         };
         Update: {
@@ -64,6 +66,7 @@ export interface Database {
           phone_number?: string | null;
           website?: string | null;
           estimated_customer_value?: number;
+          crisis_slack_webhook_url?: string | null;
           created_at?: string;
         };
       };

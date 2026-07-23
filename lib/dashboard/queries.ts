@@ -82,6 +82,7 @@ export async function getProfile(
     | "phone_number"
     | "website"
     | "estimated_customer_value"
+    | "crisis_slack_webhook_url"
   >
 > {
   // select("*") rather than naming phone_number/website explicitly: an
@@ -97,6 +98,7 @@ export async function getProfile(
         phone_number: data.phone_number ?? null,
         website: data.website ?? null,
         estimated_customer_value: data.estimated_customer_value ?? 150,
+        crisis_slack_webhook_url: data.crisis_slack_webhook_url ?? null,
       }
     : {
         email: "",
@@ -108,6 +110,7 @@ export async function getProfile(
         phone_number: null,
         website: null,
         estimated_customer_value: 150,
+        crisis_slack_webhook_url: null,
       };
 }
 

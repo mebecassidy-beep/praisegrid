@@ -3,6 +3,7 @@ import { NotificationPreferencesCard } from "@/components/settings/notification-
 import { ConnectedPlatformsCard } from "@/components/settings/connected-platforms-card";
 import { CompetitorTrackerCard } from "@/components/settings/competitor-tracker-card";
 import { RevenueEstimateCard } from "@/components/settings/revenue-estimate-card";
+import { CrisisNotificationsCard } from "@/components/settings/crisis-notifications-card";
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 
@@ -28,6 +29,7 @@ export default async function SettingsPage() {
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
       <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />
       <RevenueEstimateCard initialValue={profile.estimated_customer_value} />
+      <CrisisNotificationsCard initialWebhookUrl={profile.crisis_slack_webhook_url} />
     </div>
   );
 }

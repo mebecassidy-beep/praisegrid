@@ -9,8 +9,7 @@ export interface ChatMessage {
 
 const DEFAULT_GREETING: ChatMessage = {
   role: "assistant",
-  content:
-    "Hey, I'm Sam from Reputicious support. Ask me anything about your reviews, pricing, or your account, and I'll help you sort it out.",
+  content: "Hey, I'm Sam from Reputicious. What can I help with?",
 };
 
 export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) {
@@ -18,7 +17,6 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [escalated, setEscalated] = useState(false);
-  const [email, setEmail] = useState("");
 
   async function sendMessage(text: string) {
     const trimmed = text.trim();
@@ -64,7 +62,7 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
       await fetch("/api/support/escalate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: messages, email }),
+        body: JSON.stringify({ transcript: messages }),
       });
     } catch {
       // Escalation confirmation is optimistic, the user already sees the
@@ -81,7 +79,5 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
     addAssistantMessage,
     escalated,
     escalate,
-    email,
-    setEmail,
   };
 }

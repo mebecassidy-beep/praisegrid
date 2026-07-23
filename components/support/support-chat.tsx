@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChatThread } from "@/components/support/chat-thread";
 import { MicButton } from "@/components/support/mic-button";
+import { AgentAvatar } from "@/components/support/agent-avatar";
 import { useSupportChat } from "@/components/support/use-support-chat";
 
 // Pages where a dwelling, non-interacting visitor is likely weighing price,
@@ -44,7 +45,7 @@ export function SupportChat() {
     setNudge(false);
     setOpen(true);
     chat.addAssistantMessage(
-      "Looks like you might be weighing plans. Happy to help you figure out which one actually fits your business, just tell me how many locations you're managing and which platforms you get reviews on."
+      "Hey! Looks like you might be comparing plans. How many locations are you running?"
     );
   }
 
@@ -87,9 +88,12 @@ export function SupportChat() {
       {open && (
         <div className="flex h-[min(520px,calc(100vh-6rem))] w-[calc(100vw-2rem)] max-w-80 flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl sm:max-w-96">
           <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-blue-500/10 to-violet-600/10 px-4 py-3">
-            <div>
-              <p className="text-sm font-semibold text-white">Reputicious Support</p>
-              <p className="text-xs text-slate-400">Usually replies instantly</p>
+            <div className="flex items-center gap-3">
+              <AgentAvatar />
+              <div>
+                <p className="text-sm font-semibold text-white">Sam</p>
+                <p className="text-xs text-slate-400">Active now</p>
+              </div>
             </div>
             <button
               onClick={() => setOpen(false)}
@@ -106,31 +110,20 @@ export function SupportChat() {
           </div>
 
           <div className="border-t border-white/10 p-3">
-            {chat.escalated ? (
-              <p className="text-center text-xs text-slate-400">
-                Thanks, a real human will follow up{chat.email ? ` at ${chat.email}` : ""} shortly.
-              </p>
-            ) : (
-              <div className="mb-2 flex items-center gap-2">
-                <Input
-                  type="email"
-                  placeholder="Your email (optional)"
-                  value={chat.email}
-                  onChange={(e) => chat.setEmail(e.target.value)}
-                  className="h-8 border-white/10 bg-white/5 text-xs text-white placeholder:text-slate-500"
-                />
-                <Button
+            <div className="mb-2 flex justify-end">
+              {chat.escalated ? (
+                <p className="text-xs text-slate-400">A real human will follow up shortly.</p>
+              ) : (
+                <button
                   type="button"
-                  variant="outline"
-                  size="sm"
                   onClick={chat.escalate}
-                  className="h-8 shrink-0 gap-1.5 whitespace-nowrap border-white/10 bg-transparent text-xs text-slate-300 hover:bg-white/10 hover:text-white"
+                  className="flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors hover:text-white"
                 >
-                  <User className="h-3.5 w-3.5" />
+                  <User className="h-3 w-3" />
                   Talk to a human
-                </Button>
-              </div>
-            )}
+                </button>
+              )}
+            </div>
 
             <form onSubmit={handleSend} className="flex items-center gap-2">
               <Input

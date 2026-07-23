@@ -4,9 +4,7 @@ import { Footer } from "@/components/landing/footer";
 import { SocialProof } from "@/components/landing/social-proof";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { MissionHero } from "@/components/about/mission-hero";
-import { ProblemSection } from "@/components/about/problem-section";
-import { ManifestoSection } from "@/components/about/manifesto-section";
-import { FounderStory } from "@/components/about/founder-story";
+import { AboutScrollytelling } from "@/components/about/about-scrollytelling";
 import { PillarsSection } from "@/components/about/pillars-section";
 import { ValuesSection } from "@/components/about/values-section";
 import { AboutCta } from "@/components/about/about-cta";
@@ -23,9 +21,7 @@ export default function AboutPage() {
       <ScrollProgress />
       <Navbar />
       <MissionHero />
-      <ProblemSection />
-      <ManifestoSection />
-      <FounderStory />
+      <AboutScrollytelling />
       <SocialProof />
       <PillarsSection />
       <ValuesSection />

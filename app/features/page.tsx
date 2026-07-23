@@ -9,7 +9,6 @@ import { MapRankSimulator } from "@/components/landing/map-rank-simulator";
 import { CinematicShowcase } from "@/components/features/cinematic-showcase";
 import { ComplianceShieldBanner } from "@/components/features/compliance-shield-banner";
 import { InteractiveCards } from "@/components/features/interactive-cards";
-import { StickyCtaBar } from "@/components/features/sticky-cta-bar";
 import { ObjectionFaq } from "@/components/landing/objection-faq";
 
 export const metadata: Metadata = {
@@ -55,7 +54,6 @@ export default function FeaturesPage() {
       <InteractiveCards />
       <ObjectionFaq />
       <Footer />
-      <StickyCtaBar />
     </main>
   );
 }

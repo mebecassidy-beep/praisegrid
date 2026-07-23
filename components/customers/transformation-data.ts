@@ -9,6 +9,16 @@ export interface TransformationExample {
   searchTerm: string;
   before: { rating: number; responseTime: string; points: string[] };
   after: { rating: number; responseTime: string; points: string[] };
+  /**
+   * Illustrative count of negative reviews resolved in this example, used
+   * (alongside the same $275 estimate used by the real Reputation Revenue
+   * Forensics feature) to show a representative "revenue saved" figure.
+   * Everything on this page is preview/sandbox data - see the
+   * isSandboxPreview labeling in transformation-grid.tsx - this is a
+   * representative example, not a measured historical fact about a real
+   * account.
+   */
+  reviewsRescued: number;
 }
 
 export const TRANSFORMATIONS: TransformationExample[] = [
@@ -27,6 +37,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Under 2 hours, every time",
       points: ['Top 3 local pack for "plumbers near me"', "Every review answered on-brand, automatically"],
     },
+    reviewsRescued: 4,
   },
   {
     category: "Home Services",
@@ -43,6 +54,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Same-day, 100% of the time",
       points: ['Top 3 local pack for "auto repair near me"', "Pricing concerns resolved before they go public"],
     },
+    reviewsRescued: 5,
   },
   {
     category: "Home Services",
@@ -59,6 +71,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Same-day",
       points: ['Top 3 local pack for "house cleaning near me"', "Rebooking link in every AI reply"],
     },
+    reviewsRescued: 3,
   },
   {
     category: "Restaurants",
@@ -75,6 +88,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Within hours",
       points: ['Top 3 local pack for "restaurants near me"', "Negative reviews caught before they go public"],
     },
+    reviewsRescued: 6,
   },
   {
     category: "Restaurants",
@@ -91,6 +105,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Under 3 hours",
       points: ['Top 3 local pack for "coffee shop near me"', "Every complaint turned into a return visit"],
     },
+    reviewsRescued: 4,
   },
   {
     category: "Medical",
@@ -107,6 +122,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Same business day",
       points: ['Top 3 local pack for "dentist near me"', "New-patient questions routed automatically"],
     },
+    reviewsRescued: 3,
   },
   {
     category: "Medical",
@@ -123,6 +139,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Under 24 hours",
       points: ['Top 3 local pack for "chiropractor near me"', "HIPAA-safe replies to every review"],
     },
+    reviewsRescued: 5,
   },
   {
     category: "Retail",
@@ -139,6 +156,7 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Same day",
       points: ['Top 3 local pack for "hair salon near me"', "Booking link in every AI reply"],
     },
+    reviewsRescued: 3,
   },
   {
     category: "Retail",
@@ -155,5 +173,6 @@ export const TRANSFORMATIONS: TransformationExample[] = [
       responseTime: "Within hours",
       points: ['Top 3 local pack for "home decor store near me"', "Every complaint resolved before it spreads"],
     },
+    reviewsRescued: 5,
   },
 ];

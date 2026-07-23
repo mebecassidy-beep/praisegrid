@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, Loader2, Pencil, RefreshCw, Send, Sparkles, Star } from "lucide-react";
+import { AlertTriangle, Bell, Check, Loader2, Pencil, RefreshCw, Send, Sparkles, Star } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,23 @@ import { getDisplayStatus } from "@/lib/reviews/display-status";
 import { PLATFORM_META, STATUS_META } from "@/components/reviews/platform-meta";
 import { CrisisAlertBadge } from "@/components/reviews/crisis-alert-badge";
 import { DisputeDrafter } from "@/components/reviews/dispute-drafter";
+import { FilterPills } from "@/components/shared/filter-pills";
+import type { ToneOverride } from "@/lib/anthropic/generate-response";
+
+const TONE_OPTIONS: { value: ToneOverride | "default"; label: string }[] = [
+  { value: "default", label: "Your brand voice" },
+  { value: "empathetic", label: "Empathetic" },
+  { value: "professional", label: "Professional" },
+  { value: "brand-hero", label: "Brand Hero" },
+];
+
+const PERK_OPTIONS = [
+  { value: "", label: "No perk" },
+  { value: "a complimentary appetizer on their next visit", label: "Complimentary appetizer" },
+  { value: "a round of drinks on their next visit", label: "Round of drinks" },
+  { value: "10% off their next visit", label: "10% off next visit" },
+  { value: "a free dessert on their next visit", label: "Free dessert" },
+];
 
 function initialsFor(name: string | null) {
   if (!name) return "?";
@@ -44,6 +61,11 @@ export function ReviewFeedCard({
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notifying, setNotifying] = useState(false);
+  const [notified, setNotified] = useState(false);
+  const [notifyError, setNotifyError] = useState<string | null>(null);
+  const [toneOverride, setToneOverride] = useState<ToneOverride | "default">("default");
+  const [perkOffer, setPerkOffer] = useState("");
 
   // This card can be updated from elsewhere (e.g. the Revenue Protection
   // banner approves the same review, then the page refreshes) — resync the
@@ -57,6 +79,7 @@ export function ReviewFeedCard({
   const displayStatus = getDisplayStatus(review);
   const status = STATUS_META[displayStatus];
   const isDone = review.status === "approved" || review.status === "posted";
+  const isCrisis = review.risk_level === "high";
 
   async function handleGenerate() {
     if (generating) return;
@@ -66,7 +89,12 @@ export function ReviewFeedCard({
       const res = await fetch("/api/ai/generate-response", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ review_id: review.id, location_id: review.location_id }),
+        body: JSON.stringify({
+          review_id: review.id,
+          location_id: review.location_id,
+          tone_override: toneOverride === "default" ? undefined : toneOverride,
+          perk_offer: !isCrisis && perkOffer ? perkOffer : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Couldn't generate a response.");
@@ -99,7 +127,21 @@ export function ReviewFeedCard({
     }
   }
 
-  const isCrisis = review.risk_level === "high";
+  async function handleNotifyCrisisManager() {
+    if (notifying) return;
+    setNotifying(true);
+    setNotifyError(null);
+    try {
+      const res = await fetch(`/api/reviews/${review.id}/notify-crisis`, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Couldn't send that notification.");
+      setNotified(true);
+    } catch (err: any) {
+      setNotifyError(err.message || "Couldn't send that notification.");
+    } finally {
+      setNotifying(false);
+    }
+  }
 
   return (
     <Card
@@ -167,6 +209,26 @@ export function ReviewFeedCard({
               <span className="text-[11px] font-medium text-red-600">Drafted to be calm, professional, and legally safe</span>
             )}
           </div>
+
+          {!isDone && !editing && (
+            <div className="mb-3 space-y-2">
+              <FilterPills options={TONE_OPTIONS} active={toneOverride} onChange={setToneOverride} />
+              {!isCrisis && (
+                <select
+                  value={perkOffer}
+                  onChange={(e) => setPerkOffer(e.target.value)}
+                  className="h-7 rounded-full border border-input bg-background px-3 text-xs font-medium text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  aria-label="Add a Make it Right offer"
+                >
+                  {PERK_OPTIONS.map((opt) => (
+                    <option key={opt.label} value={opt.value}>
+                      {opt.value ? `🎁 ${opt.label}` : "Add a “Make it Right” offer"}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
 
           {editing ? (
             <Textarea
@@ -242,6 +304,28 @@ export function ReviewFeedCard({
               </>
             )}
           </div>
+
+          {isCrisis && (
+            <div className="mt-3 flex items-center gap-2 border-t border-red-500/15 pt-3">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleNotifyCrisisManager}
+                disabled={notifying || notified}
+                className="gap-1.5 border-red-300 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30"
+              >
+                {notifying ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : notified ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <Bell className="h-3.5 w-3.5" />
+                )}
+                {notified ? "Crisis manager notified" : "Notify Crisis Manager"}
+              </Button>
+              {notifyError && <p className="text-xs text-red-600">{notifyError}</p>}
+            </div>
+          )}
         </div>
 
         <DisputeDrafter review={review} onReviewUpdate={onReviewUpdate} />

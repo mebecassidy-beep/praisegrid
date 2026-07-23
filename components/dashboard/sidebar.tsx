@@ -126,7 +126,7 @@ export function Sidebar({
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
               <Star className="h-4 w-4 fill-white text-white" />
             </span>
-            Reputicious
+            Praisegrid
           </Link>
           <TierBadge tier={tier} />
         </div>
@@ -142,7 +142,7 @@ export function Sidebar({
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
                   <Star className="h-4 w-4 fill-white text-white" />
                 </span>
-                Reputicious
+                Praisegrid
               </Link>
               <button onClick={onClose} className="text-slate-400 hover:text-white" aria-label="Close menu">
                 <X className="h-5 w-5" />

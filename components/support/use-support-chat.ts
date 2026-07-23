@@ -9,7 +9,7 @@ export interface ChatMessage {
 
 const DEFAULT_GREETING: ChatMessage = {
   role: "assistant",
-  content: "Hey, I'm Sam from Reputicious. What can I help with?",
+  content: "Hey, I'm Sam from Praisegrid. What can I help with?",
 };
 
 function reportClientError(context: string) {

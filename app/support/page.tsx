@@ -5,9 +5,9 @@ import { SupportChatPanel } from "@/components/support/support-chat-panel";
 import { ContactCards } from "@/components/support/contact-cards";
 
 export const metadata: Metadata = {
-  title: "Support Center | Reputicious",
+  title: "Support Center | Praisegrid",
   description:
-    "Chat with our AI support assistant for instant answers, or reach the team directly at support@reputicious.com.",
+    "Chat with our AI support assistant for instant answers, or reach the team directly at support@praisegrid.com.",
 };
 
 export default function SupportPage() {

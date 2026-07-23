@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       "- Recommended Terminal Fix: Check the Vercel function logs for /api/support/chat around this timestamp, look for a 5xx or timeout from the Anthropic API call and confirm ANTHROPIC_API_KEY is still valid.",
     ].join("\n");
 
-    const supportInbox = process.env.SUPPORT_INBOX_EMAIL || "support@reputicious.com";
+    const supportInbox = process.env.SUPPORT_INBOX_EMAIL || "support@praisegrid.com";
     await sendEmail({
       to: supportInbox,
       subject: "[BUG REPORT] Support chat failed to respond",

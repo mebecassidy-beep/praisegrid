@@ -34,7 +34,7 @@ export function CustomersHero() {
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
               See what local businesses look like{" "}
               <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                after Reputicious
+                after Praisegrid
               </span>
             </h1>
           </RevealItem>

@@ -23,7 +23,7 @@ const EVENTS = [
 ];
 
 const CYCLE_MS = 5000;
-const DISMISS_KEY = "reputicious_fomo_dismissed";
+const DISMISS_KEY = "praisegrid_fomo_dismissed";
 
 export function FomoTicker() {
   const [dismissed, setDismissed] = useState(true);

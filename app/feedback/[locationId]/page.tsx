@@ -4,7 +4,7 @@ import { getPublicLocation } from "@/lib/feedback/get-public-location";
 import { buildGoogleReviewLink, buildYelpReviewLink } from "@/lib/reviews/public-review-links";
 
 export const metadata: Metadata = {
-  title: "Share your feedback | Reputicious",
+  title: "Share your feedback | Praisegrid",
 };
 
 export default async function FeedbackPage({ params }: { params: { locationId: string } }) {

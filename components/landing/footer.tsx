@@ -34,7 +34,7 @@ export function Footer() {
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
                 <Star className="h-4 w-4 fill-white text-white" />
               </span>
-              Reputicious
+              Praisegrid
             </Link>
             <p className="mt-4 max-w-xs text-sm text-slate-400">
               AI-powered review management for local businesses that want to grow their
@@ -74,7 +74,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} Reputicious. All rights reserved.
+            © {new Date().getFullYear()} Praisegrid. All rights reserved.
           </p>
           <p className="text-xs text-slate-500">Made for local businesses, everywhere.</p>
         </div>

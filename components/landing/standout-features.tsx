@@ -45,7 +45,7 @@ export function StandoutFeatures() {
       <div className="container relative">
         <Reveal className="mx-auto max-w-2xl text-center">
           <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
-            What sets Reputicious apart
+            What sets Praisegrid apart
           </div>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Built for the moments that actually move your reputation

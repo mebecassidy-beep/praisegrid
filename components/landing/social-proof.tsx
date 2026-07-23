@@ -25,7 +25,7 @@ const TESTIMONIALS: SampleTestimonial[] = [
   {
     businessType: "Neighborhood restaurant",
     quote:
-      "A scathing 1-star review went up on a Friday night. Reputicious flagged it instantly and had a response drafted before we even saw the notification.",
+      "A scathing 1-star review went up on a Friday night. Praisegrid flagged it instantly and had a response drafted before we even saw the notification.",
     result: "Negative review addressed in under 10 minutes",
   },
 ];

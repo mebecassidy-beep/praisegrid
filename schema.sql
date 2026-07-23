@@ -1,4 +1,4 @@
--- Reputicious database schema
+-- Praisegrid database schema
 -- Run against a Supabase (PostgreSQL) project. Safe to re-run: uses IF NOT EXISTS / OR REPLACE where possible.
 
 -- ============================================================================

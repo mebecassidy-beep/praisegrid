@@ -6,7 +6,7 @@ import { AlertTriangle, Loader2, Mail, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const DISMISS_KEY = "reputicious_exit_intent_shown";
+const DISMISS_KEY = "praisegrid_exit_intent_shown";
 const SCROLL_DEPTH_TRIGGER = 0.65;
 
 export function ExitIntentModal() {

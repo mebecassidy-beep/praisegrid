@@ -14,7 +14,7 @@ import { useSupportChat } from "@/components/support/use-support-chat";
 // worth proactively offering help before they bounce.
 const NUDGE_PATHS = ["/", "/features"];
 const NUDGE_DELAY_MS = 20_000;
-const NUDGE_STORAGE_KEY = "reputicious_support_nudge_shown";
+const NUDGE_STORAGE_KEY = "praisegrid_support_nudge_shown";
 
 export function SupportChat() {
   const pathname = usePathname();

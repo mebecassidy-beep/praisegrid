@@ -20,7 +20,7 @@ const SNIPPETS = [
 ];
 
 const EMBED_CODE = `<script
-  src="https://widget.reputicious.io/embed.js"
+  src="https://widget.praisegrid.io/embed.js"
   data-business="brightleaf-cafe"
   data-style="badge"
   async
@@ -103,7 +103,7 @@ export function WidgetPreviewCard() {
                     <span className="text-lg font-bold">4.8</span>
                     <Stars rating={5} />
                   </div>
-                  <p className="text-[11px] text-muted-foreground">1,284 reviews · Powered by Reputicious</p>
+                  <p className="text-[11px] text-muted-foreground">1,284 reviews · Powered by Praisegrid</p>
                 </div>
               </div>
             )}

@@ -144,7 +144,7 @@ export function BeforeAfterProof() {
       <div className="container">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            The transformation Reputicious is built to deliver
+            The transformation Praisegrid is built to deliver
           </h2>
           <p className="mt-4 text-lg text-slate-400">
             Illustrative before/after examples for businesses like yours, see the full disclaimer below.
@@ -192,7 +192,7 @@ export function BeforeAfterProof() {
           <RevealItem>
             <div className="h-full rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                After: with Reputicious
+                After: with Praisegrid
               </p>
               <div className="mt-4 flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-white">{example.after.rating.toFixed(1)}</span>

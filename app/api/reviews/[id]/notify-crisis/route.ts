@@ -34,7 +34,7 @@ export async function POST(_request: Request, { params }: { params: { id: string
       .eq("id", user.id)
       .single();
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://reputicious.vercel.app";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://praisegrid.vercel.app";
 
     const result = await sendCrisisSlackNotification({
       webhookUrl: profile?.crisis_slack_webhook_url ?? null,

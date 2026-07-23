@@ -42,7 +42,7 @@ export function MissionHero() {
         transition={{ duration: 0.7, delay: 0.2 }}
         className="relative mt-6 max-w-xl text-lg text-slate-400"
       >
-        Reputicious exists because busy business owners were losing hours a week, and
+        Praisegrid exists because busy business owners were losing hours a week, and
         losing customers, to reviews that sat unanswered across three different apps.
       </motion.p>
 

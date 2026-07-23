@@ -50,7 +50,7 @@ export function CostCalculator() {
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-emerald-400">
-              Recurring revenue Reputicious recaptures
+              Recurring revenue Praisegrid recaptures
             </p>
             <p className="mt-1 text-3xl font-bold tracking-tight text-emerald-400">
               {formatCurrency(recapturedRevenue)}
@@ -61,7 +61,7 @@ export function CostCalculator() {
             </p>
           </div>
           <div className="rounded-xl border border-blue-500/20 bg-blue-500/10 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-blue-400">Reputicious Pro</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-blue-400">Praisegrid Pro</p>
             <p className="mt-1 text-3xl font-bold tracking-tight text-blue-400">
               {formatCurrency(PLAN_PRICE)}
               <span className="text-sm font-normal text-slate-400">/mo</span>

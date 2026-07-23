@@ -50,7 +50,7 @@ export function ftcShieldAuditEmail(result: BusinessScanResult): { subject: stri
     ${disclaimer}
   </p>
 
-  <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://reputicious.vercel.app"}/signup"
+  <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://praisegrid.vercel.app"}/signup"
      style="display: inline-block; margin-top: 16px; padding: 10px 20px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #7c3aed); color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
     See how Feedback Shield keeps you compliant — Start Free Trial
   </a>

@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 
 const FAQS = [
   {
-    question: "Which review platforms does Reputicious support?",
+    question: "Which review platforms does Praisegrid support?",
     answer:
       "We currently sync with Google Business Profile, Yelp, and Facebook. Reviews from all three show up in one dashboard, and you can filter or respond per platform.",
   },
   {
     question: "How does the AI-drafted response feature work?",
     answer:
-      "When a new review comes in, Reputicious drafts a response trained on your business's tone and past replies. You can approve it as-is, regenerate it, or edit it before it's posted.",
+      "When a new review comes in, Praisegrid drafts a response trained on your business's tone and past replies. You can approve it as-is, regenerate it, or edit it before it's posted.",
   },
   {
     question: "What are auto-approve rules?",

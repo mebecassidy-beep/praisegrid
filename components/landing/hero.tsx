@@ -52,7 +52,7 @@ export function Hero() {
 
             <RevealItem>
               <p className="max-w-xl text-lg text-slate-400">
-                Reputicious aggregates Google, Yelp, and Facebook reviews, drafts on-brand AI
+                Praisegrid aggregates Google, Yelp, and Facebook reviews, drafts on-brand AI
                 responses in seconds, and helps your local business win at Google Maps SEO,
                 all on autopilot.
               </p>

@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { LegalH2, LegalP, LegalList, LegalPageLayout } from "@/components/legal/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Reputicious",
-  description: "How Reputicious collects, uses, and protects your data.",
+  title: "Privacy Policy | Praisegrid",
+  description: "How Praisegrid collects, uses, and protects your data.",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPageLayout title="Privacy Policy" updated="July 2026">
       <LegalP>
-        This Privacy Policy explains what information Reputicious (&quot;we,&quot; &quot;us&quot;) collects when
+        This Privacy Policy explains what information Praisegrid (&quot;we,&quot; &quot;us&quot;) collects when
         you use our website and dashboard, how we use it, and the choices you have.
       </LegalP>
 
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
 
       <LegalH2>Third-party services</LegalH2>
       <LegalP>
-        We rely on a small number of trusted service providers to operate Reputicious,
+        We rely on a small number of trusted service providers to operate Praisegrid,
         including Supabase for authentication and data storage, Stripe for payment
         processing, and Anthropic&apos;s Claude API for generating AI-drafted review
         responses. Each provider only receives the data necessary to perform its function.
@@ -48,8 +48,8 @@ export default function PrivacyPage() {
       <LegalH2>Contact us</LegalH2>
       <LegalP>
         Questions about this policy? Reach out any time at{" "}
-        <a href="mailto:support@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
-          support@reputicious.com
+        <a href="mailto:support@praisegrid.com" className="font-medium text-foreground underline underline-offset-2">
+          support@praisegrid.com
         </a>
         .
       </LegalP>

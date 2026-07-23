@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 export function ConversionVideoPlaceholder({
   videoSrc,
   posterSrc,
-  caption = "See how Reputicious turns a negative review into growth in under 3 seconds.",
+  caption = "See how Praisegrid turns a negative review into growth in under 3 seconds.",
   className,
 }: {
   videoSrc?: string;

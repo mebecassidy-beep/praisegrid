@@ -14,7 +14,7 @@ const FAQS = [
   {
     question: "Will this get my Google Business Profile suspended?",
     answer:
-      "No. Reputicious connects through Google's and Meta's official, sanctioned APIs, no scraping, no credential sharing, no automation that violates platform terms. Every sync and auto-post stays within Google's and Meta's review-response guidelines.",
+      "No. Praisegrid connects through Google's and Meta's official, sanctioned APIs, no scraping, no credential sharing, no automation that violates platform terms. Every sync and auto-post stays within Google's and Meta's review-response guidelines.",
   },
   {
     question: "How long does setup actually take?",
@@ -22,7 +22,7 @@ const FAQS = [
       "Most businesses are fully connected in under 3 minutes: sign up, connect your Google Business Profile in 2 clicks, and you're seeing live data. Yelp and Facebook connect the same way from inside your dashboard whenever you're ready.",
   },
   {
-    question: "I manage multiple locations, can Reputicious handle that?",
+    question: "I manage multiple locations, can Praisegrid handle that?",
     answer:
       "Yes. The Pro plan supports up to 5 locations, each with its own review feed, response settings, and analytics, and you can switch between them from a single dashboard.",
   },

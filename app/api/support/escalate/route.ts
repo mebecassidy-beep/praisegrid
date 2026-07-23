@@ -23,7 +23,7 @@ function renderTranscript(transcript: TranscriptMessage[]): string {
 // Handoff endpoint for the "Talk to a human" button: pauses the AI agent
 // (the widget stops sending further messages here once escalated is true),
 // persists the transcript so a teammate can find it later, and emails
-// support@reputicious.com immediately so nothing waits on someone checking
+// support@praisegrid.com immediately so nothing waits on someone checking
 // a dashboard.
 export async function POST(request: Request) {
   try {
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       console.error("Failed to log support conversation:", insertError.message);
     }
 
-    const supportInbox = process.env.SUPPORT_INBOX_EMAIL || "support@reputicious.com";
+    const supportInbox = process.env.SUPPORT_INBOX_EMAIL || "support@praisegrid.com";
     await sendEmail({
       to: supportInbox,
       replyTo: contactEmail || undefined,

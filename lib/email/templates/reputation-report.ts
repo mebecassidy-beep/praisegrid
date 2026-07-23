@@ -49,7 +49,7 @@ export function reputationReportEmail(params: {
     ${data.totalReviews} total reviews tracked across ${data.locations.length || 1} location${data.locations.length === 1 ? "" : "s"}.
   </p>
 
-  <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://reputicious.vercel.app"}/dashboard"
+  <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://praisegrid.vercel.app"}/dashboard"
      style="display: inline-block; margin-top: 8px; padding: 10px 20px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #7c3aed); color: white; text-decoration: none; font-size: 14px; font-weight: 600;">
     View full dashboard
   </a>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Clock, Mail } from "lucide-react";
 import { CopyEmailButton } from "@/components/support/copy-email-button";
 
-const SUPPORT_EMAIL = "support@reputicious.com";
+const SUPPORT_EMAIL = "support@praisegrid.com";
 
 function ContactCard({ children }: { children: React.ReactNode }) {
   return (

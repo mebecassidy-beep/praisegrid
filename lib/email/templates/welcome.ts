@@ -2,10 +2,10 @@ export function welcomeEmail(params: { promoCode: string }): { subject: string; 
   const { promoCode } = params;
 
   return {
-    subject: "Welcome to Reputicious 🎉",
+    subject: "Welcome to Praisegrid 🎉",
     html: `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 32px 24px; color: #0f172a;">
-  <h1 style="font-size: 20px; margin: 0 0 16px;">Welcome to Reputicious</h1>
+  <h1 style="font-size: 20px; margin: 0 0 16px;">Welcome to Praisegrid</h1>
   <p style="font-size: 15px; line-height: 1.6; color: #334155;">
     Your account is live. We aggregate your Google, Yelp, and Facebook reviews, draft
     on-brand AI responses, and help you stay on top of your reputation — all in one place.
@@ -21,7 +21,7 @@ export function welcomeEmail(params: { promoCode: string }): { subject: string; 
   </div>
   <p style="font-size: 14px; line-height: 1.6; color: #64748b;">
     Questions? Just reply to this email or visit our
-    <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://reputicious.vercel.app"}/support" style="color: #6366f1;">Support Center</a>.
+    <a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://praisegrid.vercel.app"}/support" style="color: #6366f1;">Support Center</a>.
   </p>
 </div>
 `.trim(),

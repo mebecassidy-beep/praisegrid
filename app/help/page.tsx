@@ -4,8 +4,8 @@ import { Footer } from "@/components/landing/footer";
 import { FaqAccordion } from "@/components/help/faq-accordion";
 
 export const metadata: Metadata = {
-  title: "Help Center | Reputicious",
-  description: "Answers to common questions about Reputicious.",
+  title: "Help Center | Praisegrid",
+  description: "Answers to common questions about Praisegrid.",
 };
 
 export default function HelpPage() {
@@ -16,8 +16,8 @@ export default function HelpPage() {
         <div className="container max-w-2xl">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Help Center</h1>
           <p className="mt-3 text-muted-foreground">
-            Common questions about Reputicious. Can&apos;t find what you need?{" "}
-            <a href="mailto:support@reputicious.com" className="font-medium text-foreground underline underline-offset-2">
+            Common questions about Praisegrid. Can&apos;t find what you need?{" "}
+            <a href="mailto:support@praisegrid.com" className="font-medium text-foreground underline underline-offset-2">
               Email support
             </a>{" "}
             or visit our{" "}

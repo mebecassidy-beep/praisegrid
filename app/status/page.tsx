@@ -3,8 +3,8 @@ import { Activity } from "lucide-react";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
 export const metadata: Metadata = {
-  title: "System Status | Reputicious",
-  description: "Real-time status monitoring for Reputicious is coming soon.",
+  title: "System Status | Praisegrid",
+  description: "Real-time status monitoring for Praisegrid is coming soon.",
 };
 
 export default function StatusPage() {
@@ -13,7 +13,7 @@ export default function StatusPage() {
       icon={Activity}
       eyebrow="System Status"
       title="A public status page is on the way"
-      description="We're setting up real-time status monitoring. In the meantime, if something seems off, reach out at support@reputicious.com and we'll look into it right away."
+      description="We're setting up real-time status monitoring. In the meantime, if something seems off, reach out at support@praisegrid.com and we'll look into it right away."
     />
   );
 }

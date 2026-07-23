@@ -92,7 +92,7 @@ export function AboutScrollytelling() {
         </div>
 
         <div>
-          <Milestone eyebrow="The problem" title="We built Reputicious because this was broken">
+          <Milestone eyebrow="The problem" title="We built Praisegrid because this was broken">
             <p className="text-base text-slate-400">
               Every local business owner we talked to described some version of the same problem.
             </p>
@@ -124,7 +124,7 @@ export function AboutScrollytelling() {
 
           <Milestone eyebrow="Who built it" title="A journalist who spent a career mastering visibility">
             <p>
-              Reputicious was founded by{" "}
+              Praisegrid was founded by{" "}
               <span className="font-semibold text-white">Maurice Cassidy</span>, a veteran journalist
               and digital strategist with thousands of published pieces as a staff writer and
               contributor across some of the highest-traffic newsrooms in digital media.
@@ -144,7 +144,7 @@ export function AboutScrollytelling() {
           <Milestone eyebrow="Why it matters" title="Give business owners their time back">
             <p>
               That newsroom instinct, the one honed on knowing that a slow response loses the story,
-              is the same one that now goes into Reputicious: the conviction that a business owner
+              is the same one that now goes into Praisegrid: the conviction that a business owner
               shouldn&apos;t have to choose between running their business and defending its
               reputation online.
             </p>

@@ -10,9 +10,9 @@ import { ValuesSection } from "@/components/about/values-section";
 import { AboutCta } from "@/components/about/about-cta";
 
 export const metadata: Metadata = {
-  title: "About | Reputicious",
+  title: "About | Praisegrid",
   description:
-    "Reputicious exists to make review management fast, authentic, and manageable for local businesses.",
+    "Praisegrid exists to make review management fast, authentic, and manageable for local businesses.",
 };
 
 export default function AboutPage() {

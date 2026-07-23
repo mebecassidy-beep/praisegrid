@@ -29,7 +29,7 @@ export function OnboardingBanner({ googlePlacesEnabled }: { googlePlacesEnabled:
             <Sparkles className="h-4 w-4 text-white" />
           </span>
           <div>
-            <p className="text-sm font-semibold">Welcome to Reputicious!</p>
+            <p className="text-sm font-semibold">Welcome to Praisegrid!</p>
             <p className="text-xs text-muted-foreground">
               Connect your Google Business Profile to start seeing real reviews and AI-drafted responses.
             </p>

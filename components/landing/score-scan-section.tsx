@@ -263,7 +263,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
                         </div>
                       ) : (
                         <p className="mb-2 text-xs text-slate-300">
-                          No low-rated recent reviews found, nice work. Reputicious keeps it that way.
+                          No low-rated recent reviews found, nice work. Praisegrid keeps it that way.
                         </p>
                       )}
                       <p className="text-xs text-slate-300">

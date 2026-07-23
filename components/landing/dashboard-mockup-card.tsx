@@ -91,7 +91,7 @@ export function DashboardMockupCard() {
         <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
         <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
         <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
-        <span className="ml-3 text-xs font-medium text-slate-500">reputicious.com/dashboard</span>
+        <span className="ml-3 text-xs font-medium text-slate-500">praisegrid.com/dashboard</span>
       </div>
 
       <div className="flex">

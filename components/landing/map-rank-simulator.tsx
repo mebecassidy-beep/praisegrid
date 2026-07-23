@@ -144,7 +144,7 @@ export function MapRankSimulator() {
 
               <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 p-5">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-emerald-600">
-                  With Reputicious: inside the 3-pack
+                  With Praisegrid: inside the 3-pack
                 </p>
                 <div className="space-y-2">
                   {Array.from({ length: 3 }).map((_, i) => {

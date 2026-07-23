@@ -12,9 +12,9 @@ import { InteractiveCards } from "@/components/features/interactive-cards";
 import { ObjectionFaq } from "@/components/landing/objection-faq";
 
 export const metadata: Metadata = {
-  title: "Features | Reputicious",
+  title: "Features | Praisegrid",
   description:
-    "See the actual Reputicious dashboard: Autonomous Crisis Shield, Claude Opus Brand Voice, and Local Competitor Radar.",
+    "See the actual Praisegrid dashboard: Autonomous Crisis Shield, Claude Opus Brand Voice, and Local Competitor Radar.",
 };
 
 export default function FeaturesPage() {

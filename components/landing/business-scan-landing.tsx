@@ -87,7 +87,7 @@ export function BusinessScanLanding() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
             <Star className="h-4 w-4 fill-white text-white" />
           </div>
-          <span className="text-lg font-bold text-white">Reputicious</span>
+          <span className="text-lg font-bold text-white">Praisegrid</span>
         </div>
       </header>
 

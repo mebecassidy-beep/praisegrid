@@ -15,7 +15,7 @@ import { useSupportChat } from "@/components/support/use-support-chat";
 export function SupportChatPanel() {
   const chat = useSupportChat({
     role: "assistant",
-    content: "Hi, I'm Sam from Reputicious. Go ahead, ask me anything.",
+    content: "Hi, I'm Sam from Praisegrid. Go ahead, ask me anything.",
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +35,7 @@ export function SupportChatPanel() {
           <AgentAvatar size="md" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">Sam</p>
-            <p className="text-xs text-slate-400">Active now, from Reputicious</p>
+            <p className="text-xs text-slate-400">Active now, from Praisegrid</p>
           </div>
         </div>
 

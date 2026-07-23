@@ -15,6 +15,7 @@ interface Module {
   gradient: string;
   screenshotSrc: string;
   screenshotAlt: string;
+  ctaLabel: string;
 }
 
 const MODULES: Module[] = [
@@ -28,6 +29,7 @@ const MODULES: Module[] = [
     gradient: "from-red-500 to-orange-400",
     screenshotSrc: "/assets/features-high-converting/crisis-shield.png",
     screenshotAlt: "Review feed with a pinned 1-star review, Crisis Alert badge, and drafted response",
+    ctaLabel: "See how a crisis response gets drafted",
   },
   {
     icon: Sparkles,
@@ -39,6 +41,7 @@ const MODULES: Module[] = [
     gradient: "from-violet-500 to-fuchsia-400",
     screenshotSrc: "/assets/features-high-converting/ai-brand-voice.png",
     screenshotAlt: "AI-drafted response next to the original review, ready to approve",
+    ctaLabel: "Try it with your own reviews",
   },
   {
     icon: Radar,
@@ -51,6 +54,7 @@ const MODULES: Module[] = [
     gradient: "from-emerald-500 to-teal-400",
     screenshotSrc: "/assets/features-high-converting/competitor-radar.png",
     screenshotAlt: "Competitor Radar panel showing a rival's recurring complaint themes",
+    ctaLabel: "Scan your own competitor",
   },
 ];
 
@@ -87,10 +91,10 @@ function FeatureModule({ module, reverse }: { module: Module; reverse: boolean }
 
           <Link
             href="/signup"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-400 transition-colors hover:text-blue-300"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-400 transition-colors hover:gap-2.5 hover:text-blue-300"
           >
-            Start Free Trial
-            <ArrowRight className="h-3.5 w-3.5" />
+            {module.ctaLabel}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform" />
           </Link>
         </div>
 

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
-import { generateReviewResponse } from "@/lib/anthropic/generate-response";
+import { generateReviewResponse, type ToneOverride } from "@/lib/anthropic/generate-response";
+
+const VALID_TONES: ToneOverride[] = ["empathetic", "professional", "brand-hero"];
 
 export async function POST(request: Request) {
   try {
-    const { review_id, location_id } = await request.json();
+    const { review_id, location_id, tone_override, perk_offer } = await request.json();
+    const toneOverride = VALID_TONES.includes(tone_override) ? (tone_override as ToneOverride) : undefined;
+    const perkOffer = typeof perk_offer === "string" && perk_offer.trim() ? perk_offer.trim().slice(0, 200) : undefined;
 
     if (!review_id || !location_id) {
       return NextResponse.json(
@@ -42,6 +46,8 @@ export async function POST(request: Request) {
       review,
       aiSettings,
       businessName: location?.name ?? "our business",
+      toneOverride,
+      perkOffer,
     });
 
     return NextResponse.json({ response: responseText });

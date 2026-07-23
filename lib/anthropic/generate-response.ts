@@ -1,10 +1,28 @@
 import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic/client";
 import type { AiSettings, Review } from "@/types";
 
+export type ToneOverride = "empathetic" | "professional" | "brand-hero";
+
+const TONE_OVERRIDES: Record<ToneOverride, string> = {
+  empathetic: "For this response specifically, lean especially warm, empathetic, and personal.",
+  professional: "For this response specifically, lean polished, formal, and professional.",
+  "brand-hero": "For this response specifically, let the brand's personality and enthusiasm shine through.",
+};
+
 interface GenerateReviewResponseInput {
   review: Pick<Review, "reviewer_name" | "rating" | "review_text" | "platform" | "risk_level">;
   aiSettings?: Pick<AiSettings, "tone_instructions" | "sign_off_name"> | null;
   businessName: string;
+  toneOverride?: ToneOverride;
+  /**
+   * A specific courtesy perk to weave into the response (e.g. "a
+   * complimentary appetizer on their next visit"). Deliberately ignored
+   * whenever the review is crisis-flagged (see isCrisis below) - CRISIS_RULES
+   * bans promising compensation/discounts on 1-2 star reviews, and that
+   * safety rule is enforced here server-side, not just by hiding the control
+   * in the UI, so it can't be bypassed by a crafted request.
+   */
+  perkOffer?: string;
 }
 
 // "Crisis Mode" reviews (risk_level medium/high — 1-2 stars, "high" also
@@ -25,12 +43,18 @@ export async function generateReviewResponse({
   review,
   aiSettings,
   businessName,
+  toneOverride,
+  perkOffer,
 }: GenerateReviewResponseInput): Promise<string> {
   const toneInstructions =
     aiSettings?.tone_instructions?.trim() ||
     "Warm, professional, and appreciative in tone.";
   const signOff = aiSettings?.sign_off_name?.trim() || "The Team";
   const isCrisis = review.risk_level === "high" || review.risk_level === "medium";
+
+  // perkOffer is only ever honored on non-crisis reviews - enforced here,
+  // not just left to the caller, since this is the actual safety boundary.
+  const safePerkOffer = !isCrisis ? perkOffer?.trim() : undefined;
 
   const systemPrompt = `You write public-facing owner responses to customer reviews for the local business "${businessName}".
 Tone guidance: ${toneInstructions}
@@ -41,6 +65,8 @@ Rules:
 - For ratings of 3 or below, acknowledge the issue and invite the reviewer to follow up privately.
 - Sign off as "${signOff}".
 - Output only the response text, no preamble.
+${toneOverride ? TONE_OVERRIDES[toneOverride] : ""}
+${safePerkOffer ? `Naturally offer this as a gesture of goodwill: ${safePerkOffer}.` : ""}
 ${isCrisis ? CRISIS_RULES : ""}`;
 
   const userPrompt = `Platform: ${review.platform}

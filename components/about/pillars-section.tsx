@@ -8,7 +8,7 @@ const PILLARS = [
     icon: MapPin,
     title: "Google Maps sync, in real time",
     description:
-      "Two-way sync with your Google Business Profile keeps every review, rating, and response perfectly up to date — no manual refreshing, no missed notifications.",
+      "Two-way sync with your Google Business Profile keeps every review, rating, and response perfectly up to date, no manual refreshing, no missed notifications.",
     gradient: "from-blue-500 to-cyan-400",
   },
   {
@@ -16,7 +16,7 @@ const PILLARS = [
     icon: Sparkles,
     title: "AI that actually sounds like you",
     description:
-      "Every draft is trained on your brand's tone and past replies, so responses read like they came from your team — not from a chatbot reading off a script.",
+      "Every draft is trained on your brand's tone and past replies, so responses read like they came from your team, not from a chatbot reading off a script.",
     gradient: "from-violet-500 to-fuchsia-400",
   },
   {
@@ -32,7 +32,7 @@ const PILLARS = [
     icon: BarChart3,
     title: "Insight, not just inbox management",
     description:
-      "Sentiment trends, recurring complaints, and rating benchmarks against local competitors — so you know what to fix before it shows up in next month's reviews.",
+      "Sentiment trends, recurring complaints, and rating benchmarks against local competitors, so you know what to fix before it shows up in next month's reviews.",
     gradient: "from-emerald-500 to-teal-400",
   },
 ];

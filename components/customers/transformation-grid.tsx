@@ -157,13 +157,13 @@ export function TransformationGrid() {
         </RevealGroup>
 
         <p className="mx-auto mt-8 max-w-md text-center text-xs text-slate-500">
-          Illustrative example based on typical outcomes — individual results vary by business and starting point.
+          Illustrative example based on typical outcomes, individual results vary by business and starting point.
         </p>
 
         <div className="mx-auto mt-10 flex max-w-lg flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center sm:flex-row sm:justify-between sm:text-left">
           <div>
             <p className="text-sm font-semibold text-white">See your own before &amp; after.</p>
-            <p className="mt-0.5 text-xs text-slate-400">Start your 14-day free trial — no credit card required.</p>
+            <p className="mt-0.5 text-xs text-slate-400">Start your 14-day free trial, no credit card required.</p>
           </div>
           <Button
             asChild

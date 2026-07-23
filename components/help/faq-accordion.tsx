@@ -23,7 +23,7 @@ const FAQS = [
   {
     question: "Can I manage multiple business locations?",
     answer:
-      "Yes — the Pro plan supports up to 5 locations, each with its own review feed, response settings, and analytics. You can switch between locations from the dashboard.",
+      "Yes, the Pro plan supports up to 5 locations, each with its own review feed, response settings, and analytics. You can switch between locations from the dashboard.",
   },
   {
     question: "Do I need a credit card to start a trial?",

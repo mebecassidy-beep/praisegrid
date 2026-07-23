@@ -147,7 +147,7 @@ export function BeforeAfterProof() {
             The transformation Reputicious is built to deliver
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            Illustrative before/after examples for businesses like yours — see the full disclaimer below.
+            Illustrative before/after examples for businesses like yours, see the full disclaimer below.
           </p>
         </Reveal>
 
@@ -172,7 +172,7 @@ export function BeforeAfterProof() {
           <RevealItem>
             <div className="h-full rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-red-400">
-                Before — {example.businessName}
+                Before: {example.businessName}
               </p>
               <div className="mt-4 flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-white">{example.before.rating.toFixed(1)}</span>
@@ -192,7 +192,7 @@ export function BeforeAfterProof() {
           <RevealItem>
             <div className="h-full rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 p-6">
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                After — with Reputicious
+                After: with Reputicious
               </p>
               <div className="mt-4 flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-white">{example.after.rating.toFixed(1)}</span>
@@ -211,7 +211,7 @@ export function BeforeAfterProof() {
         </RevealGroup>
 
         <p className="mx-auto mt-6 max-w-md text-center text-xs text-slate-500">
-          Illustrative example based on typical outcomes — individual results vary by business and starting point.
+          Illustrative example based on typical outcomes, individual results vary by business and starting point.
         </p>
       </div>
     </section>

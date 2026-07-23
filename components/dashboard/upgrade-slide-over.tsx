@@ -56,7 +56,7 @@ export function UpgradeSlideOver({
           </span>
           <h2 className="text-2xl font-bold tracking-tight">{featureName} is a {tier === "pro" ? "Pro" : "Starter"} feature</h2>
           <p className="mt-2 text-sm text-slate-400">
-            Upgrade to unlock it instantly — start with a 7-day free trial, no commitment.
+            Upgrade to unlock it instantly, start with a 7-day free trial, no commitment.
           </p>
 
           <div className="mt-6 rounded-xl border border-white/10 bg-slate-900/60 p-5">
@@ -83,7 +83,7 @@ export function UpgradeSlideOver({
             className="w-full gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:opacity-90"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            Start Free Trial — No Credit Card Required
+            Start Free Trial • No Credit Card Required
             <ArrowRight className="h-4 w-4" />
           </Button>
           <p className="text-center text-xs text-slate-500">Cancel anytime with 1-click</p>

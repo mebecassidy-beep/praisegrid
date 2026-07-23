@@ -4,7 +4,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { SignupForm } from "@/components/auth/signup-form";
 
 export const metadata: Metadata = {
-  title: "Sign up — Reputicious",
+  title: "Sign up | Reputicious",
   description: "Create your Reputicious account to start managing reviews.",
 };
 

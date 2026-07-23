@@ -10,7 +10,7 @@ export function RoiCalculatorSection() {
             How much is silence costing you every month?
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            Drag the slider to your monthly customer volume and see your estimated lost revenue —
+            Drag the slider to your monthly customer volume and see your estimated lost revenue,
             instantly, before you enter a single detail.
           </p>
         </Reveal>

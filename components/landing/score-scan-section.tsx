@@ -90,7 +90,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
           <div>
             <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
               <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-              Live Google data — free preview
+              Live Google data, free preview
             </div>
 
             <KineticHeading
@@ -100,7 +100,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
 
             <p className="mt-5 max-w-md text-lg text-slate-400">
               Find your business on Google below for a live AI Visibility Score pulled from your real
-              rating and reviews — no account required.
+              rating and reviews, no account required.
             </p>
 
             {googlePlacesEnabled ? (
@@ -123,7 +123,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
 
             <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-500">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-              Google Business Profile data only — Yelp &amp; Facebook connect securely after you start your
+              Google Business Profile data only, Yelp &amp; Facebook connect securely after you start your
               free trial and log in.
             </p>
 
@@ -254,7 +254,7 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
                       {result.recentNegativeReviews.length > 0 ? (
                         <div className="mb-2 rounded-lg bg-white/5 p-2.5">
                           <p className="text-[11px] font-medium text-slate-300">
-                            Recent complaint visible to customers — {result.recentNegativeReviews[0].authorName}
+                            Recent complaint visible to customers, {result.recentNegativeReviews[0].authorName}
                           </p>
                           <p className="mt-1 text-xs italic text-slate-400">
                             &ldquo;{result.recentNegativeReviews[0].text.slice(0, 140)}
@@ -263,13 +263,13 @@ export function ScoreScanSection({ googlePlacesEnabled }: { googlePlacesEnabled:
                         </div>
                       ) : (
                         <p className="mb-2 text-xs text-slate-300">
-                          No low-rated recent reviews found — nice work. Reputicious keeps it that way.
+                          No low-rated recent reviews found, nice work. Reputicious keeps it that way.
                         </p>
                       )}
                       <p className="text-xs text-slate-300">
                         Est. <span className="font-semibold text-white">{result.estimatedLostCustomers}</span>{" "}
                         customers/mo lost to unresolved negative reviews
-                        <span className="text-slate-500"> — estimate, based on industry response-rate studies</span>
+                        <span className="text-slate-500"> (estimate, based on industry response-rate studies)</span>
                       </p>
                     </div>
 

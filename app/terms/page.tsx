@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalH2, LegalP, LegalList, LegalPageLayout } from "@/components/legal/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Reputicious",
+  title: "Terms of Service | Reputicious",
   description: "The terms that govern your use of Reputicious.",
 };
 

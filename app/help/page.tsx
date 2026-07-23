@@ -4,7 +4,7 @@ import { Footer } from "@/components/landing/footer";
 import { FaqAccordion } from "@/components/help/faq-accordion";
 
 export const metadata: Metadata = {
-  title: "Help Center — Reputicious",
+  title: "Help Center | Reputicious",
   description: "Answers to common questions about Reputicious.",
 };
 

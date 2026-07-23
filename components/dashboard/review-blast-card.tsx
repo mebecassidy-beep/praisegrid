@@ -64,7 +64,7 @@ export function ReviewBlastCard({ locations }: { locations: Location[] }) {
         </CardTitle>
         <CardDescription>
           Text or email a recent customer for feedback, timed for right after their visit. Everyone gets the
-          same request and the same option to also post publicly — nobody&apos;s routed away from Google or Yelp.
+          same request and the same option to also post publicly, nobody&apos;s routed away from Google or Yelp.
         </CardDescription>
       </CardHeader>
       <CardContent>

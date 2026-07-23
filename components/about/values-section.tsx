@@ -20,7 +20,7 @@ const VALUES = [
   {
     icon: Wrench,
     title: "Craftsmanship",
-    description: "We sweat details most tools skip — sentiment nuance, SEO schema, edge cases.",
+    description: "We sweat details most tools skip, sentiment nuance, SEO schema, edge cases.",
   },
 ];
 

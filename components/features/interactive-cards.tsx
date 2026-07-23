@@ -12,7 +12,7 @@ const CARDS = [
   {
     icon: Globe2,
     title: "Every platform, one inbox",
-    description: "Google, Yelp, and Facebook reviews land in a single feed — no more tab-switching.",
+    description: "Google, Yelp, and Facebook reviews land in a single feed, no more tab-switching.",
     gradient: "from-blue-500 to-cyan-400",
   },
   {
@@ -100,7 +100,7 @@ export function InteractiveCards() {
             No credit card required • Cancel anytime with 1-click
           </p>
           <p className="text-xs text-slate-600">
-            Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+            Setup takes under 3 minutes, connect your Google Business Profile in 2 clicks
           </p>
         </Reveal>
       </div>

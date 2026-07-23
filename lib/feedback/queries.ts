@@ -25,3 +25,23 @@ export async function getFeedbackResponses(
 
   return data ?? [];
 }
+
+/**
+ * Total private feedback submissions ever collected across the signed-in
+ * user's locations, backs the FTC Compliance Shield live audit stat
+ * (every one of these was shown the identical public review CTA afterward).
+ */
+export async function getFeedbackResponseCount(
+  userId: string,
+  supabase: SupabaseClient<Database> = createClient()
+): Promise<number> {
+  const { data: locations } = await (supabase.from("locations") as any).select("id").eq("user_id", userId);
+  const locationIds = (locations ?? []).map((l: any) => l.id);
+  if (locationIds.length === 0) return 0;
+
+  const { count } = await (supabase.from("feedback_responses") as any)
+    .select("id", { count: "exact", head: true })
+    .in("location_id", locationIds);
+
+  return count ?? 0;
+}

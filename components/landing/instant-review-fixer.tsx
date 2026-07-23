@@ -177,7 +177,7 @@ export function InstantReviewFixer() {
 
           {status === "error" && (
             <p className="text-center text-xs text-red-400">
-              Something went wrong — please try again in a moment.
+              Something went wrong, please try again in a moment.
             </p>
           )}
         </form>
@@ -208,7 +208,7 @@ export function InstantReviewFixer() {
                 <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 p-3">
                   <div className="mb-1 flex items-center justify-between">
                     <span className="text-[11px] font-semibold text-emerald-400">
-                      After — {displayName}
+                      After: {displayName}
                     </span>
                     <div className="flex gap-0.5">
                       {Array.from({ length: 5 }).map((_, i) => (

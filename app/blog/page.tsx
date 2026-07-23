@@ -3,7 +3,7 @@ import { Newspaper } from "lucide-react";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
 export const metadata: Metadata = {
-  title: "Blog — Reputicious",
+  title: "Blog | Reputicious",
   description: "Insights on review management and local business growth, coming soon.",
 };
 

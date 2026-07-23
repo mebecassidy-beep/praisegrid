@@ -6,7 +6,7 @@ import { TransformationGrid } from "@/components/customers/transformation-grid";
 import { AboutCta } from "@/components/about/about-cta";
 
 export const metadata: Metadata = {
-  title: "Customers — Reputicious",
+  title: "Customers | Reputicious",
   description:
     "Real before & after transformations from local businesses across Home Services, Restaurants, Medical, and Retail using Reputicious.",
 };

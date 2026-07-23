@@ -8,7 +8,7 @@ const STANDOUT_FEATURES = [
     eyebrow: "Crisis Mode",
     title: "Crisis Shield",
     description:
-      "1-2 star reviews get pinned to the top of your feed with a Crisis Alert badge and a calm, legally-safe AI response draft — ready for you to approve in one click.",
+      "1-2 star reviews get pinned to the top of your feed with a Crisis Alert badge and a calm, legally-safe AI response draft, ready for you to approve in one click.",
     gradient: "from-red-500 to-orange-400",
   },
   {
@@ -16,8 +16,8 @@ const STANDOUT_FEATURES = [
     eyebrow: "Post-service automation",
     title: "Feedback Shield",
     description:
-      "Every customer gets asked privately first, then sees the same public Google/Yelp review link afterward — no matter their rating. Nobody is ever routed away from a review platform.",
-    compliance: "Built to the FTC's 2024 rule on fake & manipulated reviews — no review gating, ever",
+      "Every customer gets asked privately first, then sees the same public Google/Yelp review link afterward, no matter their rating. Nobody is ever routed away from a review platform.",
+    compliance: "Built to the FTC's 2024 rule on fake & manipulated reviews, no review gating, ever",
     gradient: "from-blue-500 to-cyan-400",
   },
   {
@@ -26,7 +26,7 @@ const STANDOUT_FEATURES = [
     title: "Competitor Leaks",
     description:
       "See the recurring complaints in a nearby rival's own public reviews, turned into concrete moves you can make this week to win their unhappy customers.",
-    compliance: "Powered by Google's official Places API — no scraping, no ToS risk",
+    compliance: "Powered by Google's official Places API, no scraping, no ToS risk",
     gradient: "from-emerald-500 to-teal-400",
   },
   {
@@ -34,7 +34,7 @@ const STANDOUT_FEATURES = [
     eyebrow: "Marketing automation",
     title: "Social Auto-Pilot",
     description:
-      "Verified 5-star reviews are instantly turned into on-brand Instagram & Facebook graphics with a ready-to-post caption — no design work required.",
+      "Verified 5-star reviews are instantly turned into on-brand Instagram & Facebook graphics with a ready-to-post caption, no design work required.",
     gradient: "from-violet-500 to-fuchsia-400",
   },
 ];
@@ -51,7 +51,7 @@ export function StandoutFeatures() {
             Built for the moments that actually move your reputation
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Four capabilities you won&apos;t find bundled together anywhere else — each one compliant by design.
+            Four capabilities you won&apos;t find bundled together anywhere else, each one compliant by design.
           </p>
         </Reveal>
 
@@ -85,7 +85,7 @@ export function StandoutFeatures() {
             href="/signup"
             className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-opacity hover:opacity-90"
           >
-            See it on your business — Start Free Trial
+            See it on your business, start your free trial
             <ArrowRight className="h-4 w-4" />
           </Link>
         </Reveal>

@@ -14,14 +14,15 @@ import { CompetitorBenchmarkCard } from "@/components/dashboard/competitor-bench
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 import { getCompetitorSnapshot } from "@/lib/competitor/get-competitor-snapshot";
-import { getFeedbackResponses } from "@/lib/feedback/queries";
+import { getFeedbackResponses, getFeedbackResponseCount } from "@/lib/feedback/queries";
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [data, profile, feedbackResponses] = await Promise.all([
+  const [data, profile, feedbackResponses, feedbackResponseCount] = await Promise.all([
     getDashboardData(user.id),
     getProfile(user.id),
     getFeedbackResponses(user.id),
+    getFeedbackResponseCount(user.id),
   ]);
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
   const hasLocation = data.locations.length > 0;
@@ -85,7 +86,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <FeedbackShieldCard recentResponses={feedbackResponses} />
+        <FeedbackShieldCard recentResponses={feedbackResponses} totalResponseCount={feedbackResponseCount} />
         <WidgetPreviewCard />
       </div>
     </div>

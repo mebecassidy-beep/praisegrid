@@ -79,7 +79,7 @@ function RevenueProtectionBannerInner({ reviews }: { reviews: Review[] }) {
           </span>
           <div>
             <p className="text-sm font-bold text-red-700 dark:text-red-400">
-              Revenue at risk — {reviews.length > 1 ? `${reviews.length} negative reviews need` : "a negative review needs"} a response
+              Revenue at risk, {reviews.length > 1 ? `${reviews.length} negative reviews need` : "a negative review needs"} a response
             </p>
             <div className="mt-1 flex items-center gap-1.5">
               <div className="flex gap-0.5">

@@ -41,7 +41,7 @@ export function CustomersHero() {
 
           <RevealItem>
             <p className="max-w-xl text-lg text-slate-400">
-              Home Services, Restaurants, Medical, and Retail businesses all fight the same battle —
+              Home Services, Restaurants, Medical, and Retail businesses all fight the same battle:
               unanswered reviews quietly costing them customers. Here&apos;s what turning that around
               actually looks like.
             </p>

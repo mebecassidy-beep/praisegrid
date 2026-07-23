@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LegalH2, LegalP, LegalList, LegalPageLayout } from "@/components/legal/legal-page-layout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Reputicious",
+  title: "Privacy Policy | Reputicious",
   description: "How Reputicious collects, uses, and protects your data.",
 };
 
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <LegalList>
         <li>Account information you provide, such as your name, email address, and business details.</li>
         <li>Review and platform data you connect (e.g. Google, Yelp, Facebook) so we can display and respond to reviews on your behalf.</li>
-        <li>Billing information processed by our payment provider, Stripe — we do not store full card numbers on our servers.</li>
+        <li>Billing information processed by our payment provider, Stripe, we do not store full card numbers on our servers.</li>
         <li>Usage data such as pages visited and features used, to help us improve the product.</li>
       </LegalList>
 

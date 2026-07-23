@@ -203,28 +203,34 @@ export interface Database {
           id: string;
           location_id: string;
           customer_name: string | null;
+          customer_phone: string | null;
           rating: number;
           comment: string | null;
           created_at: string;
           viewed_at: string | null;
+          winback_sent_at: string | null;
         };
         Insert: {
           id?: string;
           location_id: string;
           customer_name?: string | null;
+          customer_phone?: string | null;
           rating: number;
           comment?: string | null;
           created_at?: string;
           viewed_at?: string | null;
+          winback_sent_at?: string | null;
         };
         Update: {
           id?: string;
           location_id?: string;
           customer_name?: string | null;
+          customer_phone?: string | null;
           rating?: number;
           comment?: string | null;
           created_at?: string;
           viewed_at?: string | null;
+          winback_sent_at?: string | null;
         };
       };
       scheduled_blasts: {
@@ -259,6 +265,32 @@ export interface Database {
           customer_name?: string;
           send_at?: string;
           sent_at?: string | null;
+          created_at?: string;
+        };
+      };
+      support_conversations: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          contact_email: string | null;
+          transcript: unknown;
+          status: "escalated" | "resolved";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          contact_email?: string | null;
+          transcript: unknown;
+          status?: "escalated" | "resolved";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          contact_email?: string | null;
+          transcript?: unknown;
+          status?: "escalated" | "resolved";
           created_at?: string;
         };
       };

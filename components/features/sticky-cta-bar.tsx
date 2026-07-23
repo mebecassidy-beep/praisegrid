@@ -27,7 +27,7 @@ export function StickyCtaBar() {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-slate-950/95 px-4 py-3 backdrop-blur-lg"
         >
-          <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row">
+          <div className="container flex flex-col items-center justify-between gap-2 sm:flex-row sm:pr-24">
             <p className="text-sm font-medium text-slate-200">
               Ready to save 5+ hours a week and rescue negative reviews instantly?
             </p>

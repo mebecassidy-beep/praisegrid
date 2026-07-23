@@ -115,7 +115,7 @@ export function ExitIntentModal() {
                 <h3 className="text-lg font-semibold text-white">Is your review strategy FTC-compliant?</h3>
                 <p className="mt-1 text-sm text-slate-400">
                   Get a free Local Review Compliance &amp; FTC Shield Audit. The FTC&apos;s 2024 rule bans a review
-                  tactic a lot of local businesses use without realizing it — we&apos;ll check yours and send real
+                  tactic a lot of local businesses use without realizing it, we&apos;ll check yours and send real
                   numbers on your current Google standing too.
                 </p>
 
@@ -147,7 +147,7 @@ export function ExitIntentModal() {
                 </form>
 
                 {status === "error" && (
-                  <p className="mt-2 text-xs text-red-400">Something went wrong — please try again.</p>
+                  <p className="mt-2 text-xs text-red-400">Something went wrong, please try again.</p>
                 )}
 
                 <p className="mt-3 text-center text-xs text-slate-500">

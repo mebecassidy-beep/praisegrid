@@ -89,7 +89,7 @@ export function AddLocationModal({
         <p className="mt-1.5 text-sm text-muted-foreground">
           {googlePlacesEnabled
             ? "Search for your business on Google to connect it in seconds."
-            : "Add your business details — you can connect live Google data any time."}
+            : "Add your business details, you can connect live Google data any time."}
         </p>
 
         <div className="mt-6 space-y-4">

@@ -5,6 +5,7 @@ import { notifyFeedbackResponse } from "@/lib/feedback/notify-feedback-response"
 
 const MAX_COMMENT_LENGTH = 2000;
 const MAX_NAME_LENGTH = 120;
+const MAX_PHONE_LENGTH = 32;
 
 // Public, unauthenticated endpoint — a customer reaches this by tapping a
 // link in a post-service SMS/email, with no Supabase session. Rate-limited
@@ -27,6 +28,10 @@ export async function POST(request: Request, { params }: { params: { locationId:
       typeof body?.customer_name === "string" && body.customer_name.trim()
         ? body.customer_name.trim().slice(0, MAX_NAME_LENGTH)
         : null;
+    const customerPhone =
+      typeof body?.customer_phone === "string" && body.customer_phone.trim()
+        ? body.customer_phone.trim().slice(0, MAX_PHONE_LENGTH)
+        : null;
 
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       return NextResponse.json({ error: "A rating from 1 to 5 is required." }, { status: 400 });
@@ -46,6 +51,7 @@ export async function POST(request: Request, { params }: { params: { locationId:
     const { error: insertError } = await (supabase.from("feedback_responses") as any).insert({
       location_id: location.id,
       customer_name: customerName,
+      customer_phone: customerPhone,
       rating,
       comment,
     });

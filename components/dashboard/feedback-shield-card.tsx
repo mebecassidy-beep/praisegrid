@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Globe, Lock, ShieldCheck, Star } from "lucide-react";
+import { CheckCircle2, Globe, Loader2, Lock, MessageCircleHeart, ShieldCheck, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PLATFORM_META } from "@/components/reviews/platform-meta";
 import type { FeedbackResponse } from "@/types";
 import { cn } from "@/lib/utils";
+
+type WinbackState = "idle" | "sending" | "sent" | "error";
 
 const PLATFORMS: ("google" | "yelp" | "facebook")[] = ["google", "yelp", "facebook"];
 
@@ -27,8 +30,30 @@ function relativeDate(dateStr: string) {
  * positive feedback toward them. Private capture always happens for every
  * rating; the public CTA is always shown afterward, for every rating.
  */
-export function FeedbackShieldCard({ recentResponses }: { recentResponses: FeedbackResponse[] }) {
+export function FeedbackShieldCard({
+  recentResponses,
+  totalResponseCount,
+}: {
+  recentResponses: FeedbackResponse[];
+  totalResponseCount: number;
+}) {
   const [previewRating, setPreviewRating] = useState(2);
+  const [winbackState, setWinbackState] = useState<Record<string, WinbackState>>({});
+
+  async function sendWinback(responseId: string) {
+    setWinbackState((prev) => ({ ...prev, [responseId]: "sending" }));
+    try {
+      const res = await fetch("/api/feedback/winback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ responseId }),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      setWinbackState((prev) => ({ ...prev, [responseId]: "sent" }));
+    } catch {
+      setWinbackState((prev) => ({ ...prev, [responseId]: "error" }));
+    }
+  }
 
   return (
     <Card>
@@ -38,14 +63,20 @@ export function FeedbackShieldCard({ recentResponses }: { recentResponses: Feedb
           Feedback Shield
         </CardTitle>
         <CardDescription>
-          Every customer gets asked privately first — and every customer sees the same public review CTA
+          Every customer gets asked privately first, and every customer sees the same public review CTA
           afterward, regardless of what they rate you. Nobody is ever routed away from Google or Yelp.
         </CardDescription>
+        <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          {totalResponseCount === 0
+            ? "Live audit: no private feedback collected yet."
+            : `Live audit: ${totalResponseCount} private feedback submission${totalResponseCount === 1 ? "" : "s"} shown the same public CTA, no exceptions.`}
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="rounded-lg border bg-muted/30 p-4">
           <p className="mb-3 text-xs font-medium text-muted-foreground">
-            Preview — every rating gets both steps
+            Preview, every rating gets both steps
           </p>
           <div className="mb-4 flex gap-1.5">
             {[1, 2, 3, 4, 5].map((n) => (
@@ -85,7 +116,7 @@ export function FeedbackShieldCard({ recentResponses }: { recentResponses: Feedb
 
           <p className="mt-3 text-center text-xs text-muted-foreground">
             {previewRating <= 3
-              ? `A ${previewRating}★ rating comes to you privately first — but they still see the Google/Yelp link right after, same as everyone else.`
+              ? `A ${previewRating}★ rating comes to you privately first, but they still see the Google/Yelp link right after, same as everyone else.`
               : `A ${previewRating}★ rating comes to you privately first, then they see the same Google/Yelp link every customer sees.`}
           </p>
         </div>
@@ -97,25 +128,56 @@ export function FeedbackShieldCard({ recentResponses }: { recentResponses: Feedb
               Private feedback from your smart-timing blasts will show up here.
             </p>
           ) : (
-            recentResponses.slice(0, 3).map((r) => (
-              <div key={r.id} className="rounded-lg border p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={cn(
-                          "h-3 w-3",
-                          i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"
-                        )}
-                      />
-                    ))}
+            recentResponses.slice(0, 3).map((r) => {
+              const state = winbackState[r.id] ?? (r.winback_sent_at ? "sent" : "idle");
+              const eligibleForWinback = r.rating <= 2 && !!r.customer_phone;
+
+              return (
+                <div key={r.id} className="rounded-lg border p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={cn(
+                            "h-3 w-3",
+                            i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground">{relativeDate(r.created_at)}</span>
                   </div>
-                  <span className="text-[11px] text-muted-foreground">{relativeDate(r.created_at)}</span>
+                  {r.comment && <p className="mt-1.5 text-xs text-foreground/80">{r.comment}</p>}
+
+                  {eligibleForWinback && (
+                    <div className="mt-2.5">
+                      {state === "sent" ? (
+                        <p className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Win-back text sent
+                        </p>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 gap-1.5 text-[11px]"
+                          disabled={state === "sending"}
+                          onClick={() => sendWinback(r.id)}
+                        >
+                          {state === "sending" ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <MessageCircleHeart className="h-3 w-3" />
+                          )}
+                          {state === "error" ? "Try again" : "Send win-back text"}
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
-                {r.comment && <p className="mt-1.5 text-xs text-foreground/80">{r.comment}</p>}
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </CardContent>

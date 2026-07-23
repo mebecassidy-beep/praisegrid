@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type FormEvent } from "react";
-import { Send, User } from "lucide-react";
+import { CheckCircle2, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChatThread } from "@/components/support/chat-thread";
@@ -45,38 +45,45 @@ export function SupportChatPanel() {
         </div>
 
         <div className="border-t border-white/10 p-3 sm:p-4">
-          <div className="mb-2 flex justify-end">
-            {chat.escalated ? (
-              <p className="text-xs text-slate-400">A real human will follow up shortly.</p>
-            ) : (
-              <button
-                type="button"
-                onClick={chat.escalate}
-                className="flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors hover:text-white"
-              >
-                <User className="h-3 w-3" />
-                Talk to a human
-              </button>
-            )}
-          </div>
+          {chat.escalated ? (
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-500/10 px-3 py-2.5">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+              <p className="text-xs leading-relaxed text-emerald-200">
+                A real human has this thread now and will follow up shortly.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={chat.escalate}
+                  className="flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors hover:text-white"
+                >
+                  <User className="h-3 w-3" />
+                  Talk to a human
+                </button>
+              </div>
 
-          <form onSubmit={handleSend} className="flex items-center gap-2">
-            <Input
-              value={chat.input}
-              onChange={(e) => chat.setInput(e.target.value)}
-              placeholder="Ask a question…"
-              className="h-9 min-w-0 border-white/10 bg-white/5 text-white placeholder:text-slate-500"
-            />
-            <MicButton onResult={(t) => chat.setInput((prev) => (prev ? `${prev} ${t}` : t))} />
-            <Button
-              type="submit"
-              size="icon"
-              disabled={chat.loading || !chat.input.trim()}
-              className="h-9 w-9 shrink-0 bg-gradient-to-r from-blue-500 to-violet-600 hover:opacity-90"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
+              <form onSubmit={handleSend} className="flex items-center gap-2">
+                <Input
+                  value={chat.input}
+                  onChange={(e) => chat.setInput(e.target.value)}
+                  placeholder="Ask a question…"
+                  className="h-9 min-w-0 border-white/10 bg-white/5 text-white placeholder:text-slate-500"
+                />
+                <MicButton onResult={(t) => chat.setInput((prev) => (prev ? `${prev} ${t}` : t))} />
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={chat.loading || !chat.input.trim()}
+                  className="h-9 w-9 shrink-0 bg-gradient-to-r from-blue-500 to-violet-600 hover:opacity-90"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>

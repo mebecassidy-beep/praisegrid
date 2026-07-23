@@ -12,7 +12,7 @@ const PROBLEMS = [
     icon: Clock3,
     title: "Silence reads as indifference",
     description:
-      "A review left unanswered for a week doesn't just annoy one customer — it signals to every future customer scrolling past that nobody's actually listening.",
+      "A review left unanswered for a week doesn't just annoy one customer, it signals to every future customer scrolling past that nobody's actually listening.",
   },
   {
     icon: ThumbsDown,

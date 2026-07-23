@@ -73,7 +73,7 @@ export function HealthMeterCard({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Every review is answered — nothing waiting on you right now.
+              Every review is answered, nothing waiting on you right now.
             </p>
           )}
         </div>

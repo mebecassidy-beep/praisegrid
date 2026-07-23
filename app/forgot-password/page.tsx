@@ -3,7 +3,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 
 export const metadata: Metadata = {
-  title: "Forgot password — Reputicious",
+  title: "Forgot password | Reputicious",
   description: "Reset your Reputicious account password.",
 };
 

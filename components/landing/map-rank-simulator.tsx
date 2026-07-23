@@ -99,7 +99,7 @@ export function MapRankSimulator() {
           </Button>
         </form>
         <p className="mx-auto mt-2 max-w-lg text-center text-xs text-muted-foreground">
-          Illustrative simulation — not a live Google Maps lookup.
+          Illustrative simulation, not a live Google Maps lookup.
         </p>
 
         <AnimatePresence mode="wait">
@@ -113,7 +113,7 @@ export function MapRankSimulator() {
             >
               <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-red-600">
-                  Today — outside the 3-pack
+                  Today: outside the 3-pack
                 </p>
                 <div className="space-y-2">
                   {result.competitors.map((c, i) => (
@@ -144,7 +144,7 @@ export function MapRankSimulator() {
 
               <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 p-5">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-emerald-600">
-                  With Reputicious — inside the 3-pack
+                  With Reputicious: inside the 3-pack
                 </p>
                 <div className="space-y-2">
                   {Array.from({ length: 3 }).map((_, i) => {

@@ -35,7 +35,7 @@ export function ScanEmailCapture({ businessName, placeId }: { businessName: stri
     return (
       <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-400">
         <Check className="h-4 w-4 shrink-0" />
-        Sent to {email} — check your inbox.
+        Sent to {email}, check your inbox.
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function ScanEmailCapture({ businessName, placeId }: { businessName: stri
         Not ready to start your trial yet?
       </p>
       <p className="mt-1 text-xs text-slate-400">
-        Get your full breakdown, emailed instantly — every factor above, plus the ones we don&apos;t show here.
+        Get your full breakdown, emailed instantly, every factor above, plus the ones we don&apos;t show here.
       </p>
       <form onSubmit={handleSubmit} className="mt-2.5 flex flex-col gap-2 sm:flex-row">
         <Input
@@ -67,7 +67,7 @@ export function ScanEmailCapture({ businessName, placeId }: { businessName: stri
           Email me my breakdown
         </Button>
       </form>
-      {status === "error" && <p className="mt-1.5 text-xs text-red-400">Something went wrong — please try again.</p>}
+      {status === "error" && <p className="mt-1.5 text-xs text-red-400">Something went wrong, please try again.</p>}
       <p className="mt-2 text-[11px] text-slate-500">Takes 10 seconds • We&apos;ll never share your email</p>
     </div>
   );

@@ -123,7 +123,7 @@ export function ReviewStream({
             <MessageSquareOff className="h-5 w-5 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
               {liveReviews.length === 0
-                ? "No reviews yet — check back soon as they come in."
+                ? "No reviews yet, check back soon as they come in."
                 : "No reviews on this platform yet."}
             </p>
           </div>

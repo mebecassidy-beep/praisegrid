@@ -19,7 +19,7 @@ export default async function MarketingPage() {
 
       {eligible.length === 0 ? (
         <div className="rounded-lg border border-dashed bg-muted/20 py-16 text-center text-sm text-muted-foreground">
-          No eligible reviews yet — 5-star reviews with an approved response will show up here.
+          No eligible reviews yet, 5-star reviews with an approved response will show up here.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -3,7 +3,7 @@ import { Activity } from "lucide-react";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
 export const metadata: Metadata = {
-  title: "System Status — Reputicious",
+  title: "System Status | Reputicious",
   description: "Real-time status monitoring for Reputicious is coming soon.",
 };
 

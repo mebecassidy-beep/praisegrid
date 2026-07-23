@@ -3,7 +3,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
-  title: "Log in — Reputicious",
+  title: "Log in | Reputicious",
   description: "Log in to your Reputicious account.",
 };
 

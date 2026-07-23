@@ -220,7 +220,7 @@ export function AiSettingsPanel({ locations }: { locations: Location[] }) {
               </span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Reviews below this rating are always routed to manual approval — Crisis Mode reviews always stay
+              Reviews below this rating are always routed to manual approval, Crisis Mode reviews always stay
               manual regardless of this setting.
             </p>
           </div>

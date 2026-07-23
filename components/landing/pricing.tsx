@@ -29,7 +29,7 @@ const TIERS: TierDetail[] = [
       { label: "Platforms synced", value: "2 (Google, Yelp)", fill: 66 },
     ],
     highlighted: false,
-    activationLine: "⚡ Live in 90 seconds — connect Google, done.",
+    activationLine: "⚡ Live in 90 seconds, connect Google, done.",
   },
   {
     name: "Pro",
@@ -49,7 +49,7 @@ const TIERS: TierDetail[] = [
       { label: "Platforms synced", value: "3 (Google, Yelp, Facebook)", fill: 100 },
     ],
     highlighted: true,
-    activationLine: "Everything unlimited — no per-location fees, no usage caps.",
+    activationLine: "Everything unlimited, no per-location fees, no usage caps.",
   },
 ];
 
@@ -148,7 +148,7 @@ export function Pricing() {
 
                     <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                      100% compliant with Google &amp; Meta platform guidelines — zero suspension risk
+                      100% compliant with Google &amp; Meta platform guidelines, zero suspension risk
                     </p>
 
                     <div className="space-y-2">

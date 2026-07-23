@@ -71,7 +71,7 @@ export async function GET(request: Request, { params }: { params: { reviewId: st
             &ldquo;{quote}&rdquo;
           </div>
           <div style={{ marginTop: "48px", fontSize: "30px", color: "#64748b", display: "flex" }}>
-            — {review.reviewer_name || "A happy customer"}, via {review.platform}
+            {review.reviewer_name || "A happy customer"}, via {review.platform}
           </div>
           <div style={{ marginTop: "64px", fontSize: "28px", fontWeight: 700, color: "#3b82f6", display: "flex" }}>
             {review.locations.name}

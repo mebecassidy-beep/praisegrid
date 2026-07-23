@@ -12,6 +12,17 @@ const DEFAULT_GREETING: ChatMessage = {
   content: "Hey, I'm Sam from Reputicious. What can I help with?",
 };
 
+function reportClientError(context: string) {
+  if (typeof window === "undefined") return;
+  fetch("/api/support/report-error", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ context, page: window.location.pathname }),
+  }).catch(() => {
+    // Best-effort only, the user already sees a friendly fallback message.
+  });
+}
+
 export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) {
   const [messages, setMessages] = useState<ChatMessage[]>([initialGreeting]);
   const [input, setInput] = useState("");
@@ -20,7 +31,9 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
 
   async function sendMessage(text: string) {
     const trimmed = text.trim();
-    if (!trimmed || loading) return;
+    // Automation is paused once a human has taken over, no further AI
+    // replies should generate while a teammate is working the thread.
+    if (!trimmed || loading || escalated) return;
 
     const nextMessages = [...messages, { role: "user" as const, content: trimmed }];
     setMessages(nextMessages);
@@ -38,7 +51,7 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch {
+    } catch (err: any) {
       setMessages((prev) => [
         ...prev,
         {
@@ -47,6 +60,7 @@ export function useSupportChat(initialGreeting: ChatMessage = DEFAULT_GREETING) 
             "Sorry, something went wrong on my end. Try again in a moment, or use \"Talk to a human\" below.",
         },
       ]);
+      reportClientError(err?.message || "Chat request failed");
     } finally {
       setLoading(false);
     }

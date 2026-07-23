@@ -121,7 +121,7 @@ export function ReviewExplorer({
       <div className="space-y-4">
         {filtered.length === 0 ? (
           <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
-            {liveReviews.length === 0 ? "No reviews yet — check back soon." : "No reviews match your search or filters."}
+            {liveReviews.length === 0 ? "No reviews yet, check back soon." : "No reviews match your search or filters."}
           </div>
         ) : (
           filtered.map((review) => (

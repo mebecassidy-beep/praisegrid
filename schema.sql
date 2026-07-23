@@ -373,3 +373,42 @@ drop policy if exists "Users can delete their own scheduled blasts" on public.sc
 create policy "Users can delete their own scheduled blasts"
   on public.scheduled_blasts for delete
   using (auth.uid() = user_id);
+
+-- ============================================================================
+-- support_conversations
+-- Logs every chat transcript escalated via the "Talk to a human" button in
+-- the support widget (see app/api/support/escalate). Written by the
+-- service-role client since the widget is public and often unauthenticated,
+-- same insert pattern as leads/feedback_responses.
+-- ============================================================================
+create table if not exists public.support_conversations (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles (id) on delete set null,
+  contact_email text,
+  transcript jsonb not null,
+  status text not null default 'escalated'
+    check (status in ('escalated', 'resolved')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists support_conversations_user_id_idx on public.support_conversations (user_id);
+
+alter table public.support_conversations enable row level security;
+
+drop policy if exists "Users can view their own support conversations" on public.support_conversations;
+create policy "Users can view their own support conversations"
+  on public.support_conversations for select
+  using (auth.uid() = user_id);
+
+-- No insert/update policy: only the service-role escalate route writes here.
+
+-- ============================================================================
+-- feedback_responses: Win-Back SMS support
+-- Optional phone number a customer can leave alongside private feedback, so
+-- a low rating (1-2 stars) can trigger a one-click "olive branch" SMS from
+-- the dashboard. winback_sent_at guards against double-sends and drives the
+-- button's sent/unsent state.
+-- ============================================================================
+alter table public.feedback_responses
+  add column if not exists customer_phone text,
+  add column if not exists winback_sent_at timestamptz;

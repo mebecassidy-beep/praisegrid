@@ -3,7 +3,7 @@ import { Code2 } from "lucide-react";
 import { ComingSoonPage } from "@/components/simple/coming-soon";
 
 export const metadata: Metadata = {
-  title: "API Docs — Reputicious",
+  title: "API Docs | Reputicious",
   description: "Public API access for Reputicious is coming soon.",
 };
 

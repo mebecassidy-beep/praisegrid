@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/client";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { createRouteHandlerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
 
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60_000;
@@ -19,6 +20,11 @@ function renderTranscript(transcript: TranscriptMessage[]): string {
     .join("");
 }
 
+// Handoff endpoint for the "Talk to a human" button: pauses the AI agent
+// (the widget stops sending further messages here once escalated is true),
+// persists the transcript so a teammate can find it later, and emails
+// support@reputicious.com immediately so nothing waits on someone checking
+// a dashboard.
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -36,25 +42,39 @@ export async function POST(request: Request) {
       ? body.transcript.filter((m: any) => m && typeof m.content === "string")
       : [];
 
-    const supportInbox = process.env.SUPPORT_INBOX_EMAIL;
-    if (!supportInbox) {
-      console.log("[support-escalate] SUPPORT_INBOX_EMAIL not configured, skipping email", {
-        email,
-      });
-      return NextResponse.json({ ok: true });
+    const requestScoped = createRouteHandlerSupabaseClient();
+    const {
+      data: { user },
+    } = await requestScoped.auth.getUser();
+
+    // No email input in the widget itself, this covers the common case (a
+    // logged-in dashboard user escalating) without asking them to retype
+    // what we already know from their session.
+    const contactEmail = email || user?.email || "";
+
+    const serviceRole = createServiceRoleClient();
+    const { error: insertError } = await (serviceRole.from("support_conversations") as any).insert({
+      user_id: user?.id ?? null,
+      contact_email: contactEmail || null,
+      transcript,
+    });
+
+    if (insertError) {
+      console.error("Failed to log support conversation:", insertError.message);
     }
 
+    const supportInbox = process.env.SUPPORT_INBOX_EMAIL || "support@reputicious.com";
     await sendEmail({
       to: supportInbox,
-      replyTo: email || undefined,
-      subject: `Support escalation${email ? ` from ${email}` : ""}`,
+      replyTo: contactEmail || undefined,
+      subject: `Support escalation${contactEmail ? ` from ${contactEmail}` : ""}`,
       html: `
         <div style="font-family: sans-serif;">
-          <p><strong>Escalated conversation</strong>${email ? ` — reply-to: ${email}` : ""}</p>
+          <p><strong>Escalated conversation</strong>${contactEmail ? `, reply-to: ${contactEmail}` : ""}</p>
           ${renderTranscript(transcript)}
         </div>
       `.trim(),
-    });
+    }).catch((err) => console.error("Failed to send escalation email:", err));
 
     return NextResponse.json({ ok: true });
   } catch (error: any) {

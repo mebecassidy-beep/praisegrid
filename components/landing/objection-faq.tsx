@@ -9,12 +9,12 @@ const FAQS = [
   {
     question: "Is the AI going to post something embarrassing without my okay?",
     answer:
-      "Only if you let it. Every AI-drafted response sits in a queue for your 1-click approval by default. Auto-approve rules are opt-in — you choose exactly which conditions (star rating, confidence threshold, keyword filters) are safe to post automatically, and you can turn auto-approve off entirely at any time.",
+      "Only if you let it. Every AI-drafted response sits in a queue for your 1-click approval by default. Auto-approve rules are opt-in, you choose exactly which conditions (star rating, confidence threshold, keyword filters) are safe to post automatically, and you can turn auto-approve off entirely at any time.",
   },
   {
     question: "Will this get my Google Business Profile suspended?",
     answer:
-      "No. Reputicious connects through Google's and Meta's official, sanctioned APIs — no scraping, no credential sharing, no automation that violates platform terms. Every sync and auto-post stays within Google's and Meta's review-response guidelines.",
+      "No. Reputicious connects through Google's and Meta's official, sanctioned APIs, no scraping, no credential sharing, no automation that violates platform terms. Every sync and auto-post stays within Google's and Meta's review-response guidelines.",
   },
   {
     question: "How long does setup actually take?",
@@ -22,7 +22,7 @@ const FAQS = [
       "Most businesses are fully connected in under 3 minutes: sign up, connect your Google Business Profile in 2 clicks, and you're seeing live data. Yelp and Facebook connect the same way from inside your dashboard whenever you're ready.",
   },
   {
-    question: "I manage multiple locations — can Reputicious handle that?",
+    question: "I manage multiple locations, can Reputicious handle that?",
     answer:
       "Yes. The Pro plan supports up to 5 locations, each with its own review feed, response settings, and analytics, and you can switch between them from a single dashboard.",
   },
@@ -33,7 +33,7 @@ const FAQS = [
   {
     question: "What happens to my data if I cancel?",
     answer:
-      "We only connect to the platforms you explicitly authorize and never sell your data. If you cancel, we stop syncing immediately — see our Privacy Policy for full details.",
+      "We only connect to the platforms you explicitly authorize and never sell your data. If you cancel, we stop syncing immediately, see our Privacy Policy for full details.",
   },
 ];
 

@@ -56,7 +56,7 @@ export function CompetitorBenchmarkCard({
         </CardTitle>
         <CardDescription>
           {yourName} vs. {competitor.competitorName}
-          {!competitor.isRealData && " — benchmark estimate"}
+          {!competitor.isRealData && ", benchmark estimate"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -100,9 +100,9 @@ export function CompetitorBenchmarkCard({
           )}
         >
           {ahead
-            ? `You're ahead of ${competitor.competitorName} — keep responding fast to stay there.`
+            ? `You're ahead of ${competitor.competitorName}, keep responding fast to stay there.`
             : tied
-              ? `You're tied with ${competitor.competitorName} — a few more 5-star reviews puts you in the lead.`
+              ? `You're tied with ${competitor.competitorName}, a few more 5-star reviews puts you in the lead.`
               : `Gain ~${gapReviews} more 5-star review${gapReviews === 1 ? "" : "s"} to pull ahead of ${competitor.competitorName}.`}
         </p>
       </CardContent>

@@ -23,8 +23,8 @@ const REVIEW = {
 };
 
 const AI_RESPONSE =
-  "Jordan, I'm sorry — that wait is completely unacceptable and not the experience we want for anyone. " +
-  "I'd like to make this right personally; please reach out directly so we can. — Owner, The Copper Fork";
+  "Jordan, I'm sorry, that wait is completely unacceptable and not the experience we want for anyone. " +
+  "I'd like to make this right personally, please reach out directly so we can. From the owner, The Copper Fork";
 
 type DemoPhase = "idle" | "generating" | "generated" | "posted";
 
@@ -148,7 +148,7 @@ export function DashboardMockupCard() {
                       <div className="h-2.5 w-2/3 animate-pulse rounded bg-white/10" />
                     </div>
                   ) : (
-                    <p className="text-sm text-slate-500">Watch a response get drafted and approved — live.</p>
+                    <p className="text-sm text-slate-500">Watch a response get drafted and approved, live.</p>
                   )}
                 </motion.div>
               ) : (
@@ -178,7 +178,7 @@ export function DashboardMockupCard() {
               ) : phase === "generated" ? (
                 <Button size="sm" onClick={handleApprove} className="gap-1.5 bg-emerald-500 text-white hover:bg-emerald-400">
                   <Send className="h-3.5 w-3.5" />
-                  Approve & Post — 1 click
+                  Approve & Post (1 click)
                 </Button>
               ) : (
                 <>
@@ -202,7 +202,7 @@ export function DashboardMockupCard() {
 
       <div className="flex items-center gap-1.5 border-t border-white/10 bg-slate-950/60 px-5 py-2.5 text-[11px] text-slate-500">
         <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-        100% compliant with Google &amp; Meta platform guidelines — no scraping, no suspension risk
+        100% compliant with Google &amp; Meta platform guidelines, no scraping, no suspension risk
       </div>
     </div>
   );

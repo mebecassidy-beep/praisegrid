@@ -73,7 +73,7 @@ export function SocialProof() {
           </div>
 
           <p className="mx-auto mt-6 max-w-lg text-center text-xs text-slate-600">
-            Illustrative examples of typical outcomes, not verified customer quotes — individual results
+            Illustrative examples of typical outcomes, not verified customer quotes, individual results
             vary by business.
           </p>
         </div>

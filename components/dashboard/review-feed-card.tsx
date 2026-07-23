@@ -180,7 +180,7 @@ export function ReviewFeedCard({
               {draftText}
             </p>
           ) : (
-            <p className="text-sm text-muted-foreground">No draft yet — generate one below.</p>
+            <p className="text-sm text-muted-foreground">No draft yet, generate one below.</p>
           )}
 
           {error && <p className="mt-2 text-xs text-red-600">{error}</p>}

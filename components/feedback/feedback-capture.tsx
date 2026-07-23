@@ -22,6 +22,7 @@ export function FeedbackCapture({
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,7 @@ export function FeedbackCapture({
       const res = await fetch(`/api/feedback/${locationId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating, comment, customer_name: name }),
+        body: JSON.stringify({ rating, comment, customer_name: name, customer_phone: phone }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Couldn't submit your feedback.");
@@ -66,7 +67,7 @@ export function FeedbackCapture({
           <div className="space-y-2 rounded-xl border bg-muted/30 p-4">
             <p className="text-sm font-medium">Mind sharing it publicly too?</p>
             <p className="text-xs text-muted-foreground">
-              Totally optional — it helps other people find {businessName}.
+              Totally optional, it helps other people find {businessName}.
             </p>
             <div className="flex flex-col gap-2 pt-1">
               {googleReviewLink && (
@@ -129,6 +130,14 @@ export function FeedbackCapture({
             placeholder={rating <= 3 ? "What happened? We'd like to make it right." : "Anything you'd like to add?"}
             className="min-h-[90px]"
           />
+          {rating <= 3 && (
+            <Input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone number (optional), in case we want to make this right"
+            />
+          )}
         </div>
       )}
 

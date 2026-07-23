@@ -62,7 +62,7 @@ export function CompetitorTrackerCard({ initialCompetitorName }: { initialCompet
         </div>
 
         <p className="text-xs text-muted-foreground">
-          We pull a live Google rating for this business when we can find a public listing — otherwise
+          We pull a live Google rating for this business when we can find a public listing, otherwise
           your report shows a benchmark estimate instead.
         </p>
       </CardContent>

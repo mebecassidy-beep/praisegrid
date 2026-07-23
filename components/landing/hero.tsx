@@ -53,7 +53,7 @@ export function Hero() {
             <RevealItem>
               <p className="max-w-xl text-lg text-slate-400">
                 Reputicious aggregates Google, Yelp, and Facebook reviews, drafts on-brand AI
-                responses in seconds, and helps your local business win at Google Maps SEO —
+                responses in seconds, and helps your local business win at Google Maps SEO,
                 all on autopilot.
               </p>
             </RevealItem>
@@ -91,7 +91,7 @@ export function Hero() {
               No credit card required • Cancel anytime with 1-click
             </p>
             <p className="text-xs text-slate-500">
-              Setup takes under 3 minutes — connect your Google Business Profile in 2 clicks
+              Setup takes under 3 minutes, connect your Google Business Profile in 2 clicks
             </p>
           </Reveal>
         </div>

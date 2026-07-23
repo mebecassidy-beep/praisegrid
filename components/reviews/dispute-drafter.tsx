@@ -70,7 +70,7 @@ export function DisputeDrafter({
       <p className="text-xs text-muted-foreground">
         Explain why this doesn&apos;t look like a real customer (e.g. no record of this transaction, mentions a
         different business, you suspect it&apos;s from a competitor). Claude drafts a formal policy-violation
-        request grounded only in what you provide — you submit it yourself through {review.platform}&apos;s
+        request grounded only in what you provide, you submit it yourself through {review.platform}&apos;s
         report flow.
       </p>
       <Textarea

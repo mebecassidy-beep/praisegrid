@@ -74,7 +74,7 @@ export function CostCalculator() {
 
         <p className="mt-4 text-center text-xs text-slate-500">
           Based on a {Math.round(LOST_CUSTOMER_RATE * 100)}% deterrence rate from industry review-response
-          studies and a ${AVG_CUSTOMER_VALUE} average customer value — an estimate to illustrate impact,
+          studies and a ${AVG_CUSTOMER_VALUE} average customer value, an estimate to illustrate impact,
           not a guarantee for your business.
         </p>
 

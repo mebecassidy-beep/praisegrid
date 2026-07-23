@@ -6,7 +6,7 @@ import { SupportChat } from "@/components/support/support-chat";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Reputicious — Local Business Review Management",
+  title: "Reputicious | Local Business Review Management",
   description:
     "Aggregate reviews, generate AI responses, and optimize your Google Maps SEO.",
 };

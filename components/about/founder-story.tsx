@@ -8,19 +8,19 @@ const EDGE_POINTS = [
     icon: Newspaper,
     title: "Newsroom-grade speed",
     description:
-      "Years spent writing and publishing at the pace real newsrooms demand — where a slow response means losing the story entirely.",
+      "Years spent writing and publishing at the pace real newsrooms demand, where a slow response means losing the story entirely.",
   },
   {
     icon: Search,
     title: "SEO since 2010",
     description:
-      "Over a decade specializing in digital and news SEO — reverse-engineering how search algorithms decide what gets seen.",
+      "Over a decade specializing in digital and news SEO, reverse-engineering how search algorithms decide what gets seen.",
   },
   {
     icon: TrendingUp,
     title: "Public perception, professionally",
     description:
-      "A career built on managing how audiences see a story in real time — the same instinct that now goes into managing how customers see your business.",
+      "A career built on managing how audiences see a story in real time, the same instinct that now goes into managing how customers see your business.",
   },
 ];
 
@@ -57,12 +57,12 @@ export function FounderStory() {
             </p>
             <p>
               Alongside that byline career, Maurice built a specialization in digital and news SEO dating
-              back to 2010 — over a decade spent learning exactly how search algorithms decide what
+              back to 2010, over a decade spent learning exactly how search algorithms decide what
               gets seen, and how fast-moving newsrooms shape public perception in real time.
             </p>
             <p>
-              That combination — algorithm fluency and a professional instinct for public perception,
-              forged under newsroom deadlines — is the unfair advantage Reputicious brings to local
+              That combination, algorithm fluency and a professional instinct for public perception,
+              forged under newsroom deadlines, is the unfair advantage Reputicious brings to local
               businesses. The same expertise that once got a story to rank and spread is now focused
               on getting your business seen, trusted, and ranked higher on Google Maps.
             </p>

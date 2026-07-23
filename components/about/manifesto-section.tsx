@@ -17,7 +17,7 @@ export function ManifestoSection() {
             We believe responding to a customer should take{" "}
             <span className="font-semibold text-white">seconds, not a spare afternoon.</span>{" "}
             We believe an AI-drafted reply can still sound like{" "}
-            <span className="font-semibold text-white">you</span> — if it&apos;s actually trained
+            <span className="font-semibold text-white">you</span>, if it&apos;s actually trained
             on your voice, not a generic template. And we believe local businesses deserve
             the same review-response speed and polish that big brands pay agencies for.
           </p>

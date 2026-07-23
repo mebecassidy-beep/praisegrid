@@ -36,7 +36,7 @@ export function CompetitorLeakFinderCard({ hasCompetitor }: { hasCompetitor: boo
         </CardTitle>
         <CardDescription>
           Surfaces recurring complaints from your competitor&apos;s own public reviews (via Google&apos;s
-          official API — no scraping) as concrete local growth moves for you.
+          official API, no scraping) as concrete local growth moves for you.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -58,7 +58,7 @@ export function CompetitorLeakFinderCard({ hasCompetitor }: { hasCompetitor: boo
                 <p className="text-xs text-muted-foreground">
                   {result.isRealData
                     ? `Based on ${result.reviewsAnalyzed} real negative review${result.reviewsAnalyzed === 1 ? "" : "s"} for ${result.competitorName}.`
-                    : `Illustrative example — connect Google Places to analyze ${result.competitorName}'s real reviews.`}
+                    : `Illustrative example, connect Google Places to analyze ${result.competitorName}'s real reviews.`}
                 </p>
                 {result.leaks.map((leak, i) => (
                   <div key={i} className="rounded-lg border p-3.5">

@@ -223,7 +223,7 @@ export function BusinessScanLanding() {
                           <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                           <span className="font-semibold text-white">{result.currentRating}</span>
                           <span className="text-slate-500">
-                            ({result.reviewCount} reviews) — current
+                            ({result.reviewCount} reviews), current
                           </span>
                         </div>
                       )}

@@ -143,7 +143,7 @@ export function RatingTrendChart({
           title="Average rating trend"
           description={
             hasLocation
-              ? "Not enough review history yet — this chart fills in as reviews come in over time."
+              ? "Not enough review history yet, this chart fills in as reviews come in over time."
               : "Connect a location to start tracking your rating trend month over month."
           }
           cta={
@@ -190,7 +190,7 @@ export function ResponseTimeChart() {
     <ChartEmptyState
       icon={Clock}
       title="Avg. first response time"
-      description="Response-time tracking is coming soon — we'll start timing this from your first approved response."
+      description="Response-time tracking is coming soon, we'll start timing this from your first approved response."
     />
   );
 }

@@ -48,7 +48,7 @@ export function FranchiseLockedState() {
       </span>
       <h2 className="text-xl font-bold tracking-tight">Franchise View is a Pro feature</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Upgrade to compare every location side by side — start with a 7-day free trial, no commitment.
+        Upgrade to compare every location side by side, start with a 7-day free trial, no commitment.
       </p>
 
       <ul className="mt-6 space-y-2 text-left">
@@ -68,7 +68,7 @@ export function FranchiseLockedState() {
         className="mt-6 w-full gap-2 bg-gradient-to-r from-blue-500 to-violet-600 text-white hover:opacity-90"
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        Start Free Trial — No Credit Card Required
+        Start Free Trial • No Credit Card Required
         <ArrowRight className="h-4 w-4" />
       </Button>
     </div>

@@ -12,7 +12,7 @@ export function DashboardPreviewSection() {
             See it inside your dashboard
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            Every flagged review gets a Claude-drafted, on-brand response ready to approve in one click —
+            Every flagged review gets a Claude-drafted, on-brand response ready to approve in one click,
             watch the live demo below play out on its own.
           </p>
         </Reveal>

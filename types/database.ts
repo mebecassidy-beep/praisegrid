@@ -31,6 +31,7 @@ export interface Database {
           competitor_name: string | null;
           phone_number: string | null;
           website: string | null;
+          estimated_customer_value: number;
           created_at: string;
         };
         Insert: {
@@ -46,6 +47,7 @@ export interface Database {
           competitor_name?: string | null;
           phone_number?: string | null;
           website?: string | null;
+          estimated_customer_value?: number;
           created_at?: string;
         };
         Update: {
@@ -61,6 +63,7 @@ export interface Database {
           competitor_name?: string | null;
           phone_number?: string | null;
           website?: string | null;
+          estimated_customer_value?: number;
           created_at?: string;
         };
       };
@@ -110,6 +113,7 @@ export interface Database {
           dispute_notes: string | null;
           dispute_draft: string | null;
           social_generated_at: string | null;
+          responded_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -128,6 +132,7 @@ export interface Database {
           dispute_notes?: string | null;
           dispute_draft?: string | null;
           social_generated_at?: string | null;
+          responded_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -146,6 +151,7 @@ export interface Database {
           dispute_notes?: string | null;
           dispute_draft?: string | null;
           social_generated_at?: string | null;
+          responded_at?: string | null;
           created_at?: string;
         };
       };

@@ -412,3 +412,24 @@ create policy "Users can view their own support conversations"
 alter table public.feedback_responses
   add column if not exists customer_phone text,
   add column if not exists winback_sent_at timestamptz;
+
+-- ============================================================================
+-- Reputation Revenue Forensics
+-- responded_at is stamped once, the first time a review's response is
+-- approved & posted (see app/api/reviews/[id]/route.ts) - never overwritten
+-- on later edits, so it stays a true "time to first response" mark. Together
+-- with review_date/created_at it drives real response-time math; nothing
+-- about this feature is a fabricated number, see lib/analytics/revenue-forensics.ts.
+-- ============================================================================
+alter table public.reviews
+  add column if not exists responded_at timestamptz;
+
+-- estimated_customer_value is the business owner's own estimate of what an
+-- average customer is worth (conservative default below), used to translate
+-- a count of rescued negative reviews into a revenue-rescued estimate. This
+-- is deliberately an owner-editable assumption (see Settings ->
+-- components/settings/revenue-estimate-card.tsx), not a number we invent on
+-- their behalf - the review counts and response times it's multiplied by are
+-- real, but the dollar figure is always presented as an estimate.
+alter table public.profiles
+  add column if not exists estimated_customer_value numeric(10,2) not null default 150;

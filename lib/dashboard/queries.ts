@@ -81,6 +81,7 @@ export async function getProfile(
     | "competitor_name"
     | "phone_number"
     | "website"
+    | "estimated_customer_value"
   >
 > {
   // select("*") rather than naming phone_number/website explicitly: an
@@ -91,7 +92,12 @@ export async function getProfile(
   const { data } = await (supabase.from("profiles") as any).select("*").eq("id", userId).single();
 
   return data
-    ? { ...data, phone_number: data.phone_number ?? null, website: data.website ?? null }
+    ? {
+        ...data,
+        phone_number: data.phone_number ?? null,
+        website: data.website ?? null,
+        estimated_customer_value: data.estimated_customer_value ?? 150,
+      }
     : {
         email: "",
         company_name: null,
@@ -101,6 +107,7 @@ export async function getProfile(
         competitor_name: null,
         phone_number: null,
         website: null,
+        estimated_customer_value: 150,
       };
 }
 

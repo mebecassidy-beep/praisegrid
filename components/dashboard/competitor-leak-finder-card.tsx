@@ -30,9 +30,24 @@ export function CompetitorLeakFinderCard({ hasCompetitor }: { hasCompetitor: boo
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-blue-500" />
-          Local competitor leak finder
+        <CardTitle className="flex items-center justify-between gap-2">
+          <span className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-blue-500" />
+            Local competitor leak finder
+          </span>
+          {/* Only ever shown once a scan has actually confirmed live Places
+              data - never claimed while showing the illustrative fallback,
+              since that would contradict the "Illustrative example" caption
+              below in the same card. */}
+          {result?.isRealData && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              </span>
+              Live data
+            </span>
+          )}
         </CardTitle>
         <CardDescription>
           Surfaces recurring complaints from your competitor&apos;s own public reviews (via Google&apos;s

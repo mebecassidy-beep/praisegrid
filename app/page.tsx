@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
+import { ConversionVideoPlaceholder } from "@/components/landing/conversion-video-placeholder";
 import { StandoutFeatures } from "@/components/landing/standout-features";
 import { RoiCalculatorSection } from "@/components/landing/roi-calculator-section";
 import { DashboardPreviewSection } from "@/components/landing/dashboard-preview-section";
@@ -19,6 +20,7 @@ export default function HomePage() {
     <main>
       <Navbar />
       <Hero />
+      <ConversionVideoPlaceholder />
       <StandoutFeatures />
       <RoiCalculatorSection />
       <DashboardPreviewSection />

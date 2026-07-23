@@ -8,7 +8,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 
 const BASE_URL = process.env.CAPTURE_BASE_URL || "http://localhost:3000";
-const DEMO_EMAIL = "demo-screenshots@reputicious.com";
+const DEMO_EMAIL = "demo-screenshots@praisegrid.com";
 const DEMO_PASSWORD = "ScreenshotDemo2026!";
 const OUT_DIR = path.resolve(process.cwd(), "public/assets/features-high-converting");
 

@@ -16,7 +16,7 @@ for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
   if (match) process.env[match[1]] ||= match[2];
 }
 
-const DEMO_EMAIL = "demo-screenshots@reputicious.com";
+const DEMO_EMAIL = "demo-screenshots@praisegrid.com";
 const DEMO_PASSWORD = "ScreenshotDemo2026!";
 const COMPETITOR_NAME = "Riverside Table";
 

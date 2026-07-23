@@ -14,7 +14,7 @@ export async function runAccountDiagnostics(
   check: DiagnosticsCheck
 ): Promise<string> {
   if (!userId) {
-    return "No signed-in account is attached to this chat session, so I can't look up specific account data. Ask the user to log in at reputicious.com/login first, or offer to escalate to a human who can look the account up by email.";
+    return "No signed-in account is attached to this chat session, so I can't look up specific account data. Ask the user to log in at praisegrid.com/login first, or offer to escalate to a human who can look the account up by email.";
   }
 
   const supabase = createServiceRoleClient();

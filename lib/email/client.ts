@@ -5,7 +5,7 @@ import { Resend } from "resend";
 // to a placeholder so the app can boot; sendEmail() below is the real gate.
 export const resend = new Resend(process.env.RESEND_API_KEY || "re_not_configured");
 
-export const FROM_EMAIL = process.env.EMAIL_FROM || "Reputicious <support@reputicious.com>";
+export const FROM_EMAIL = process.env.EMAIL_FROM || "Praisegrid <support@praisegrid.com>";
 
 /** Stub-safe email send: no-ops with a log line instead of erroring when
  * RESEND_API_KEY isn't configured yet. */

@@ -25,7 +25,7 @@ export async function sendCrisisSlackNotification(params: {
     `:rotating_light: *Crisis Alert for ${params.businessName}*\n` +
     `A high-risk 1-star ${params.platform} review just came in from *${reviewer}*.\n` +
     (params.reviewText ? `> ${params.reviewText}\n` : "") +
-    `<${params.dashboardUrl}|Open in Reputicious>`;
+    `<${params.dashboardUrl}|Open in Praisegrid>`;
 
   const res = await fetch(params.webhookUrl, {
     method: "POST",

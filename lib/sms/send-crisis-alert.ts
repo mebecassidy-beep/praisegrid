@@ -24,6 +24,6 @@ export async function sendCrisisAlertSms(params: {
   await client.messages.create({
     to: params.to,
     from: TWILIO_FROM_NUMBER,
-    body: `⚠️ Reputicious Crisis Alert: A high-risk 1-star review just came in for ${params.businessName}. Log in to respond immediately.`,
+    body: `⚠️ Praisegrid Crisis Alert: A high-risk 1-star review just came in for ${params.businessName}. Log in to respond immediately.`,
   });
 }

@@ -36,7 +36,7 @@ export default function FeaturesPage() {
             <p className="mt-5 text-lg leading-relaxed text-slate-400">
               Three systems doing the real work behind the scenes: catching a crisis the second it
               happens, drafting replies that sound like you, and watching your competitors so you
-              don't have to.
+              don&apos;t have to.
             </p>
             <Link
               href="/signup"

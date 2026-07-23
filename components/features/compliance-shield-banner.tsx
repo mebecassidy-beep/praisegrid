@@ -21,7 +21,7 @@ export function ComplianceShieldBanner() {
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
                   Your dashboard runs a live audit on every private feedback submission to confirm
                   nobody was routed away from Google or Yelp based on their rating. Built to the
-                  FTC's 2024 rule on fake and manipulated reviews, 16 CFR Part 465, so review
+                  FTC&apos;s 2024 rule on fake and manipulated reviews, 16 CFR Part 465, so review
                   gating never happens on your account.
                 </p>
               </div>

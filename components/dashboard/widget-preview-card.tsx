@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy, GalleryHorizontal, LayoutGrid, Square, Star } from "lucide-react";
+import { useMemo, useState } from "react";
+import { GalleryHorizontal, LayoutGrid, Square, Star } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import type { Review } from "@/types";
 
 type WidgetStyle = "badge" | "carousel" | "grid";
 
@@ -12,19 +14,6 @@ const STYLES: { value: WidgetStyle; label: string; icon: typeof Square }[] = [
   { value: "carousel", label: "Carousel", icon: GalleryHorizontal },
   { value: "grid", label: "Grid", icon: LayoutGrid },
 ];
-
-const SNIPPETS = [
-  { name: "Sarah M.", rating: 5, quote: "Amazing service! The team went above and beyond." },
-  { name: "Emily C.", rating: 5, quote: "This is why I keep coming back, every single time." },
-  { name: "Priya N.", rating: 4, quote: "Really solid experience, staff was friendly." },
-];
-
-const EMBED_CODE = `<script
-  src="https://widget.praisegrid.io/embed.js"
-  data-business="brightleaf-cafe"
-  data-style="badge"
-  async
-></script>`;
 
 function Stars({ rating, className }: { rating: number; className?: string }) {
   return (
@@ -36,35 +25,52 @@ function Stars({ rating, className }: { rating: number; className?: string }) {
   );
 }
 
-function SnippetCard({ snippet }: { snippet: (typeof SNIPPETS)[number] }) {
+function SnippetCard({ review }: { review: Review }) {
   return (
     <div className="w-48 shrink-0 rounded-lg border bg-white p-3 shadow-sm dark:bg-slate-900">
-      <Stars rating={snippet.rating} />
-      <p className="mt-1.5 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">&ldquo;{snippet.quote}&rdquo;</p>
-      <p className="mt-1.5 text-[11px] font-medium text-slate-400">{snippet.name}</p>
+      <Stars rating={review.rating} />
+      <p className="mt-1.5 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">&ldquo;{review.review_text}&rdquo;</p>
+      <p className="mt-1.5 text-[11px] font-medium text-slate-400">{review.reviewer_name || "Verified customer"}</p>
     </div>
   );
 }
 
-export function WidgetPreviewCard() {
+/**
+ * Preview now renders the account's real positive reviews instead of fake
+ * testimonials. The embed snippet is left disabled with a "Coming soon"
+ * label rather than copy-able code, since there's no hosted widget script
+ * (widget.praisegrid.io) actually built yet.
+ */
+export function WidgetPreviewCard({
+  reviews,
+  avgRating,
+  totalReviews,
+}: {
+  reviews: Review[];
+  avgRating: number;
+  totalReviews: number;
+}) {
   const [style, setStyle] = useState<WidgetStyle>("badge");
-  const [copied, setCopied] = useState(false);
 
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(EMBED_CODE);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      // clipboard unavailable — no-op
-    }
-  }
+  const snippets = useMemo(
+    () =>
+      reviews
+        .filter((r) => r.rating >= 4 && !!r.review_text)
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 4),
+    [reviews]
+  );
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Website widget</CardTitle>
-        <CardDescription>Show off your reviews anywhere on your site with one embed snippet.</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          Website widget
+          <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground">
+            Coming soon
+          </Badge>
+        </CardTitle>
+        <CardDescription>Preview of how your real reviews would look embedded on your site.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-1.5">
@@ -96,48 +102,41 @@ export function WidgetPreviewCard() {
           </div>
 
           <div className="flex min-h-[168px] items-center justify-center bg-slate-50 p-6 dark:bg-slate-950">
-            {style === "badge" && (
+            {snippets.length === 0 ? (
+              <p className="max-w-xs text-center text-sm text-muted-foreground">
+                Once you have a few 4-5 star reviews with written feedback, they&apos;ll show up here.
+              </p>
+            ) : style === "badge" ? (
               <div className="flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-md dark:bg-slate-900">
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-bold">4.8</span>
-                    <Stars rating={5} />
+                    <span className="text-lg font-bold">{avgRating > 0 ? avgRating.toFixed(1) : "—"}</span>
+                    <Stars rating={Math.round(avgRating)} />
                   </div>
-                  <p className="text-[11px] text-muted-foreground">1,284 reviews · Powered by Praisegrid</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {totalReviews.toLocaleString()} reviews · Powered by Praisegrid
+                  </p>
                 </div>
               </div>
-            )}
-
-            {style === "carousel" && (
+            ) : style === "carousel" ? (
               <div className="flex w-full gap-3 overflow-x-auto px-1">
-                {SNIPPETS.map((s) => (
-                  <SnippetCard key={s.name} snippet={s} />
+                {snippets.map((r) => (
+                  <SnippetCard key={r.id} review={r} />
                 ))}
               </div>
-            )}
-
-            {style === "grid" && (
+            ) : (
               <div className="grid w-full grid-cols-2 gap-3">
-                {SNIPPETS.slice(0, 2).map((s) => (
-                  <SnippetCard key={s.name} snippet={s} />
+                {snippets.slice(0, 2).map((r) => (
+                  <SnippetCard key={r.id} review={r} />
                 ))}
               </div>
             )}
           </div>
         </div>
 
-        <div className="relative">
-          <pre className="overflow-x-auto rounded-lg bg-slate-950 p-3 text-xs leading-relaxed text-slate-300">
-            <code>{EMBED_CODE}</code>
-          </pre>
-          <button
-            onClick={handleCopy}
-            className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-white hover:bg-white/20"
-          >
-            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-            {copied ? "Copied" : "Copy"}
-          </button>
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Embeddable widget code isn&apos;t available yet, we&apos;ll notify you when the embed script ships.
+        </p>
       </CardContent>
     </Card>
   );

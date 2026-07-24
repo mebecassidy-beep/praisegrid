@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Clock, Loader2, Mail, MessageSquareText, Send, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Check, Clock, Loader2, Mail, MessageSquareText, Send, X, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import type { Location } from "@/types";
+import type { Location, ScheduledBlast } from "@/types";
 
 type Method = "sms" | "email";
 type Delay = "now" | "2h" | "next_morning";
@@ -18,7 +19,21 @@ const DELAY_OPTIONS: { value: Delay; label: string }[] = [
   { value: "next_morning", label: "Tomorrow, 9am" },
 ];
 
-export function ReviewBlastCard({ locations }: { locations: Location[] }) {
+function formatSendAt(dateStr: string) {
+  const date = new Date(dateStr);
+  const isToday = date.toDateString() === new Date().toDateString();
+  const time = date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return isToday ? `Today, ${time}` : `${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}, ${time}`;
+}
+
+export function ReviewBlastCard({
+  locations,
+  pendingBlasts = [],
+}: {
+  locations: Location[];
+  pendingBlasts?: ScheduledBlast[];
+}) {
+  const router = useRouter();
   const [locationId, setLocationId] = useState(locations[0]?.id ?? "");
   const [method, setMethod] = useState<Method>("email");
   const [delay, setDelay] = useState<Delay>("now");
@@ -28,6 +43,14 @@ export function ReviewBlastCard({ locations }: { locations: Location[] }) {
   const [sent, setSent] = useState(false);
   const [scheduled, setScheduled] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [livePending, setLivePending] = useState(pendingBlasts);
+  const [cancelingId, setCancelingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLivePending(pendingBlasts);
+  }, [pendingBlasts]);
+
+  const locationName = (id: string) => locations.find((l) => l.id === id)?.name ?? "your business";
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -48,10 +71,25 @@ export function ReviewBlastCard({ locations }: { locations: Location[] }) {
       setScheduled(Boolean(data.scheduled));
       setCustomerName("");
       setTo("");
+      if (data.scheduled) router.refresh();
     } catch (err: any) {
       setError(err.message || "Couldn't send that request.");
     } finally {
       setSending(false);
+    }
+  }
+
+  async function handleCancel(id: string) {
+    setCancelingId(id);
+    try {
+      const res = await fetch(`/api/reviews/blast/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Couldn't cancel that request.");
+      setLivePending((prev) => prev.filter((b) => b.id !== id));
+      router.refresh();
+    } catch {
+      // leave it in the list, the user can retry
+    } finally {
+      setCancelingId(null);
     }
   }
 
@@ -67,7 +105,35 @@ export function ReviewBlastCard({ locations }: { locations: Location[] }) {
           same request and the same option to also post publicly, nobody&apos;s routed away from Google or Yelp.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        {livePending.length > 0 && (
+          <div className="space-y-1.5 rounded-lg border bg-muted/30 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {livePending.length} scheduled
+            </p>
+            {livePending.map((blast) => (
+              <div key={blast.id} className="flex items-center justify-between gap-2 text-sm">
+                <span className="truncate text-foreground/90">
+                  {blast.customer_name} · {locationName(blast.location_id)} · {formatSendAt(blast.send_at)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCancel(blast.id)}
+                  disabled={cancelingId === blast.id}
+                  aria-label={`Cancel scheduled request to ${blast.customer_name}`}
+                  className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-red-600"
+                >
+                  {cancelingId === blast.id ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <X className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {locations.length === 0 ? (
           <p className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
             Add a location first to send feedback requests to your customers.

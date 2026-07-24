@@ -5,6 +5,7 @@ import { MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewFeedCard } from "@/components/dashboard/review-feed-card";
 import { AddLocationModal } from "@/components/dashboard/add-location-modal";
+import { ExportReviewsButton } from "@/components/reviews/export-reviews-button";
 import { FilterPills } from "@/components/shared/filter-pills";
 import { crisisRank, getDisplayStatus, type DisplayStatus } from "@/lib/reviews/display-status";
 import type { Review } from "@/types";
@@ -29,13 +30,15 @@ export function ReviewExplorer({
   reviews,
   hasLocation,
   googlePlacesEnabled,
+  initialQuery,
 }: {
   reviews: Review[];
   hasLocation: boolean;
   googlePlacesEnabled: boolean;
+  initialQuery?: string;
 }) {
   const [liveReviews, setLiveReviews] = useState(reviews);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery ?? "");
   const [platformFilter, setPlatformFilter] = useState<Platform | "all">("all");
   const [statusFilter, setStatusFilter] = useState<DisplayStatus | "all">("all");
 
@@ -44,6 +47,14 @@ export function ReviewExplorer({
   useEffect(() => {
     setLiveReviews(reviews);
   }, [reviews]);
+
+  // Resyncs when the topbar's global search submits a new `?q=` while this
+  // page is already mounted (router.push keeps the component instance, so
+  // useState's initial value alone would miss the update).
+  useEffect(() => {
+    if (initialQuery !== undefined) setQuery(initialQuery);
+  }, [initialQuery]);
+
   const [modalOpen, setModalOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -69,6 +80,7 @@ export function ReviewExplorer({
 
   const pendingCount = liveReviews.filter((r) => r.status === "pending").length;
   const flaggedCount = liveReviews.filter((r) => getDisplayStatus(r) === "flagged").length;
+  const disputedCount = liveReviews.filter((r) => r.flagged_as_fake).length;
 
   if (!hasLocation) {
     return (
@@ -99,6 +111,12 @@ export function ReviewExplorer({
         <span>{pendingCount} pending</span>
         <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
         <span>{flaggedCount} flagged</span>
+        {disputedCount > 0 && (
+          <>
+            <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />
+            <span>{disputedCount} disputed as fake</span>
+          </>
+        )}
       </div>
 
       <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -115,6 +133,7 @@ export function ReviewExplorer({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <FilterPills options={PLATFORM_FILTERS} active={platformFilter} onChange={setPlatformFilter} />
           <FilterPills options={STATUS_FILTERS} active={statusFilter} onChange={setStatusFilter} />
+          <ExportReviewsButton reviews={filtered} />
         </div>
       </div>
 

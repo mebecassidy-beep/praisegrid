@@ -193,6 +193,22 @@ create policy "Users can delete reviews for their own locations"
     )
   );
 
+-- Adds `reviews` to Supabase's realtime publication so the dashboard can
+-- subscribe to new-review inserts live instead of only picking them up on
+-- the next page load. Postgres Changes subscriptions still enforce the RLS
+-- policies above, so a client only ever receives inserts for their own
+-- locations. Guarded because ALTER PUBLICATION ... ADD TABLE errors (rather
+-- than no-ops) if the table's already a member.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'reviews'
+  ) then
+    alter publication supabase_realtime add table public.reviews;
+  end if;
+end $$;
+
 -- ============================================================================
 -- ai_settings
 -- Per-location voice/tone configuration for AI-generated responses.

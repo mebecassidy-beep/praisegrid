@@ -1,4 +1,5 @@
 import { BusinessProfileCard } from "@/components/settings/business-profile-card";
+import { BillingCard } from "@/components/settings/billing-card";
 import { NotificationPreferencesCard } from "@/components/settings/notification-preferences-card";
 import { ConnectedPlatformsCard } from "@/components/settings/connected-platforms-card";
 import { CompetitorTrackerCard } from "@/components/settings/competitor-tracker-card";
@@ -25,6 +26,7 @@ export default async function SettingsPage() {
         initialPhoneNumber={profile.phone_number}
         initialWebsite={profile.website}
       />
+      <BillingCard tier={profile.subscription_tier} />
       <ConnectedPlatformsCard locations={data.locations} />
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
       <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />

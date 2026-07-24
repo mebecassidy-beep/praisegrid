@@ -132,7 +132,7 @@ export interface ResponseTimeTrendPoint {
 }
 
 /** Monthly avg response time across ALL responded reviews (any rating) - a general responsiveness trend, distinct from the negative-review-focused revenue forensics above. */
-export function computeResponseTimeTrend(reviews: ForensicsReview[]): ResponseTimeTrendPoint[] {
+export function computeResponseTimeTrend(reviews: ForensicsReview[], months = 6): ResponseTimeTrendPoint[] {
   const responded = reviews.filter((r) => r.responded_at);
   const monthBuckets = new Map<string, number[]>();
   for (const review of responded) {
@@ -144,7 +144,7 @@ export function computeResponseTimeTrend(reviews: ForensicsReview[]): ResponseTi
   }
   const sortedKeys = Array.from(monthBuckets.keys())
     .sort((a, b) => (a > b ? 1 : -1))
-    .slice(-6);
+    .slice(-months);
   return sortedKeys.map((key) => {
     const [, monthIndex] = key.split("-").map(Number);
     const times = monthBuckets.get(key)!;

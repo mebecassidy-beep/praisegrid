@@ -30,7 +30,7 @@ export interface DashboardData {
  * pulls the score down). Returns null when there's no review history yet —
  * a fabricated score for zero data would be misleading, not honest.
  */
-function computeHealthScore(overall: LocationMetric): number | null {
+export function computeHealthScore(overall: LocationMetric): number | null {
   if (overall.reviewCount === 0) return null;
 
   const ratingComponent = (overall.avgRating / 5) * 100;
@@ -41,12 +41,19 @@ function computeHealthScore(overall: LocationMetric): number | null {
   return Math.round(Math.min(100, Math.max(0, score)));
 }
 
+export function computeRatingDistribution(reviews: Review[]): { stars: number; count: number }[] {
+  return [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    count: reviews.filter((r) => r.rating === stars).length,
+  }));
+}
+
 const MONTH_LABELS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-function computeLocationMetric(reviews: Review[]): LocationMetric {
+export function computeLocationMetric(reviews: Review[]): LocationMetric {
   if (reviews.length === 0) {
     return { avgRating: 0, reviewCount: 0, responseRate: 0, pendingCount: 0 };
   }
@@ -121,7 +128,8 @@ export async function getProfile(
  */
 export async function getDashboardData(
   userId: string,
-  supabase: SupabaseClient<Database> = createClient()
+  supabase: SupabaseClient<Database> = createClient(),
+  months = 6
 ): Promise<DashboardData> {
   const { data: locations } = await (supabase.from("locations") as any)
     .select("*")
@@ -141,11 +149,7 @@ export async function getDashboardData(
   }
 
   const overall = computeLocationMetric(reviewList);
-
-  const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => ({
-    stars,
-    count: reviewList.filter((r) => r.rating === stars).length,
-  }));
+  const ratingDistribution = computeRatingDistribution(reviewList);
 
   const locationMetrics: Record<string, LocationMetric> = {};
   for (const location of locationList) {
@@ -164,7 +168,7 @@ export async function getDashboardData(
   }
   const sortedMonthKeys = Array.from(monthBuckets.keys())
     .sort((a, b) => (a > b ? 1 : -1))
-    .slice(-6);
+    .slice(-months);
 
   const monthlyRatingTrend = sortedMonthKeys.map((key) => {
     const reviews = monthBuckets.get(key)!;

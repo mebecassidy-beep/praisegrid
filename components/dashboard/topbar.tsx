@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Bell, Check, ChevronDown, Loader2, Menu, Search } from "lucide-react";
+import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Bell, Check, ChevronDown, Loader2, Menu, Moon, Search, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { crisisRank, getDisplayStatus } from "@/lib/reviews/display-status";
@@ -33,35 +33,34 @@ export function Topbar({
   locations,
   reviews,
   onMenuClick,
+  theme,
+  onToggleTheme,
 }: {
   userEmail: string;
   locations: Location[];
   reviews: Review[];
   onMenuClick: () => void;
+  theme: "light" | "dark";
+  onToggleTheme: () => void;
 }) {
   const router = useRouter();
-  const [locationId, setLocationId] = useState(locations[0]?.id ?? null);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [locationOpen, setLocationOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [searchValue, setSearchValue] = useState(searchParams.get("q") ?? "");
 
-  // `locations` is server-fetched and only changes after a fresh navigation
-  // or router.refresh() (e.g. right after connecting a location via the
-  // modal) — useState's initial value only applies on mount, so without
-  // this the switcher would keep showing "Select location" until a full
-  // page reload even after a location was just added.
-  useEffect(() => {
-    if (!locationId && locations.length > 0) {
-      setLocationId(locations[0].id);
-    }
-  }, [locations, locationId]);
+  // Selection is derived from the URL, not local state, so it stays in sync
+  // with what the page is actually filtered to (including on back/forward
+  // nav) instead of drifting the moment a page re-renders with fresh data.
+  const selectedLocationId = searchParams.get("location");
+  const selectedLocation = locations.find((l) => l.id === selectedLocationId) ?? null;
 
   const initials = userEmail
     ? userEmail.slice(0, 2).toUpperCase()
     : "?";
-
-  const selectedLocation = locations.find((l) => l.id === locationId) ?? null;
 
   // Real notifications derived from actual flagged/high-risk reviews — no
   // fabricated activity. Every reviewer, platform, and timestamp shown here
@@ -70,6 +69,26 @@ export function Topbar({
     .filter((r) => getDisplayStatus(r) === "flagged")
     .sort((a, b) => crisisRank(a) - crisisRank(b))
     .slice(0, 5);
+
+  function selectLocation(id: string | null) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("location", id);
+    } else {
+      params.delete("location");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+    setLocationOpen(false);
+  }
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = searchValue.trim();
+    const params = new URLSearchParams();
+    if (selectedLocationId) params.set("location", selectedLocationId);
+    if (q) params.set("q", q);
+    router.push(`/reviews${params.toString() ? `?${params.toString()}` : ""}`);
+  }
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -90,39 +109,49 @@ export function Topbar({
         <Menu className="h-5 w-5" />
       </button>
 
-      <div className="relative hidden max-w-sm flex-1 sm:block">
+      <form onSubmit={handleSearchSubmit} className="relative hidden max-w-sm flex-1 sm:block">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           placeholder="Search reviews, reviewers…"
           className="h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
-      </div>
+      </form>
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3">
         {locations.length > 0 ? (
           <div className="relative" onBlur={closeOnBlur(setLocationOpen)}>
             <button
               onClick={() => setLocationOpen((v) => !v)}
+              aria-haspopup="listbox"
+              aria-expanded={locationOpen}
               className="flex h-9 items-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm hover:bg-accent"
             >
-              <span className="hidden sm:inline">{selectedLocation?.name ?? "Select location"}</span>
+              <span className="hidden sm:inline">{selectedLocation?.name ?? "All locations"}</span>
               <span className="sm:hidden">Location</span>
               <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", locationOpen && "rotate-180")} />
             </button>
             {locationOpen && (
-              <div className="absolute right-0 z-40 mt-2 w-56 rounded-md border bg-popover p-1 shadow-md">
+              <div className="absolute right-0 z-40 mt-2 w-56 rounded-md border bg-popover p-1 shadow-md" role="listbox">
+                {locations.length > 1 && (
+                  <button
+                    onClick={() => selectLocation(null)}
+                    className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
+                  >
+                    All locations
+                    {!selectedLocationId && <Check className="h-4 w-4 text-blue-500" />}
+                  </button>
+                )}
                 {locations.map((loc) => (
                   <button
                     key={loc.id}
-                    onClick={() => {
-                      setLocationId(loc.id);
-                      setLocationOpen(false);
-                    }}
+                    onClick={() => selectLocation(loc.id)}
                     className="flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent"
                   >
                     {loc.name}
-                    {loc.id === locationId && <Check className="h-4 w-4 text-blue-500" />}
+                    {loc.id === selectedLocationId && <Check className="h-4 w-4 text-blue-500" />}
                   </button>
                 ))}
               </div>
@@ -134,11 +163,21 @@ export function Topbar({
           </span>
         )}
 
+        <button
+          onClick={onToggleTheme}
+          aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-muted-foreground shadow-sm hover:bg-accent hover:text-foreground"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
+
         <div className="relative" onBlur={closeOnBlur(setNotifOpen)}>
           <button
             onClick={() => setNotifOpen((v) => !v)}
             className="relative flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-muted-foreground shadow-sm hover:bg-accent hover:text-foreground"
             aria-label="Notifications"
+            aria-haspopup="true"
+            aria-expanded={notifOpen}
           >
             <Bell className="h-4 w-4" />
             {flaggedReviews.length > 0 && (
@@ -171,6 +210,8 @@ export function Topbar({
         <div className="relative" onBlur={closeOnBlur(setProfileOpen)}>
           <button
             onClick={() => setProfileOpen((v) => !v)}
+            aria-haspopup="true"
+            aria-expanded={profileOpen}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-semibold text-white"
           >
             {initials}

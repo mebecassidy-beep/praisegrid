@@ -3,13 +3,13 @@ import { pageMetadata } from "@/lib/seo";
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
 import { CustomersHero } from "@/components/customers/customers-hero";
-import { TransformationGrid } from "@/components/customers/transformation-grid";
+import { ReputationSimulator } from "@/components/customers/reputation-simulator";
 import { AboutCta } from "@/components/about/about-cta";
 
 export const metadata: Metadata = pageMetadata({
   title: "Customers | Praisegrid",
   description:
-    "Real before & after transformations from local businesses across Home Services, Restaurants, Medical, and Retail using Praisegrid.",
+    "Run a live reputation scan on your own business and see a real Reputation Score, not a fabricated case study.",
   path: "/customers",
 });
 
@@ -18,7 +18,7 @@ export default function CustomersPage() {
     <main>
       <Navbar />
       <CustomersHero />
-      <TransformationGrid />
+      <ReputationSimulator />
       <AboutCta />
       <Footer />
     </main>

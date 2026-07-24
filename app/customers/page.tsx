@@ -14,11 +14,13 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function CustomersPage() {
+  const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
+
   return (
     <main>
       <Navbar />
       <CustomersHero />
-      <ReputationSimulator />
+      <ReputationSimulator googlePlacesEnabled={googlePlacesEnabled} />
       <AboutCta />
       <Footer />
     </main>

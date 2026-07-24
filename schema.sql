@@ -139,15 +139,20 @@ alter table public.reviews
 
 -- Stable per-platform review ID (e.g. Google's places/{id}/reviews/{id}
 -- resource name), the idempotency key for the review-sync cron jobs so
--- repeated syncs never insert duplicate rows for the same review. Nullable
--- and only unique-constrained when present, so existing manually-created
--- rows (support/demo data, the pre-sync ingestion endpoint) are unaffected.
+-- repeated syncs never insert duplicate rows for the same review.
+--
+-- Deliberately a plain (non-partial) unique index: Postgres unique
+-- constraints already treat every NULL as distinct from every other NULL,
+-- so existing rows with external_review_id = null (demo data, the
+-- pre-sync manual ingestion endpoint) are naturally exempt without a WHERE
+-- clause - and a WHERE clause here would actually break sync, Supabase's
+-- upsert(..., { onConflict }) always generates a plain ON CONFLICT (columns)
+-- target, which Postgres will only match against a non-partial constraint.
 alter table public.reviews
   add column if not exists external_review_id text;
 
 create unique index if not exists reviews_location_platform_external_id_idx
-  on public.reviews (location_id, platform, external_review_id)
-  where external_review_id is not null;
+  on public.reviews (location_id, platform, external_review_id);
 
 create index if not exists reviews_location_id_idx on public.reviews (location_id);
 create index if not exists reviews_status_idx on public.reviews (status);

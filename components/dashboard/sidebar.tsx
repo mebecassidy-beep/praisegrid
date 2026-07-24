@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { UpgradeSlideOver } from "@/components/dashboard/upgrade-slide-over";
+import { hasProAccess } from "@/lib/subscription";
 import type { SubscriptionTier } from "@/types";
 
 const TIER_LABEL: Record<SubscriptionTier, string> = {
@@ -48,7 +49,7 @@ const NAV_ITEMS = [
   { href: "/reviews", label: "Reviews", icon: MessageSquareText },
   { href: "/settings/ai", label: "AI Settings", icon: Sparkles },
   { href: "/locations", label: "Locations", icon: MapPin },
-  { href: "/franchise", label: "Franchise View", icon: Building2, lockedForFree: true },
+  { href: "/franchise", label: "Franchise View", icon: Building2, requiresPro: true },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/marketing", label: "Social Auto-Pilot", icon: Sparkles },
   { href: "/assets", label: "QR & Table Tents", icon: QrCode },
@@ -70,7 +71,7 @@ function NavLinks({
     <nav className="flex flex-1 flex-col gap-1 px-3">
       {NAV_ITEMS.map((item) => {
         const active = pathname === item.href;
-        const locked = item.lockedForFree && tier === "free";
+        const locked = item.requiresPro && !hasProAccess(tier);
 
         if (locked) {
           return (

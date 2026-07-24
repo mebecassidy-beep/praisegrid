@@ -2,12 +2,13 @@ import { FranchiseOverview } from "@/components/dashboard/franchise-overview";
 import { FranchiseLockedState } from "@/components/dashboard/franchise-locked-state";
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
+import { hasProAccess } from "@/lib/subscription";
 
 export default async function FranchisePage() {
   const user = await requireUser();
   const profile = await getProfile(user.id);
 
-  if (profile.subscription_tier === "free") {
+  if (!hasProAccess(profile.subscription_tier)) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <FranchiseLockedState />

@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { GalleryHorizontal, LayoutGrid, Square, Star } from "lucide-react";
+import { Check, Copy, GalleryHorizontal, LayoutGrid, Square, Star } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { Review } from "@/types";
+import type { Location, Review } from "@/types";
+import type { LocationMetric } from "@/lib/dashboard/queries";
 
 type WidgetStyle = "badge" | "carousel" | "grid";
 
@@ -36,44 +36,67 @@ function SnippetCard({ review }: { review: Review }) {
 }
 
 /**
- * Preview now renders the account's real positive reviews instead of fake
- * testimonials. The embed snippet is left disabled with a "Coming soon"
- * label rather than copy-able code, since there's no hosted widget script
- * (widget.praisegrid.io) actually built yet.
+ * Generates a real, working embed snippet backed by /api/public/widget/
+ * [locationId] and public/widget.js - a widget embeds one specific
+ * location's Google listing, so this has its own location picker
+ * independent of the dashboard's global location filter.
  */
 export function WidgetPreviewCard({
+  locations,
   reviews,
-  avgRating,
-  totalReviews,
+  locationMetrics,
 }: {
+  locations: Location[];
   reviews: Review[];
-  avgRating: number;
-  totalReviews: number;
+  locationMetrics: Record<string, LocationMetric>;
 }) {
   const [style, setStyle] = useState<WidgetStyle>("badge");
+  const [locationId, setLocationId] = useState(locations[0]?.id ?? "");
+  const [copied, setCopied] = useState(false);
+
+  const metric = locationMetrics[locationId];
+  const locationReviews = useMemo(() => reviews.filter((r) => r.location_id === locationId), [reviews, locationId]);
 
   const snippets = useMemo(
     () =>
-      reviews
+      locationReviews
         .filter((r) => r.rating >= 4 && !!r.review_text)
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 4),
-    [reviews]
+    [locationReviews]
   );
+
+  const embedCode = `<script\n  src="https://praisegrid.com/widget.js"\n  data-location="${locationId}"\n  data-style="${style}"\n  async\n></script>`;
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(embedCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // clipboard unavailable — no-op
+    }
+  }
+
+  if (locations.length === 0 || !metric) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Website widget</CardTitle>
+          <CardDescription>Connect a location to get an embeddable review widget for your site.</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          Website widget
-          <Badge variant="outline" className="border-transparent bg-muted text-muted-foreground">
-            Coming soon
-          </Badge>
-        </CardTitle>
-        <CardDescription>Preview of how your real reviews would look embedded on your site.</CardDescription>
+        <CardTitle>Website widget</CardTitle>
+        <CardDescription>Show off your real reviews anywhere on your site with one embed snippet.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {STYLES.map((s) => (
             <button
               key={s.value}
@@ -89,6 +112,20 @@ export function WidgetPreviewCard({
               {s.label}
             </button>
           ))}
+
+          {locations.length > 1 && (
+            <select
+              value={locationId}
+              onChange={(e) => setLocationId(e.target.value)}
+              className="ml-auto h-7 rounded-full border border-input bg-background px-2.5 text-xs font-medium"
+            >
+              {locations.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div className="overflow-hidden rounded-lg border">
@@ -102,7 +139,7 @@ export function WidgetPreviewCard({
           </div>
 
           <div className="flex min-h-[168px] items-center justify-center bg-slate-50 p-6 dark:bg-slate-950">
-            {snippets.length === 0 ? (
+            {style !== "badge" && snippets.length === 0 ? (
               <p className="max-w-xs text-center text-sm text-muted-foreground">
                 Once you have a few 4-5 star reviews with written feedback, they&apos;ll show up here.
               </p>
@@ -110,11 +147,11 @@ export function WidgetPreviewCard({
               <div className="flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-md dark:bg-slate-900">
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-bold">{avgRating > 0 ? avgRating.toFixed(1) : "—"}</span>
-                    <Stars rating={Math.round(avgRating)} />
+                    <span className="text-lg font-bold">{metric.avgRating > 0 ? metric.avgRating.toFixed(1) : "—"}</span>
+                    <Stars rating={Math.round(metric.avgRating)} />
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    {totalReviews.toLocaleString()} reviews · Powered by Praisegrid
+                    {metric.reviewCount.toLocaleString()} reviews · Powered by Praisegrid
                   </p>
                 </div>
               </div>
@@ -134,8 +171,20 @@ export function WidgetPreviewCard({
           </div>
         </div>
 
+        <div className="relative">
+          <pre className="overflow-x-auto rounded-lg bg-slate-950 p-3 text-xs leading-relaxed text-slate-300">
+            <code>{embedCode}</code>
+          </pre>
+          <button
+            onClick={handleCopy}
+            className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-white hover:bg-white/20"
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
         <p className="text-xs text-muted-foreground">
-          Embeddable widget code isn&apos;t available yet, we&apos;ll notify you when the embed script ships.
+          Paste this anywhere in your site&apos;s HTML. It pulls your live rating and reviews on every page load.
         </p>
       </CardContent>
     </Card>

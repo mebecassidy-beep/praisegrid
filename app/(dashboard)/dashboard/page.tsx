@@ -142,7 +142,7 @@ export default async function DashboardPage({
 
         <RevealItem className="grid gap-6 lg:grid-cols-2">
           <FeedbackShieldCard recentResponses={feedbackResponses} totalResponseCount={feedbackResponseCount} />
-          <WidgetPreviewCard reviews={scopedReviews} avgRating={scopedMetric.avgRating} totalReviews={scopedMetric.reviewCount} />
+          <WidgetPreviewCard locations={data.locations} reviews={data.reviews} locationMetrics={data.locationMetrics} />
         </RevealItem>
       </RevealGroup>
     </div>

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { createRouteHandlerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { getActiveConnection } from "@/lib/google-business-profile/connection";
+import { replyToReview } from "@/lib/google-business-profile/client";
+import { GBP_EXTERNAL_ID_PREFIX } from "@/lib/google-business-profile/sync-reviews";
 
 const VALID_STATUSES = ["pending", "approved", "posted"];
 
@@ -28,12 +31,38 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     const { data: existing } = await (supabase.from("reviews") as any)
-      .select("id, location_id, status, responded_at, locations!inner(user_id)")
+      .select("id, location_id, status, responded_at, external_review_id, locations!inner(user_id)")
       .eq("id", params.id)
       .single();
 
     if (!existing || existing.locations?.user_id !== user.id) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
+    }
+
+    // A review synced through the Google Business Profile OAuth connection
+    // (see lib/google-business-profile/sync-reviews.ts) can actually be
+    // replied to on Google itself, not just marked posted locally. If that
+    // real post fails, this returns an error rather than silently marking it
+    // posted, since that would tell the owner it went live when it didn't.
+    const isGbpReview = existing.external_review_id?.startsWith(GBP_EXTERNAL_ID_PREFIX);
+    if (status === "posted" && isGbpReview && responseText) {
+      // platform_connections has no UPDATE policy for the authenticated
+      // role (only server-side code ever touches tokens), and
+      // getActiveConnection may need to refresh + persist a token - needs
+      // the service-role client, not the request-scoped one used above.
+      const connection = await getActiveConnection(createServiceRoleClient(), existing.location_id);
+      if (connection) {
+        try {
+          const gbpReviewId = existing.external_review_id.slice(GBP_EXTERNAL_ID_PREFIX.length);
+          await replyToReview(connection.accessToken, connection.accountId, connection.gbpLocationId, gbpReviewId, responseText);
+        } catch (err: any) {
+          console.error("Failed to post reply to Google:", err);
+          return NextResponse.json(
+            { error: "Couldn't post this reply to Google. Your draft is saved, you can try again." },
+            { status: 502 }
+          );
+        }
+      }
     }
 
     const update: Record<string, string> = {};

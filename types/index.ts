@@ -17,6 +17,7 @@ export type AiSettings = Database["public"]["Tables"]["ai_settings"]["Row"];
 export type Lead = Database["public"]["Tables"]["leads"]["Row"];
 export type FeedbackResponse = Database["public"]["Tables"]["feedback_responses"]["Row"];
 export type ScheduledBlast = Database["public"]["Tables"]["scheduled_blasts"]["Row"];
+export type PlatformConnection = Database["public"]["Tables"]["platform_connections"]["Row"];
 
 export type LocationWithReviews = Location & { reviews: Review[] };
 export type ReviewWithLocation = Review & { location: Location };

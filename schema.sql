@@ -210,6 +210,50 @@ create policy "Users can delete reviews for their own locations"
     )
   );
 
+-- ============================================================================
+-- platform_connections
+-- OAuth tokens for the Google Business Profile API (full review history +
+-- real reply-posting, distinct from the static-key Places API used for the
+-- basic 5-review sync). access_token/refresh_token are AES-256-GCM
+-- ciphertext, encrypted/decrypted only in application code (see
+-- lib/google-business-profile/token-crypto.ts) so the key never touches a
+-- SQL query or log line. Only ever written by the server-side OAuth callback
+-- and read by server-side sync/reply-posting routes, both using the
+-- service-role client - regular users never see raw tokens, so there are
+-- deliberately no insert/update/delete RLS policies for the authenticated role.
+-- ============================================================================
+create table if not exists public.platform_connections (
+  id uuid primary key default gen_random_uuid(),
+  location_id uuid not null references public.locations (id) on delete cascade,
+  platform text not null check (platform in ('google')),
+  access_token text not null,
+  refresh_token text,
+  expires_at timestamptz,
+  scope text,
+  -- Google's own identifiers for the GBP account + location resource, not
+  -- the same as locations.google_place_id (that's the read-only Places API
+  -- ID). Both required to call the reviews.list / reviews.reply endpoints.
+  account_id text,
+  gbp_location_id text,
+  connected_at timestamptz not null default now(),
+  unique (location_id, platform)
+);
+
+create index if not exists platform_connections_location_id_idx on public.platform_connections (location_id);
+
+alter table public.platform_connections enable row level security;
+
+drop policy if exists "Users can view platform connections for their own locations" on public.platform_connections;
+create policy "Users can view platform connections for their own locations"
+  on public.platform_connections for select
+  using (
+    exists (
+      select 1 from public.locations
+      where locations.id = platform_connections.location_id
+        and locations.user_id = auth.uid()
+    )
+  );
+
 -- Adds `reviews` to Supabase's realtime publication so the dashboard can
 -- subscribe to new-review inserts live instead of only picking them up on
 -- the next page load. Postgres Changes subscriptions still enforce the RLS

@@ -306,6 +306,44 @@ export interface Database {
           created_at?: string;
         };
       };
+      platform_connections: {
+        Row: {
+          id: string;
+          location_id: string;
+          platform: "google";
+          access_token: string;
+          refresh_token: string | null;
+          expires_at: string | null;
+          scope: string | null;
+          account_id: string | null;
+          gbp_location_id: string | null;
+          connected_at: string;
+        };
+        Insert: {
+          id?: string;
+          location_id: string;
+          platform: "google";
+          access_token: string;
+          refresh_token?: string | null;
+          expires_at?: string | null;
+          scope?: string | null;
+          account_id?: string | null;
+          gbp_location_id?: string | null;
+          connected_at?: string;
+        };
+        Update: {
+          id?: string;
+          location_id?: string;
+          platform?: "google";
+          access_token?: string;
+          refresh_token?: string | null;
+          expires_at?: string | null;
+          scope?: string | null;
+          account_id?: string | null;
+          gbp_location_id?: string | null;
+          connected_at?: string;
+        };
+      };
     };
   };
 }

@@ -20,7 +20,10 @@ const TIERS: TierDetail[] = [
       "1 business location",
       "Google + Yelp sync",
       "AI-drafted responses (100/mo)",
-      "Basic sentiment analytics",
+      "Fake review dispute drafting",
+      "Feedback Shield private-first funnel",
+      "One-tap review request blasts",
+      "QR codes & table tents",
       "Email support",
     ],
     metrics: [
@@ -36,11 +39,14 @@ const TIERS: TierDetail[] = [
     price: 97,
     description: "For growing brands that need automation and deeper insights.",
     features: [
-      "Up to 5 business locations",
+      "Up to 5 business locations & Franchise View",
       "Google, Yelp + Facebook sync",
       "Unlimited AI-drafted responses",
       "Auto-approve rules engine",
-      "Advanced sentiment analytics",
+      "Competitor benchmarking & leak finder",
+      "Revenue Forensics ROI calculator",
+      "Crisis Shield: Slack + SMS alerts",
+      "Social Auto-Pilot",
       "Priority support",
     ],
     metrics: [

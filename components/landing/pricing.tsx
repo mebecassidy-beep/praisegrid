@@ -18,7 +18,7 @@ const TIERS: TierDetail[] = [
     description: "For single-location businesses getting started with review management.",
     features: [
       "1 business location",
-      "Google + Yelp sync",
+      "Google review sync (5 most recent, daily)",
       "AI-drafted responses (100/mo)",
       "Fake review dispute drafting",
       "Feedback Shield private-first funnel",
@@ -29,7 +29,7 @@ const TIERS: TierDetail[] = [
     metrics: [
       { label: "Business locations", value: "1", fill: 20 },
       { label: "AI-drafted responses", value: "100/mo", fill: 35 },
-      { label: "Platforms synced", value: "2 (Google, Yelp)", fill: 66 },
+      { label: "Platforms synced", value: "Google (Yelp, Facebook coming soon)", fill: 40 },
     ],
     highlighted: false,
     activationLine: "⚡ Live in 90 seconds, connect Google, done.",
@@ -40,7 +40,7 @@ const TIERS: TierDetail[] = [
     description: "For growing brands that need automation and deeper insights.",
     features: [
       "Up to 5 business locations & Franchise View",
-      "Google, Yelp + Facebook sync",
+      "Google review sync (5 most recent, daily)",
       "Unlimited AI-drafted responses",
       "Auto-approve rules engine",
       "Competitor benchmarking & leak finder",
@@ -52,7 +52,7 @@ const TIERS: TierDetail[] = [
     metrics: [
       { label: "Business locations", value: "Up to 5", fill: 100 },
       { label: "AI-drafted responses", value: "Unlimited", fill: 100 },
-      { label: "Platforms synced", value: "3 (Google, Yelp, Facebook)", fill: 100 },
+      { label: "Platforms synced", value: "Google (Yelp, Facebook coming soon)", fill: 40 },
     ],
     highlighted: true,
     activationLine: "Everything unlimited, no per-location fees, no usage caps.",

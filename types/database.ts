@@ -117,6 +117,7 @@ export interface Database {
           dispute_draft: string | null;
           social_generated_at: string | null;
           responded_at: string | null;
+          external_review_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -136,6 +137,7 @@ export interface Database {
           dispute_draft?: string | null;
           social_generated_at?: string | null;
           responded_at?: string | null;
+          external_review_id?: string | null;
           created_at?: string;
         };
         Update: {
@@ -155,6 +157,7 @@ export interface Database {
           dispute_draft?: string | null;
           social_generated_at?: string | null;
           responded_at?: string | null;
+          external_review_id?: string | null;
           created_at?: string;
         };
       };

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { createRouteHandlerSupabaseClient } from '@/lib/supabase/server'
 import { classifyReviewRisk } from '@/lib/reviews/classify-risk'
 import { sendCrisisAlertSms } from '@/lib/sms/send-crisis-alert'
+import { hasProAccess } from '@/lib/subscription'
 
 export async function GET(request: Request) {
   try {
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
         .eq('id', user.id)
         .single()
 
-      if (profile?.subscription_tier === 'pro' && profile?.alert_phone_number) {
+      if (hasProAccess(profile?.subscription_tier) && profile?.alert_phone_number) {
         sendCrisisAlertSms({
           to: profile.alert_phone_number,
           businessName: profile.company_name || 'your business',

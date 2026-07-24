@@ -12,10 +12,17 @@ export interface PlaceSuggestion {
 }
 
 export interface PlaceReview {
+  /** Google's review resource name (places/{placeId}/reviews/{reviewId}) -
+   * used as the idempotency key for syncing into our own reviews table. Not
+   * guaranteed present on every response shape, callers should fall back to
+   * a derived key if empty rather than assume it's always set. */
+  id: string;
   authorName: string;
   rating: number;
   text: string;
   relativeTime: string;
+  /** RFC3339 timestamp, null if Google didn't return one for this review. */
+  publishTime: string | null;
 }
 
 export interface PlaceDetails {
@@ -90,10 +97,12 @@ export async function searchBusinessByName(query: string): Promise<PlaceDetails 
 
   const reviews: PlaceReview[] = Array.isArray(place.reviews)
     ? place.reviews.slice(0, 5).map((r: any) => ({
+        id: r.name ?? "",
         authorName: r.authorAttribution?.displayName ?? "Anonymous",
         rating: typeof r.rating === "number" ? r.rating : 0,
         text: (r.text?.text ?? "").slice(0, 400),
         relativeTime: r.relativePublishTimeDescription ?? "",
+        publishTime: typeof r.publishTime === "string" ? r.publishTime : null,
       }))
     : [];
 
@@ -108,7 +117,7 @@ export async function searchBusinessByName(query: string): Promise<PlaceDetails 
 }
 
 export async function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
-  const res = await fetch(`${PLACES_BASE}/places/${encodeURIComponent(placeId)}`, {
+  const res = await fetch(`${PLACES_BASE}/places/${encodeURIComponent(placeId)}?languageCode=en`, {
     headers: {
       "X-Goog-Api-Key": apiKey(),
       "X-Goog-FieldMask": "id,displayName,formattedAddress,rating,userRatingCount,reviews",
@@ -124,10 +133,12 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetails> {
 
   const reviews: PlaceReview[] = Array.isArray(data.reviews)
     ? data.reviews.slice(0, 5).map((r: any) => ({
+        id: r.name ?? "",
         authorName: r.authorAttribution?.displayName ?? "Anonymous",
         rating: typeof r.rating === "number" ? r.rating : 0,
         text: (r.text?.text ?? "").slice(0, 400),
         relativeTime: r.relativePublishTimeDescription ?? "",
+        publishTime: typeof r.publishTime === "string" ? r.publishTime : null,
       }))
     : [];
 

@@ -38,10 +38,10 @@ This chat window renders plain text only, no markdown. Never use **bold**, bulle
 
 WHAT YOU KNOW (the facts, don't improvise beyond them)
 Plans, exactly as follows, don't blur or combine their feature lists:
-- Starter ($49/mo): 1 business location, Google + Yelp sync only (no Facebook), AI-drafted review responses (100/mo), basic sentiment analytics, email support.
-- Pro ($97/mo): up to 5 business locations, Google + Yelp + Facebook sync, unlimited AI-drafted responses, auto-approve rules engine, advanced sentiment analytics, priority support.
+- Starter ($49/mo): 1 business location, Google review sync (5 most recent, daily), AI-drafted review responses (100/mo), basic sentiment analytics, email support.
+- Pro ($97/mo): up to 5 business locations, Google review sync (5 most recent, daily), unlimited AI-drafted responses, auto-approve rules engine, advanced sentiment analytics, priority support.
 
-Review sync: once a location is connected in Settings, Praisegrid pulls in new Google (and Yelp, and Facebook on Pro) reviews automatically and drafts an AI response for each one, which the customer approves before it posts. Nothing posts without approval unless auto-approve rules are turned on.
+Review sync: once a location is connected in Settings, Praisegrid pulls in that location's 5 most recent Google reviews once a day (a Google API limit, not something we control) and drafts an AI response for each new one, which the customer approves. Be precise if asked what "approve" does right now: it saves the response in Praisegrid and marks the review as responded, it does not yet post the reply back to Google itself, that's a real feature the team is actively building, don't imply it already works. Yelp and Facebook sync are not built yet, they're marked "Coming soon" in Settings, not hidden.
 
 Crisis Shield: any 1 or 2 star review gets pinned to the top of the customer's review feed with a Crisis Alert badge, plus a calm, legally safe AI-drafted response ready to approve in one click. It's about catching a bad review fast, not hiding it.
 
@@ -67,7 +67,7 @@ const TOOLS: Anthropic.Tool[] = [
   {
     name: "run_account_diagnostics",
     description:
-      "Check the signed-in user's Google/Yelp/Facebook review sync status, Feedback Shield compliance posture, or account and billing status. Only works for a signed-in user; if there is none, it will say so.",
+      "Check the signed-in user's Google review sync status, Feedback Shield compliance posture, or account and billing status. Only works for a signed-in user; if there is none, it will say so.",
     input_schema: {
       type: "object",
       properties: {

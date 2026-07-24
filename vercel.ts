@@ -2,6 +2,7 @@ import type { VercelConfig } from "@vercel/config/v1";
 
 export const config: VercelConfig = {
   crons: [
+    { path: "/api/cron/sync-google-reviews", schedule: "0 12 * * *" },
     { path: "/api/cron/reports", schedule: "0 13 * * *" },
     { path: "/api/cron/competitor-report", schedule: "0 14 * * 1" },
     // Hobby plan caps crons at once/day, so scheduled blasts are checked

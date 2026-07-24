@@ -6,9 +6,9 @@ import { Parallax } from "@/components/motion/parallax";
 const FEATURES = [
   {
     icon: MapPin,
-    title: "Google Maps Sync",
+    title: "Google Review Sync",
     description:
-      "Two-way sync with your Google Business Profile keeps every review, rating, and response perfectly up to date in real time.",
+      "Your 5 most recent Google reviews sync in automatically every day, so nothing slips through unnoticed. Full history and instant reply-posting are next.",
     gradient: "from-blue-500 to-cyan-400",
   },
   {

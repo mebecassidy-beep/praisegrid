@@ -23,7 +23,7 @@ const STATUS_FILTERS: { value: DisplayStatus | "all"; label: string }[] = [
   { value: "pending", label: "Pending" },
   { value: "flagged", label: "Flagged" },
   { value: "approved", label: "Approved" },
-  { value: "posted", label: "Posted" },
+  { value: "posted", label: "Responded" },
 ];
 
 export function ReviewExplorer({

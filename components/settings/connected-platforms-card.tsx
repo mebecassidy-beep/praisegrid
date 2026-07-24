@@ -20,7 +20,7 @@ export function ConnectedPlatformsCard({ locations }: { locations: Location[] })
     <Card>
       <CardHeader>
         <CardTitle>Connected platforms</CardTitle>
-        <CardDescription>Sync reviews automatically from each connected source.</CardDescription>
+        <CardDescription>Google syncs your 5 most recent reviews daily. Yelp and Facebook are coming soon.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center justify-between gap-3 rounded-lg border p-3">

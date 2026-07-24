@@ -6,9 +6,9 @@ const PILLARS = [
   {
     number: "01",
     icon: MapPin,
-    title: "Google Maps sync, in real time",
+    title: "Google review sync, every day",
     description:
-      "Two-way sync with your Google Business Profile keeps every review, rating, and response perfectly up to date, no manual refreshing, no missed notifications.",
+      "Your 5 most recent Google reviews sync in automatically each day, and the dashboard notifies you the moment they land, no manual refreshing. Full history and instant reply-posting are next.",
     gradient: "from-blue-500 to-cyan-400",
   },
   {

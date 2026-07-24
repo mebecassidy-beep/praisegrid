@@ -11,6 +11,6 @@ export const PLATFORM_META: Record<Platform, { label: string; icon: LucideIcon; 
 export const STATUS_META: Record<DisplayStatus, { label: string; badgeClass: string }> = {
   pending: { label: "Pending", badgeClass: "bg-amber-500/10 text-amber-600" },
   approved: { label: "Approved", badgeClass: "bg-emerald-500/10 text-emerald-600" },
-  posted: { label: "Posted", badgeClass: "bg-emerald-500/10 text-emerald-600" },
+  posted: { label: "Responded", badgeClass: "bg-emerald-500/10 text-emerald-600" },
   flagged: { label: "Flagged", badgeClass: "bg-red-500/10 text-red-600" },
 };

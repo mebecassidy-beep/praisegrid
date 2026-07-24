@@ -137,6 +137,18 @@ alter table public.reviews
   add column if not exists dispute_draft text,
   add column if not exists social_generated_at timestamptz;
 
+-- Stable per-platform review ID (e.g. Google's places/{id}/reviews/{id}
+-- resource name), the idempotency key for the review-sync cron jobs so
+-- repeated syncs never insert duplicate rows for the same review. Nullable
+-- and only unique-constrained when present, so existing manually-created
+-- rows (support/demo data, the pre-sync ingestion endpoint) are unaffected.
+alter table public.reviews
+  add column if not exists external_review_id text;
+
+create unique index if not exists reviews_location_platform_external_id_idx
+  on public.reviews (location_id, platform, external_review_id)
+  where external_review_id is not null;
+
 create index if not exists reviews_location_id_idx on public.reviews (location_id);
 create index if not exists reviews_status_idx on public.reviews (status);
 

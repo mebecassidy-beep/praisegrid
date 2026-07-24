@@ -42,17 +42,16 @@ export async function runAccountDiagnostics(
   if (check === "sync_status" || check === "all") {
     if (locations.length === 0) {
       lines.push(
-        "Sync status: no business locations are connected yet, so neither Google nor Yelp sync can run until one is added in Settings > Locations."
+        "Sync status: no business locations are connected yet, so Google review sync can't run until one is added in Settings > Locations. Yelp and Facebook sync aren't built yet regardless of connection status."
       );
     } else {
       for (const loc of locations) {
-        const google = loc.google_place_id ? "connected" : "not connected";
-        const yelp = loc.yelp_business_id ? "connected" : "not connected";
-        lines.push(`Location "${loc.name}": Google sync ${google}, Yelp sync ${yelp}.`);
+        const google = loc.google_place_id ? "connected, syncs up to 5 most recent reviews daily" : "not connected";
+        lines.push(`Location "${loc.name}": Google ${google}. Yelp and Facebook sync aren't built yet.`);
       }
       lines.push(
         latestReview
-          ? `Most recent review pulled in: a ${latestReview.platform} review dated ${
+          ? `Most recent review synced in: a ${latestReview.platform} review dated ${
               latestReview.review_date ?? latestReview.created_at
             }.`
           : "No reviews have synced in yet for this account."

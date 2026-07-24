@@ -281,7 +281,7 @@ export function ReviewFeedCard({
                   ) : (
                     <Send className="h-3.5 w-3.5" />
                   )}
-                  {isDone ? "Posted" : "Approve & Post"}
+                  {isDone ? "Responded" : "Approve response"}
                 </Button>
                 {!isDone && (
                   <>

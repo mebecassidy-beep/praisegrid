@@ -6,10 +6,10 @@ import { Sheet } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 const TIER_PERKS: Record<"starter" | "pro", string[]> = {
-  starter: ["1 business location", "Google + Yelp sync", "AI-drafted responses (100/mo)"],
+  starter: ["1 business location", "Google review sync (5 most recent, daily)", "AI-drafted responses (100/mo)"],
   pro: [
     "Up to 5 business locations",
-    "Google, Yelp + Facebook sync",
+    "Google review sync (5 most recent, daily)",
     "Unlimited AI-drafted responses",
     "Auto-approve rules engine",
   ],

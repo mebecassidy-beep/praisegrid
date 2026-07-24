@@ -32,13 +32,13 @@ const FAQS: { category: Category; question: string; answer: string }[] = [
     category: "Getting started",
     question: "Which review platforms does Praisegrid support?",
     answer:
-      "We currently sync with Google Business Profile. Yelp and Facebook connections are coming soon, you'll see them marked that way in Settings rather than hidden.",
+      "Google is live today: your 5 most recent reviews sync in automatically once a day (a Google API limit, full history is coming). Yelp and Facebook connections are coming soon, you'll see them marked that way in Settings rather than hidden.",
   },
   {
     category: "Getting started",
     question: "How do I connect my Google Business Profile?",
     answer:
-      "From the dashboard, click \"Connect Google Business Profile\" and search for your listing, we pull it directly from Google so your name, address, and reviews are accurate from the first sync.",
+      "From the dashboard, click \"Connect Google Business Profile\" and search for your listing, we pull your name and address directly from Google right away. Your reviews sync in on the next daily sync, not instantly.",
   },
   {
     category: "Getting started",
@@ -85,7 +85,7 @@ const FAQS: { category: Category; question: string; answer: string }[] = [
     category: "Alerts & notifications",
     question: "Will I know the moment a new review comes in?",
     answer:
-      "Yes, the dashboard shows a live notification the instant a new review is synced, and updates your stats automatically without needing to refresh the page.",
+      "Once a review lands in your account, whichever page you're on updates instantly with a live notification, no refresh needed. Google reviews currently sync once a day, we're working on syncing more often.",
   },
   {
     category: "Alerts & notifications",

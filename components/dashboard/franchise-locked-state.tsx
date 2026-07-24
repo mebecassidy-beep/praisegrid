@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const PRO_PERKS = [
   "Up to 5 business locations",
-  "Google, Yelp + Facebook sync",
+  "Google review sync (5 most recent, daily)",
   "Unlimited AI-drafted responses",
   "Auto-approve rules engine",
 ];

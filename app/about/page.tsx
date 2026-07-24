@@ -24,7 +24,7 @@ export default function AboutPage() {
       <Navbar />
       <MissionHero />
       <AboutScrollytelling />
-      <SocialProof />
+      <SocialProof variant="about" />
       <PillarsSection />
       <ValuesSection />
       <AboutCta />

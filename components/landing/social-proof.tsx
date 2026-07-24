@@ -15,22 +15,40 @@ interface SampleTestimonial {
 
 // Illustrative examples — visibly labeled "Sample result" in the UI below.
 // Swap for verified customer quotes as they come in (see item 5 discussion).
-const TESTIMONIALS: SampleTestimonial[] = [
-  {
-    businessType: "Local plumbing & HVAC company",
-    quote:
-      "We used to let reviews pile up for weeks. Now every one gets an on-brand reply the same day, and we haven't lost a customer to an unanswered complaint since.",
-    result: "~6 hours/week saved on review management",
-  },
-  {
-    businessType: "Neighborhood restaurant",
-    quote:
-      "A scathing 1-star review went up on a Friday night. Praisegrid flagged it instantly and had a response drafted before we even saw the notification.",
-    result: "Negative review addressed in under 10 minutes",
-  },
-];
+// Two sets so Home and About don't show the exact same pair verbatim.
+const TESTIMONIAL_SETS: Record<"home" | "about", SampleTestimonial[]> = {
+  home: [
+    {
+      businessType: "Local plumbing & HVAC company",
+      quote:
+        "We used to let reviews pile up for weeks. Now every one gets an on-brand reply the same day, and we haven't lost a customer to an unanswered complaint since.",
+      result: "~6 hours/week saved on review management",
+    },
+    {
+      businessType: "Neighborhood restaurant",
+      quote:
+        "A scathing 1-star review went up on a Friday night. Praisegrid flagged it instantly and had a response drafted before we even saw the notification.",
+      result: "Negative review addressed in under 10 minutes",
+    },
+  ],
+  about: [
+    {
+      businessType: "Local dental practice",
+      quote:
+        "Patients used to see old, unanswered reviews and just call the next practice on the list. Every review gets a same-day reply now, and it actually sounds like our front desk, not a form letter.",
+      result: "Same-day response rate: 100%",
+    },
+    {
+      businessType: "Boutique retail shop",
+      quote:
+        "We were slow to respond and customers called us out for it publicly. Replies go out the same day now, and they actually sound like our brand instead of corporate copy-paste.",
+      result: "Average response time cut from a week to same-day",
+    },
+  ],
+};
 
-export function SocialProof() {
+export function SocialProof({ variant = "home" }: { variant?: "home" | "about" }) {
+  const TESTIMONIALS = TESTIMONIAL_SETS[variant];
   return (
     <section id="metrics" className="border-b bg-slate-950">
       <div className="container grid grid-cols-2 gap-8 py-12 sm:grid-cols-4">

@@ -32,7 +32,7 @@ export function Hero() {
             <RevealItem>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
                 <Sparkles className="h-3.5 w-3.5 text-blue-400" />
-                Powered by Claude Opus 4.8
+                AI-drafted responses that sound like you
               </div>
             </RevealItem>
 

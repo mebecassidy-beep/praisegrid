@@ -13,7 +13,7 @@ const FEATURES = [
   },
   {
     icon: Sparkles,
-    title: "Claude Opus 4.8 Brand Voice",
+    title: "AI Brand Voice",
     description:
       "AI-drafted responses trained on your tone and past replies, so every reply sounds like it came straight from your team.",
     gradient: "from-violet-500 to-fuchsia-400",

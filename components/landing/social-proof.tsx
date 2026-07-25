@@ -1,10 +1,10 @@
 import { Quote, Sparkles } from "lucide-react";
 
 const STATS = [
-  { value: "10k+", label: "Reviews Managed" },
-  { value: "4.9/5", label: "Average Rating" },
-  { value: "500+", label: "Local Businesses" },
-  { value: "98%", label: "Response Rate" },
+  { value: "AI-Powered", label: "Instant Review Responses" },
+  { value: "Real-Time", label: "Crisis Alerts" },
+  { value: "One-Click", label: "Google Review Sync" },
+  { value: "24/7", label: "Review Monitoring" },
 ];
 
 interface SampleTestimonial {

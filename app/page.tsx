@@ -12,7 +12,6 @@ import { Features } from "@/components/landing/features";
 import { Pricing } from "@/components/landing/pricing";
 import { ObjectionFaq } from "@/components/landing/objection-faq";
 import { Footer } from "@/components/landing/footer";
-import { FomoTicker } from "@/components/landing/fomo-ticker";
 import { ExitIntentModal } from "@/components/landing/exit-intent-modal";
 
 export const metadata: Metadata = pageMetadata({
@@ -39,7 +38,6 @@ export default function HomePage() {
       <Pricing />
       <ObjectionFaq />
       <Footer />
-      <FomoTicker />
       <ExitIntentModal />
     </main>
   );

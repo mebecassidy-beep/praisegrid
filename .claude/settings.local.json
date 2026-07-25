@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "auto",
     "allow": [
       "Bash(npm -v)",
       "Bash(npx tsc *)",
@@ -48,7 +47,38 @@
       "Bash(node verify_scroll.js)",
       "Bash(node verify_pricing.js)",
       "Bash(npx vercel *)",
-      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; cat -n {}')"
-    ]
+      "Bash(xargs -I{} sh -c 'echo \"=== {} ===\"; cat -n {}')",
+      "Bash(command -v vercel)",
+      "Bash(vercel --version)",
+      "mcp__plugin_vercel_vercel__list_deployments",
+      "mcp__plugin_vercel_vercel__get_project",
+      "Bash(gh repo *)",
+      "mcp__plugin_vercel_vercel__check_domain_availability_and_price",
+      "Bash(git log *)",
+      "Bash(echo \"exit:$?\")",
+      "mcp__plugin_vercel_vercel__search_vercel_documentation",
+      "Bash(git check-ignore *)",
+      "Bash(npm i *)",
+      "Bash(npx --yes vercel@latest --version)",
+      "Bash(npx *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(git -C /Users/maurice/praisegrid status --short)",
+      "Bash(NODE_PATH=/Users/maurice/praisegrid/node_modules node *)",
+      "Bash(node .tmp-realtime-test.mjs)",
+      "Bash(claude doctor *)",
+      "mcp__plugin_vercel_vercel__get_deployment",
+      "Bash(command -v curl)",
+      "Bash(bash /private/tmp/claude-502/-Users-maurice-praisegrid/957f3946-2899-4120-9909-104860c44be8/scratchpad/check-routes.sh)",
+      "Bash(git rm *)",
+      "Bash(bash /private/tmp/claude-502/-Users-maurice-praisegrid/957f3946-2899-4120-9909-104860c44be8/scratchpad/final-check.sh)",
+      "mcp__plugin_vercel_vercel__get_deployment_build_logs",
+      "Bash(python3 *)",
+      "mcp__plugin_vercel_vercel__list_projects",
+      "Bash(git -C /Users/maurice/praisegrid mv app/api/cron/_debug-env/route.ts app/api/cron/debug-env/route.ts)",
+      "mcp__plugin_vercel_vercel__get_runtime_logs",
+      "Bash(node -e \"console.log\\('TOKEN_ENCRYPTION_KEY=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")",
+      "Bash(node -e \"console.log\\('OAUTH_STATE_SECRET=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")"
+    ],
+    "defaultMode": "auto"
   }
 }

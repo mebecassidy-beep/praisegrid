@@ -37,20 +37,84 @@ alter table public.profiles
   add column if not exists phone_number text,
   add column if not exists website text;
 
+-- ============================================================================
+-- team_members
+-- Lets a Pro-tier account owner invite teammates who get full access to the
+-- account under one shared role - no separate "member" permission tier, see
+-- lib/team/. member_user_id stays null until the invited person actually
+-- signs up (matched by email in handle_new_user() below); status flips to
+-- 'active' at that point. Defined before profiles' own RLS policies below
+-- since they call effective_account_id(), which queries this table.
+-- ============================================================================
+create table if not exists public.team_members (
+  id uuid primary key default gen_random_uuid(),
+  account_owner_id uuid not null references public.profiles (id) on delete cascade,
+  member_user_id uuid references auth.users (id) on delete cascade,
+  invited_email text not null,
+  status text not null check (status in ('invited', 'active')) default 'invited',
+  invited_at timestamptz not null default now(),
+  joined_at timestamptz,
+  unique (account_owner_id, invited_email)
+);
+
+create index if not exists team_members_account_owner_id_idx on public.team_members (account_owner_id);
+create index if not exists team_members_member_user_id_idx on public.team_members (member_user_id);
+
+-- Resolves which account's data a logged-in user should see: their own, or
+-- - if they're an active team member - the owner's account they were
+-- invited into. Every RLS policy below that used to compare directly
+-- against auth.uid() now goes through this instead, so a teammate sees
+-- exactly what the owner sees. security definer so it can read
+-- team_members (which has its own RLS below) without a chicken-and-egg
+-- problem when called from another table's policy.
+create or replace function public.effective_account_id(uid uuid)
+returns uuid
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(
+    (select account_owner_id from public.team_members where member_user_id = uid and status = 'active' limit 1),
+    uid
+  );
+$$;
+
+alter table public.team_members enable row level security;
+
+drop policy if exists "Account members can view their team" on public.team_members;
+create policy "Account members can view their team"
+  on public.team_members for select
+  using (public.effective_account_id(auth.uid()) = account_owner_id);
+
+drop policy if exists "Account members can invite teammates" on public.team_members;
+create policy "Account members can invite teammates"
+  on public.team_members for insert
+  with check (public.effective_account_id(auth.uid()) = account_owner_id);
+
+drop policy if exists "Account members can remove teammates" on public.team_members;
+create policy "Account members can remove teammates"
+  on public.team_members for delete
+  using (public.effective_account_id(auth.uid()) = account_owner_id);
+
 alter table public.profiles enable row level security;
 
 drop policy if exists "Users can view their own profile" on public.profiles;
 create policy "Users can view their own profile"
   on public.profiles for select
-  using (auth.uid() = id);
+  using (public.effective_account_id(auth.uid()) = id);
 
 drop policy if exists "Users can update their own profile" on public.profiles;
 create policy "Users can update their own profile"
   on public.profiles for update
-  using (auth.uid() = id)
-  with check (auth.uid() = id);
+  using (public.effective_account_id(auth.uid()) = id)
+  with check (public.effective_account_id(auth.uid()) = id);
 
--- Auto-create a profile row whenever a new Supabase auth user signs up.
+-- Auto-create a profile row whenever a new Supabase auth user signs up, and
+-- claim any pending team invite sent to their email (see team_members
+-- above) - the invited person's own profile row still exists (some other
+-- part of the app may look it up by id), but effective_account_id() means
+-- every account-scoped query resolves to the inviting owner's data instead.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -59,6 +123,11 @@ as $$
 begin
   insert into public.profiles (id, email)
   values (new.id, new.email);
+
+  update public.team_members
+  set member_user_id = new.id, status = 'active', joined_at = now()
+  where invited_email = new.email and status = 'invited';
+
   return new;
 end;
 $$;
@@ -89,23 +158,23 @@ alter table public.locations enable row level security;
 drop policy if exists "Users can view their own locations" on public.locations;
 create policy "Users can view their own locations"
   on public.locations for select
-  using (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id);
 
 drop policy if exists "Users can insert their own locations" on public.locations;
 create policy "Users can insert their own locations"
   on public.locations for insert
-  with check (auth.uid() = user_id);
+  with check (public.effective_account_id(auth.uid()) = user_id);
 
 drop policy if exists "Users can update their own locations" on public.locations;
 create policy "Users can update their own locations"
   on public.locations for update
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id)
+  with check (public.effective_account_id(auth.uid()) = user_id);
 
 drop policy if exists "Users can delete their own locations" on public.locations;
 create policy "Users can delete their own locations"
   on public.locations for delete
-  using (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id);
 
 -- ============================================================================
 -- reviews
@@ -166,7 +235,7 @@ create policy "Users can view reviews for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = reviews.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -177,7 +246,7 @@ create policy "Users can insert reviews for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = reviews.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -188,14 +257,14 @@ create policy "Users can update reviews for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = reviews.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   )
   with check (
     exists (
       select 1 from public.locations
       where locations.id = reviews.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -206,7 +275,7 @@ create policy "Users can delete reviews for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = reviews.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -253,7 +322,7 @@ create policy "Users can view platform connections for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = platform_connections.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -300,7 +369,7 @@ create policy "Users can view ai_settings for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = ai_settings.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -311,7 +380,7 @@ create policy "Users can insert ai_settings for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = ai_settings.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -322,14 +391,14 @@ create policy "Users can update ai_settings for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = ai_settings.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   )
   with check (
     exists (
       select 1 from public.locations
       where locations.id = ai_settings.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -340,7 +409,7 @@ create policy "Users can delete ai_settings for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = ai_settings.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -392,7 +461,7 @@ create policy "Users can view feedback for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = feedback_responses.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -403,14 +472,14 @@ create policy "Users can update feedback for their own locations"
     exists (
       select 1 from public.locations
       where locations.id = feedback_responses.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   )
   with check (
     exists (
       select 1 from public.locations
       where locations.id = feedback_responses.location_id
-        and locations.user_id = auth.uid()
+        and locations.user_id = public.effective_account_id(auth.uid())
     )
   );
 
@@ -442,17 +511,17 @@ alter table public.scheduled_blasts enable row level security;
 drop policy if exists "Users can view their own scheduled blasts" on public.scheduled_blasts;
 create policy "Users can view their own scheduled blasts"
   on public.scheduled_blasts for select
-  using (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id);
 
 drop policy if exists "Users can insert their own scheduled blasts" on public.scheduled_blasts;
 create policy "Users can insert their own scheduled blasts"
   on public.scheduled_blasts for insert
-  with check (auth.uid() = user_id);
+  with check (public.effective_account_id(auth.uid()) = user_id);
 
 drop policy if exists "Users can delete their own scheduled blasts" on public.scheduled_blasts;
 create policy "Users can delete their own scheduled blasts"
   on public.scheduled_blasts for delete
-  using (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id);
 
 -- ============================================================================
 -- support_conversations
@@ -478,7 +547,7 @@ alter table public.support_conversations enable row level security;
 drop policy if exists "Users can view their own support conversations" on public.support_conversations;
 create policy "Users can view their own support conversations"
   on public.support_conversations for select
-  using (auth.uid() = user_id);
+  using (public.effective_account_id(auth.uid()) = user_id);
 
 -- No insert/update policy: only the service-role escalate route writes here.
 

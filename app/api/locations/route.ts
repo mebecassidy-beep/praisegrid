@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 export async function POST(request: Request) {
   try {
@@ -23,9 +24,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A business name is required." }, { status: 400 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { data: location, error } = await (supabase.from("locations") as any)
       .insert({
-        user_id: user.id,
+        user_id: accountId,
         name,
         address,
         google_place_id: googlePlaceId,

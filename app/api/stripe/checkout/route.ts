@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createRouteHandlerSupabaseClient } from '@/lib/supabase/server'
+import { getEffectiveAccountId } from '@/lib/team/account'
 import {
   stripe,
   CHECKOUT_OFFERS,
@@ -36,19 +37,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase)
+
     const { data: profile, error: profileError } = await (supabase
       .from('profiles') as any)
-      .select('stripe_customer_id')
-      .eq('id', user.id)
+      .select('stripe_customer_id, email')
+      .eq('id', accountId)
       .single()
 
     let customerId = (profile as any)?.stripe_customer_id ?? undefined
 
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: user.email,
+        email: profile?.email ?? user.email,
         metadata: {
-          supabase_user_id: user.id,
+          supabase_user_id: accountId,
         },
       })
       customerId = customer.id
@@ -56,7 +59,7 @@ export async function POST(request: Request) {
       await (supabase
         .from('profiles') as any)
         .update({ stripe_customer_id: customerId })
-        .eq('id', user.id)
+        .eq('id', accountId)
     }
 
     const discounts = offer ? [{ coupon: await getOrCreateOfferCoupon(offer) }] : undefined

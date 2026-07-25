@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { getCompetitorLeaks } from "@/lib/competitor/get-competitor-leaks";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 // On-demand (not run on every page load) since it can make a Claude call —
 // the analytics card triggers this from a button rather than the page
@@ -22,9 +23,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Too many requests. Please try again in a minute." }, { status: 429 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("competitor_name")
-      .eq("id", user.id)
+      .eq("id", accountId)
       .single();
 
     if (!profile?.competitor_name) {

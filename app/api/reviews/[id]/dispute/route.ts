@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { generateDisputeDraft } from "@/lib/anthropic/generate-dispute-draft";
 
 const MAX_NOTES_LENGTH = 2000;
@@ -33,7 +34,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
       .eq("id", params.id)
       .single();
 
-    if (!review || review.locations?.user_id !== user.id) {
+    const accountId = await getEffectiveAccountId(user.id, supabase);
+    if (!review || review.locations?.user_id !== accountId) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 

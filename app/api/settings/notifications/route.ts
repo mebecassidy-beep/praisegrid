@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const VALID_FREQUENCIES = ["weekly", "monthly", "off"];
 
@@ -19,9 +20,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Invalid report_frequency." }, { status: 400 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { error } = await (supabase.from("profiles") as any)
       .update({ report_frequency: reportFrequency })
-      .eq("id", user.id);
+      .eq("id", accountId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

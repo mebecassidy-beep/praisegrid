@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { stripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
@@ -15,9 +16,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("stripe_customer_id")
-      .eq("id", user.id)
+      .eq("id", accountId)
       .single();
 
     const customerId = (profile as any)?.stripe_customer_id;

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { ImageResponse } from "next/og";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 export async function GET(request: Request, { params }: { params: { reviewId: string } }) {
   const supabase = createRouteHandlerSupabaseClient();
@@ -17,7 +18,8 @@ export async function GET(request: Request, { params }: { params: { reviewId: st
     .eq("id", params.reviewId)
     .single();
 
-  if (!review || review.locations?.user_id !== user.id) {
+  const accountId = await getEffectiveAccountId(user.id, supabase);
+  if (!review || review.locations?.user_id !== accountId) {
     return new Response("Not found", { status: 404 });
   }
 

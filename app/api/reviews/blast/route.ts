@@ -5,6 +5,7 @@ import { reviewRequestEmail } from "@/lib/email/templates/review-request";
 import { sendReviewRequestSms } from "@/lib/sms/send-review-request";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { buildFeedbackShieldLink } from "@/lib/reviews/public-review-links";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -62,10 +63,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { data: location } = await (supabase.from("locations") as any)
       .select("id, name")
       .eq("id", locationId)
-      .eq("user_id", user.id)
+      .eq("user_id", accountId)
       .single();
 
     if (!location) {
@@ -75,7 +77,7 @@ export async function POST(request: Request) {
     if (delay !== "now") {
       const sendAt = computeSendAt(delay);
       const { error: scheduleError } = await (supabase.from("scheduled_blasts") as any).insert({
-        user_id: user.id,
+        user_id: accountId,
         location_id: locationId,
         method,
         to_address: to,

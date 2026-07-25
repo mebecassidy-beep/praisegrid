@@ -1,10 +1,10 @@
 import { AiSettingsPanel } from "@/components/settings/ai-settings-panel";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData } from "@/lib/dashboard/queries";
 
 export default async function AiSettingsPage() {
-  const user = await requireUser();
-  const data = await getDashboardData(user.id);
+  const { accountId } = await requireAccount();
+  const data = await getDashboardData(accountId);
 
   return (
     <div className="max-w-3xl space-y-6">

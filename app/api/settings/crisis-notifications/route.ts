@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const MAX_LENGTH = 500;
 
@@ -21,9 +22,10 @@ export async function PATCH(request: Request) {
       );
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { error } = await (supabase.from("profiles") as any)
       .update({ crisis_slack_webhook_url: webhookUrl.slice(0, MAX_LENGTH) || null })
-      .eq("id", user.id);
+      .eq("id", accountId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

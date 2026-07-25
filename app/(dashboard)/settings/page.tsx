@@ -5,17 +5,20 @@ import { ConnectedPlatformsCard } from "@/components/settings/connected-platform
 import { CompetitorTrackerCard } from "@/components/settings/competitor-tracker-card";
 import { RevenueEstimateCard } from "@/components/settings/revenue-estimate-card";
 import { CrisisNotificationsCard } from "@/components/settings/crisis-notifications-card";
-import { requireUser } from "@/lib/supabase/server";
+import { TeamCard } from "@/components/settings/team-card";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 import { getConnectedLocationIds } from "@/lib/oauth/queries";
+import { getTeamMembers } from "@/lib/team/queries";
+import { hasProAccess } from "@/lib/subscription";
 
 export default async function SettingsPage() {
-  const user = await requireUser();
-  const [profile, data] = await Promise.all([getProfile(user.id), getDashboardData(user.id)]);
-  const connectedFacebookLocationIds = await getConnectedLocationIds(
-    data.locations.map((l) => l.id),
-    "facebook"
-  );
+  const { accountId } = await requireAccount();
+  const [profile, data] = await Promise.all([getProfile(accountId), getDashboardData(accountId)]);
+  const [connectedFacebookLocationIds, teamMembers] = await Promise.all([
+    getConnectedLocationIds(data.locations.map((l) => l.id), "facebook"),
+    getTeamMembers(accountId),
+  ]);
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -33,6 +36,7 @@ export default async function SettingsPage() {
       />
       <BillingCard tier={profile.subscription_tier} />
       <ConnectedPlatformsCard locations={data.locations} facebookConnected={connectedFacebookLocationIds.size > 0} />
+      <TeamCard isPro={hasProAccess(profile.subscription_tier)} initialMembers={teamMembers} />
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
       <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />
       <RevenueEstimateCard initialValue={profile.estimated_customer_value} />

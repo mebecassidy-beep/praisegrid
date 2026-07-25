@@ -80,7 +80,8 @@
       "Bash(node -e \"console.log\\('OAUTH_STATE_SECRET=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")",
       "Bash(git -C /Users/maurice/praisegrid mv lib/google-business-profile/token-crypto.ts lib/oauth/token-crypto.ts)",
       "Bash(git -C /Users/maurice/praisegrid mv lib/google-business-profile/oauth-state.ts lib/oauth/state.ts)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(xargs -I{} echo {})"
     ],
     "defaultMode": "auto"
   }

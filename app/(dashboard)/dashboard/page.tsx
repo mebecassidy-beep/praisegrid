@@ -14,7 +14,7 @@ import { OnboardingBanner } from "@/components/dashboard/onboarding-banner";
 import { RevenueProtectionBanner } from "@/components/dashboard/revenue-protection-banner";
 import { ReviewBlastCard } from "@/components/dashboard/review-blast-card";
 import { CompetitorBenchmarkCard } from "@/components/dashboard/competitor-benchmark-card";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import {
   getDashboardData,
   getProfile,
@@ -31,13 +31,13 @@ export default async function DashboardPage({
 }: {
   searchParams: { location?: string };
 }) {
-  const user = await requireUser();
+  const { accountId } = await requireAccount();
   const [data, profile, feedbackResponses, feedbackResponseCount, pendingBlasts] = await Promise.all([
-    getDashboardData(user.id),
-    getProfile(user.id),
-    getFeedbackResponses(user.id),
-    getFeedbackResponseCount(user.id),
-    getPendingScheduledBlasts(user.id),
+    getDashboardData(accountId),
+    getProfile(accountId),
+    getFeedbackResponses(accountId),
+    getFeedbackResponseCount(accountId),
+    getPendingScheduledBlasts(accountId),
   ]);
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
   const hasLocation = data.locations.length > 0;

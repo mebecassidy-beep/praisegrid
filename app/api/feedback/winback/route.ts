@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { sendWinbackSms } from "@/lib/sms/send-winback-sms";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 // One-click "olive branch" SMS for a customer who left a low private rating
 // through Feedback Shield. Requires the signed-in business owner, only
@@ -29,7 +30,8 @@ export async function POST(request: Request) {
       .eq("id", responseId)
       .single();
 
-    if (!feedbackResponse || feedbackResponse.locations?.user_id !== user.id) {
+    const accountId = await getEffectiveAccountId(user.id, supabase);
+    if (!feedbackResponse || feedbackResponse.locations?.user_id !== accountId) {
       return NextResponse.json({ error: "Feedback not found." }, { status: 404 });
     }
 
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
 
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("company_name")
-      .eq("id", user.id)
+      .eq("id", accountId)
       .single();
 
     await sendWinbackSms({

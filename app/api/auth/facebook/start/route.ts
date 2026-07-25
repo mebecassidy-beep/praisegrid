@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { createOAuthState } from "@/lib/oauth/state";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { buildFacebookAuthUrl, isFacebookOAuthConfigured } from "@/lib/facebook/client";
 
 export async function GET(request: Request) {
@@ -24,10 +25,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "location_id is required" }, { status: 400 });
   }
 
+  const accountId = await getEffectiveAccountId(user.id, supabase);
   const { data: location } = await (supabase.from("locations") as any)
     .select("id")
     .eq("id", locationId)
-    .eq("user_id", user.id)
+    .eq("user_id", accountId)
     .single();
 
   if (!location) {
@@ -35,7 +37,7 @@ export async function GET(request: Request) {
   }
 
   const redirectUri = `${new URL(request.url).origin}/api/auth/facebook/callback`;
-  const state = createOAuthState(locationId, user.id);
+  const state = createOAuthState(locationId, accountId);
 
   return NextResponse.redirect(buildFacebookAuthUrl(redirectUri, state));
 }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { generateQrPngBuffer } from "@/lib/qr/generate-qr";
 import { buildFeedbackShieldLink, buildGoogleReviewLink, buildYelpReviewLink } from "@/lib/reviews/public-review-links";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const VALID_TARGETS = ["google", "yelp", "feedback"];
 
@@ -31,10 +32,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "A valid location_id and target are required." }, { status: 400 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { data: location } = await (supabase.from("locations") as any)
       .select("id, name, google_place_id, yelp_business_id")
       .eq("id", locationId)
-      .eq("user_id", user.id)
+      .eq("user_id", accountId)
       .single();
 
     if (!location) {

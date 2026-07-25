@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -14,10 +15,11 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { error } = await (supabase.from("scheduled_blasts") as any)
       .delete()
       .eq("id", params.id)
-      .eq("user_id", user.id)
+      .eq("user_id", accountId)
       .is("sent_at", null);
 
     if (error) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const MAX_LENGTH = 200;
 
@@ -20,13 +21,14 @@ export async function PATCH(request: Request) {
     const phoneNumber = typeof body?.phone_number === "string" ? body.phone_number.trim().slice(0, MAX_LENGTH) : "";
     const website = typeof body?.website === "string" ? body.website.trim().slice(0, MAX_LENGTH) : "";
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { error } = await (supabase.from("profiles") as any)
       .update({
         company_name: companyName || null,
         phone_number: phoneNumber || null,
         website: website || null,
       })
-      .eq("id", user.id);
+      .eq("id", accountId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

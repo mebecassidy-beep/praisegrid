@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { X } from "lucide-react";
 import { ReviewExplorer } from "@/components/reviews/review-explorer";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData } from "@/lib/dashboard/queries";
 
 export default async function ReviewsPage({
@@ -9,8 +9,8 @@ export default async function ReviewsPage({
 }: {
   searchParams: { location?: string; q?: string };
 }) {
-  const user = await requireUser();
-  const data = await getDashboardData(user.id);
+  const { accountId } = await requireAccount();
+  const data = await getDashboardData(accountId);
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
 
   const selectedLocation = searchParams.location

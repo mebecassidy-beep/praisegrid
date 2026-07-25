@@ -1,6 +1,6 @@
 import { LocationsGrid } from "@/components/dashboard/locations-grid";
 import { ConnectStatusBanner } from "@/components/dashboard/connect-status-banner";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { getConnectedLocationIds } from "@/lib/oauth/queries";
 import { isGbpOAuthConfigured } from "@/lib/google-business-profile/client";
@@ -11,8 +11,8 @@ export default async function LocationsPage({
 }: {
   searchParams: { gbp_status?: string; gbp_message?: string; fb_status?: string; fb_message?: string };
 }) {
-  const user = await requireUser();
-  const data = await getDashboardData(user.id);
+  const { accountId } = await requireAccount();
+  const data = await getDashboardData(accountId);
   const locationIds = data.locations.map((l) => l.id);
   const [connectedLocationIds, connectedFacebookLocationIds] = await Promise.all([
     getConnectedLocationIds(locationIds, "google"),

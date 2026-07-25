@@ -1,10 +1,10 @@
 import { SocialPostGenerator } from "@/components/marketing/social-post-generator";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData } from "@/lib/dashboard/queries";
 
 export default async function MarketingPage() {
-  const user = await requireUser();
-  const data = await getDashboardData(user.id);
+  const { accountId } = await requireAccount();
+  const data = await getDashboardData(accountId);
 
   const eligible = data.reviews.filter((r) => r.rating === 5 && r.status === "posted");
 

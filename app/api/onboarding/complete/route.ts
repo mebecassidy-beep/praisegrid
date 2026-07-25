@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient, requireUser } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 export async function POST() {
   const user = await requireUser();
   const supabase = createRouteHandlerSupabaseClient();
+  const accountId = await getEffectiveAccountId(user.id, supabase);
 
   const { error } = await (supabase.from("profiles") as any)
     .update({ onboarding_completed_at: new Date().toISOString() })
-    .eq("id", user.id);
+    .eq("id", accountId);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

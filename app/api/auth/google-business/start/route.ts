@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { createOAuthState } from "@/lib/oauth/state";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { GBP_OAUTH_SCOPE, isGbpOAuthConfigured } from "@/lib/google-business-profile/client";
 
 const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -26,10 +27,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "location_id is required" }, { status: 400 });
   }
 
+  const accountId = await getEffectiveAccountId(user.id, supabase);
   const { data: location } = await (supabase.from("locations") as any)
     .select("id")
     .eq("id", locationId)
-    .eq("user_id", user.id)
+    .eq("user_id", accountId)
     .single();
 
   if (!location) {
@@ -37,7 +39,7 @@ export async function GET(request: Request) {
   }
 
   const redirectUri = `${new URL(request.url).origin}/api/auth/google-business/callback`;
-  const state = createOAuthState(locationId, user.id);
+  const state = createOAuthState(locationId, accountId);
 
   const authUrl = new URL(GOOGLE_AUTH_URL);
   authUrl.searchParams.set("client_id", process.env.GOOGLE_OAUTH_CLIENT_ID!);

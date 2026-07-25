@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/client";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createRouteHandlerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60_000;
@@ -52,9 +53,14 @@ export async function POST(request: Request) {
     // what we already know from their session.
     const contactEmail = email || user?.email || "";
 
+    // Stored against the account (not the raw logged-in user id) so a
+    // teammate's escalation is visible to the whole account, same as every
+    // other account-scoped table - see lib/team/account.ts.
+    const accountId = user ? await getEffectiveAccountId(user.id, requestScoped) : null;
+
     const serviceRole = createServiceRoleClient();
     const { error: insertError } = await (serviceRole.from("support_conversations") as any).insert({
-      user_id: user?.id ?? null,
+      user_id: accountId,
       contact_email: contactEmail || null,
       transcript,
     });

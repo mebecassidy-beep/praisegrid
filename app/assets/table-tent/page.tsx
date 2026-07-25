@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/supabase/server";
 import { createClient } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { PrintButton } from "@/components/dashboard/print-button";
 
 const TARGET_LABEL: Record<string, string> = {
@@ -14,7 +14,7 @@ export default async function TableTentPage({
 }: {
   searchParams: { location_id?: string; target?: string };
 }) {
-  const user = await requireUser();
+  const { accountId } = await requireAccount();
   const locationId = searchParams.location_id ?? "";
   const target = searchParams.target && searchParams.target in TARGET_LABEL ? searchParams.target : "feedback";
 
@@ -22,7 +22,7 @@ export default async function TableTentPage({
   const { data: location } = await (supabase.from("locations") as any)
     .select("id, name")
     .eq("id", locationId)
-    .eq("user_id", user.id)
+    .eq("user_id", accountId)
     .single();
 
   if (!location) {

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { sendCrisisSlackNotification } from "@/lib/slack/send-crisis-notification";
 
 // Manual, on-demand Slack notification for a specific high-risk review (the
@@ -25,13 +26,14 @@ export async function POST(_request: Request, { params }: { params: { id: string
       .eq("id", params.id)
       .single();
 
-    if (!review || review.locations?.user_id !== user.id) {
+    const accountId = await getEffectiveAccountId(user.id, supabase);
+    if (!review || review.locations?.user_id !== accountId) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     const { data: profile } = await (supabase.from("profiles") as any)
       .select("crisis_slack_webhook_url")
-      .eq("id", user.id)
+      .eq("id", accountId)
       .single();
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://praisegrid.vercel.app";

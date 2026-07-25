@@ -306,6 +306,35 @@ export interface Database {
           created_at?: string;
         };
       };
+      team_members: {
+        Row: {
+          id: string;
+          account_owner_id: string;
+          member_user_id: string | null;
+          invited_email: string;
+          status: "invited" | "active";
+          invited_at: string;
+          joined_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          account_owner_id: string;
+          member_user_id?: string | null;
+          invited_email: string;
+          status?: "invited" | "active";
+          invited_at?: string;
+          joined_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          account_owner_id?: string;
+          member_user_id?: string | null;
+          invited_email?: string;
+          status?: "invited" | "active";
+          invited_at?: string;
+          joined_at?: string | null;
+        };
+      };
       platform_connections: {
         Row: {
           id: string;

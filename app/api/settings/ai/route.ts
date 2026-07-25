@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const VALID_PRESETS = ["friendly_neighborhood", "professional_corporate", "custom"];
 
@@ -25,8 +26,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const locationId = new URL(request.url).searchParams.get("location_id");
-    if (!locationId || !(await requireOwnedLocation(supabase, user.id, locationId))) {
+    if (!locationId || !(await requireOwnedLocation(supabase, accountId, locationId))) {
       return NextResponse.json({ error: "Location not found" }, { status: 404 });
     }
 
@@ -66,10 +68,11 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const body = await request.json().catch(() => ({}));
     const locationId = typeof body?.location_id === "string" ? body.location_id : "";
 
-    if (!locationId || !(await requireOwnedLocation(supabase, user.id, locationId))) {
+    if (!locationId || !(await requireOwnedLocation(supabase, accountId, locationId))) {
       return NextResponse.json({ error: "Location not found" }, { status: 404 });
     }
 

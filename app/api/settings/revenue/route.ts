@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 const MIN_VALUE = 0;
 const MAX_VALUE = 1_000_000;
@@ -20,9 +21,10 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Enter a valid dollar amount." }, { status: 400 });
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase);
     const { error } = await (supabase.from("profiles") as any)
       .update({ estimated_customer_value: Math.round(rawValue * 100) / 100 })
-      .eq("id", user.id);
+      .eq("id", accountId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

@@ -4,6 +4,7 @@ import { createRouteHandlerSupabaseClient } from '@/lib/supabase/server'
 import { classifyReviewRisk } from '@/lib/reviews/classify-risk'
 import { sendCrisisAlertSms } from '@/lib/sms/send-crisis-alert'
 import { hasProAccess } from '@/lib/subscription'
+import { getEffectiveAccountId } from '@/lib/team/account'
 
 export async function GET(request: Request) {
   try {
@@ -15,10 +16,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase)
     const { data: locations, error: locError } = await (supabase
       .from('locations') as any)
       .select('id')
-      .eq('user_id', user.id)
+      .eq('user_id', accountId)
 
     if (locError) {
       return NextResponse.json({ error: locError.message }, { status: 500 })
@@ -81,11 +83,12 @@ export async function POST(request: Request) {
       )
     }
 
+    const accountId = await getEffectiveAccountId(user.id, supabase)
     const { data: location } = await (supabase
       .from('locations') as any)
       .select('id')
       .eq('id', location_id)
-      .eq('user_id', user.id)
+      .eq('user_id', accountId)
       .single()
 
     if (!location) {
@@ -117,7 +120,7 @@ export async function POST(request: Request) {
       const { data: profile } = await (supabase
         .from('profiles') as any)
         .select('subscription_tier, alert_phone_number, company_name')
-        .eq('id', user.id)
+        .eq('id', accountId)
         .single()
 
       if (hasProAccess(profile?.subscription_tier) && profile?.alert_phone_number) {

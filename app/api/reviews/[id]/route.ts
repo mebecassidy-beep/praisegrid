@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { getEffectiveAccountId } from "@/lib/team/account";
 import { getActiveConnection } from "@/lib/google-business-profile/connection";
 import { replyToReview } from "@/lib/google-business-profile/client";
 import { GBP_EXTERNAL_ID_PREFIX } from "@/lib/google-business-profile/sync-reviews";
@@ -35,7 +36,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       .eq("id", params.id)
       .single();
 
-    if (!existing || existing.locations?.user_id !== user.id) {
+    const accountId = await getEffectiveAccountId(user.id, supabase);
+    if (!existing || existing.locations?.user_id !== accountId) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 

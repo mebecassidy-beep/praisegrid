@@ -7,7 +7,7 @@ import { SentimentBreakdown } from "@/components/dashboard/sentiment-breakdown";
 import { CompetitorLeakFinderCard } from "@/components/dashboard/competitor-leak-finder-card";
 import { RevenueForensicsCard } from "@/components/dashboard/revenue-forensics-card";
 import { DateRangePicker } from "@/components/analytics/date-range-picker";
-import { requireUser } from "@/lib/supabase/server";
+import { requireAccount } from "@/lib/team/account";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
 import { computeRevenueForensics, computeResponseTimeTrend } from "@/lib/analytics/revenue-forensics";
 
@@ -18,11 +18,11 @@ export default async function AnalyticsPage({
 }: {
   searchParams: { months?: string };
 }) {
-  const user = await requireUser();
+  const { accountId } = await requireAccount();
   const requestedMonths = Number(searchParams.months);
   const months = VALID_MONTH_RANGES.includes(requestedMonths) ? requestedMonths : 6;
 
-  const [data, profile] = await Promise.all([getDashboardData(user.id, undefined, months), getProfile(user.id)]);
+  const [data, profile] = await Promise.all([getDashboardData(accountId, undefined, months), getProfile(accountId)]);
   const hasLocation = data.locations.length > 0;
   const googlePlacesEnabled = Boolean(process.env.GOOGLE_PLACES_API_KEY);
   const forensics = computeRevenueForensics(data.reviews, profile.estimated_customer_value);

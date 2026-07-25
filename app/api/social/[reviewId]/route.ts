@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { generateSocialCaption } from "@/lib/anthropic/generate-social-caption";
+import { getEffectiveAccountId } from "@/lib/team/account";
 
 // Only "verified" 5-star reviews are eligible: rating 5 and status
 // "posted", meaning the owner already reviewed and approved a response to
@@ -22,7 +23,8 @@ export async function POST(request: Request, { params }: { params: { reviewId: s
       .eq("id", params.reviewId)
       .single();
 
-    if (!review || review.locations?.user_id !== user.id) {
+    const accountId = await getEffectiveAccountId(user.id, supabase);
+    if (!review || review.locations?.user_id !== accountId) {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 

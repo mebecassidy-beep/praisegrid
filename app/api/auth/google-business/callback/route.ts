@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server";
-import { verifyOAuthState } from "@/lib/google-business-profile/oauth-state";
+import { verifyOAuthState } from "@/lib/oauth/state";
 import { exchangeCodeForTokens, listAccounts, listLocationsForAccount } from "@/lib/google-business-profile/client";
 import { saveConnection } from "@/lib/google-business-profile/connection";
 

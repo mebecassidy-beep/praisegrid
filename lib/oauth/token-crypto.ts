@@ -3,7 +3,8 @@ import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 // AES-256-GCM, encrypt/decrypt happen entirely in application code (not
 // Postgres) so the key never appears in a SQL query or log line. Stored
 // column is opaque ciphertext; TOKEN_ENCRYPTION_KEY is the only thing that
-// can ever turn it back into a real, usable Google OAuth token.
+// can ever turn it back into a real, usable OAuth token. Shared across every
+// platform_connections row regardless of platform (google, facebook, ...).
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
 const AUTH_TAG_LENGTH = 16;

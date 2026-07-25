@@ -7,10 +7,15 @@ import { RevenueEstimateCard } from "@/components/settings/revenue-estimate-card
 import { CrisisNotificationsCard } from "@/components/settings/crisis-notifications-card";
 import { requireUser } from "@/lib/supabase/server";
 import { getDashboardData, getProfile } from "@/lib/dashboard/queries";
+import { getConnectedLocationIds } from "@/lib/oauth/queries";
 
 export default async function SettingsPage() {
   const user = await requireUser();
   const [profile, data] = await Promise.all([getProfile(user.id), getDashboardData(user.id)]);
+  const connectedFacebookLocationIds = await getConnectedLocationIds(
+    data.locations.map((l) => l.id),
+    "facebook"
+  );
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -27,7 +32,7 @@ export default async function SettingsPage() {
         initialWebsite={profile.website}
       />
       <BillingCard tier={profile.subscription_tier} />
-      <ConnectedPlatformsCard locations={data.locations} />
+      <ConnectedPlatformsCard locations={data.locations} facebookConnected={connectedFacebookLocationIds.size > 0} />
       <NotificationPreferencesCard initialReportFrequency={profile.report_frequency} />
       <CompetitorTrackerCard initialCompetitorName={profile.competitor_name} />
       <RevenueEstimateCard initialValue={profile.estimated_customer_value} />

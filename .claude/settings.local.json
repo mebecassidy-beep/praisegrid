@@ -77,7 +77,10 @@
       "Bash(git -C /Users/maurice/praisegrid mv app/api/cron/_debug-env/route.ts app/api/cron/debug-env/route.ts)",
       "mcp__plugin_vercel_vercel__get_runtime_logs",
       "Bash(node -e \"console.log\\('TOKEN_ENCRYPTION_KEY=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")",
-      "Bash(node -e \"console.log\\('OAUTH_STATE_SECRET=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")"
+      "Bash(node -e \"console.log\\('OAUTH_STATE_SECRET=' + require\\('crypto'\\).randomBytes\\(32\\).toString\\('base64'\\)\\)\")",
+      "Bash(git -C /Users/maurice/praisegrid mv lib/google-business-profile/token-crypto.ts lib/oauth/token-crypto.ts)",
+      "Bash(git -C /Users/maurice/praisegrid mv lib/google-business-profile/oauth-state.ts lib/oauth/state.ts)",
+      "Bash(git *)"
     ],
     "defaultMode": "auto"
   }

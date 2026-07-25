@@ -16,12 +16,16 @@ export function LocationsGrid({
   googlePlacesEnabled,
   gbpOAuthEnabled,
   connectedLocationIds,
+  facebookOAuthEnabled,
+  connectedFacebookLocationIds,
 }: {
   locations: Location[];
   locationMetrics: Record<string, LocationMetric>;
   googlePlacesEnabled: boolean;
   gbpOAuthEnabled: boolean;
   connectedLocationIds: Set<string>;
+  facebookOAuthEnabled: boolean;
+  connectedFacebookLocationIds: Set<string>;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -103,22 +107,38 @@ export function LocationsGrid({
                   <Meter value={metric.responseRate} status={status} />
                 </div>
 
-                <div className="border-t pt-3">
+                <div className="space-y-2 border-t pt-3">
                   {connectedLocationIds.has(location.id) ? (
                     <Badge variant="outline" className="gap-1 border-transparent bg-emerald-500/10 text-emerald-600">
                       <Check className="h-3 w-3" />
-                      Full sync &amp; auto-reply active
+                      Google: full sync &amp; auto-reply active
                     </Badge>
                   ) : gbpOAuthEnabled ? (
                     <Button size="sm" variant="outline" className="w-full gap-1.5" asChild>
                       <a href={`/api/auth/google-business/start?location_id=${location.id}`}>
-                        Enable full sync &amp; auto-reply
+                        Enable Google full sync &amp; auto-reply
                       </a>
                     </Button>
                   ) : (
                     <Badge variant="outline" className="gap-1 border-transparent bg-muted text-muted-foreground">
                       <Lock className="h-3 w-3" />
-                      Full sync &amp; auto-reply, coming soon
+                      Google full sync &amp; auto-reply, coming soon
+                    </Badge>
+                  )}
+
+                  {connectedFacebookLocationIds.has(location.id) ? (
+                    <Badge variant="outline" className="gap-1 border-transparent bg-emerald-500/10 text-emerald-600">
+                      <Check className="h-3 w-3" />
+                      Facebook: review sync active
+                    </Badge>
+                  ) : facebookOAuthEnabled ? (
+                    <Button size="sm" variant="outline" className="w-full gap-1.5" asChild>
+                      <a href={`/api/auth/facebook/start?location_id=${location.id}`}>Enable Facebook review sync</a>
+                    </Button>
+                  ) : (
+                    <Badge variant="outline" className="gap-1 border-transparent bg-muted text-muted-foreground">
+                      <Lock className="h-3 w-3" />
+                      Facebook review sync, coming soon
                     </Badge>
                   )}
                 </div>

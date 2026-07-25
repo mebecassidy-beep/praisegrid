@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { encryptToken, decryptToken } from "@/lib/google-business-profile/token-crypto";
+import { encryptToken, decryptToken } from "@/lib/oauth/token-crypto";
 import { refreshAccessToken, type TokenResponse } from "@/lib/google-business-profile/client";
 import type { Database } from "@/types/database";
 

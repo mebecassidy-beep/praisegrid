@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerSupabaseClient } from "@/lib/supabase/server";
 import { createOAuthState } from "@/lib/oauth/state";
-import { GBP_OAUTH_SCOPE, isGbpOAuthConfigured } from "@/lib/google-business-profile/client";
-
-const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+import { buildFacebookAuthUrl, isFacebookOAuthConfigured } from "@/lib/facebook/client";
 
 export async function GET(request: Request) {
-  if (!isGbpOAuthConfigured()) {
-    return NextResponse.json({ error: "Google Business Profile OAuth is not configured yet." }, { status: 503 });
+  if (!isFacebookOAuthConfigured()) {
+    return NextResponse.json({ error: "Facebook review sync is not configured yet." }, { status: 503 });
   }
 
   const supabase = createRouteHandlerSupabaseClient();
@@ -36,17 +34,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Location not found" }, { status: 404 });
   }
 
-  const redirectUri = `${new URL(request.url).origin}/api/auth/google-business/callback`;
+  const redirectUri = `${new URL(request.url).origin}/api/auth/facebook/callback`;
   const state = createOAuthState(locationId, user.id);
 
-  const authUrl = new URL(GOOGLE_AUTH_URL);
-  authUrl.searchParams.set("client_id", process.env.GOOGLE_OAUTH_CLIENT_ID!);
-  authUrl.searchParams.set("redirect_uri", redirectUri);
-  authUrl.searchParams.set("response_type", "code");
-  authUrl.searchParams.set("scope", GBP_OAUTH_SCOPE);
-  authUrl.searchParams.set("access_type", "offline");
-  authUrl.searchParams.set("prompt", "consent");
-  authUrl.searchParams.set("state", state);
-
-  return NextResponse.redirect(authUrl.toString());
+  return NextResponse.redirect(buildFacebookAuthUrl(redirectUri, state));
 }

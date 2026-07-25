@@ -212,28 +212,31 @@ create policy "Users can delete reviews for their own locations"
 
 -- ============================================================================
 -- platform_connections
--- OAuth tokens for the Google Business Profile API (full review history +
--- real reply-posting, distinct from the static-key Places API used for the
--- basic 5-review sync). access_token/refresh_token are AES-256-GCM
--- ciphertext, encrypted/decrypted only in application code (see
--- lib/google-business-profile/token-crypto.ts) so the key never touches a
--- SQL query or log line. Only ever written by the server-side OAuth callback
--- and read by server-side sync/reply-posting routes, both using the
+-- OAuth tokens for platform APIs that need real login (Google Business
+-- Profile: full review history + real reply-posting; Facebook: Page review
+-- sync only, Meta's Graph API has no endpoint to post a reply to a rating).
+-- access_token/refresh_token are AES-256-GCM ciphertext, encrypted/decrypted
+-- only in application code (see lib/oauth/token-crypto.ts) so the key never
+-- touches a SQL query or log line. Only ever written by the server-side OAuth
+-- callbacks and read by server-side sync/reply-posting routes, both using the
 -- service-role client - regular users never see raw tokens, so there are
 -- deliberately no insert/update/delete RLS policies for the authenticated role.
 -- ============================================================================
 create table if not exists public.platform_connections (
   id uuid primary key default gen_random_uuid(),
   location_id uuid not null references public.locations (id) on delete cascade,
-  platform text not null check (platform in ('google')),
+  platform text not null check (platform in ('google', 'facebook')),
   access_token text not null,
   refresh_token text,
   expires_at timestamptz,
   scope text,
-  -- Google's own identifiers for the GBP account + location resource, not
-  -- the same as locations.google_place_id (that's the read-only Places API
-  -- ID). Both required to call the reviews.list / reviews.reply endpoints.
+  -- The platform's own identifier for the connected resource: a Google GBP
+  -- account ID, or a Facebook Page ID. Not the same as
+  -- locations.google_place_id (that's the read-only Places API ID).
   account_id text,
+  -- Google-only: the specific GBP location within account_id's account.
+  -- Facebook has no equivalent nesting (one Page = one connection), so this
+  -- stays null for facebook rows.
   gbp_location_id text,
   connected_at timestamptz not null default now(),
   unique (location_id, platform)
@@ -518,3 +521,15 @@ alter table public.profiles
 -- channel notification the owner triggers manually per review.
 alter table public.profiles
   add column if not exists crisis_slack_webhook_url text;
+
+-- ============================================================================
+-- Facebook Page review sync (OAuth, read-only - see lib/facebook/)
+-- Widens platform_connections beyond 'google' now that Facebook is a second
+-- OAuth-connected platform. Table already allows any platform's account_id
+-- in that one column, so no new column is needed - a Facebook row just
+-- leaves gbp_location_id null.
+-- ============================================================================
+alter table public.platform_connections
+  drop constraint if exists platform_connections_platform_check;
+alter table public.platform_connections
+  add constraint platform_connections_platform_check check (platform in ('google', 'facebook'));

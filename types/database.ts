@@ -310,7 +310,7 @@ export interface Database {
         Row: {
           id: string;
           location_id: string;
-          platform: "google";
+          platform: "google" | "facebook";
           access_token: string;
           refresh_token: string | null;
           expires_at: string | null;
@@ -322,7 +322,7 @@ export interface Database {
         Insert: {
           id?: string;
           location_id: string;
-          platform: "google";
+          platform: "google" | "facebook";
           access_token: string;
           refresh_token?: string | null;
           expires_at?: string | null;
@@ -334,7 +334,7 @@ export interface Database {
         Update: {
           id?: string;
           location_id?: string;
-          platform?: "google";
+          platform?: "google" | "facebook";
           access_token?: string;
           refresh_token?: string | null;
           expires_at?: string | null;
